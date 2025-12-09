@@ -194,22 +194,6 @@
             justify-content: center
         }
 
-        .hero {
-            width: 640px;
-            background: var(--panel);
-            border: 1px solid var(--stroke);
-            border-radius: 12px;
-            padding: 18px;
-            margin-top: 24px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-        }
-
-        .hero-illustration {
-            height: 140px;
-            border-radius: 10px;
-            background: linear-gradient(90deg, #4b2f6f, #9866c5 60%, #dde6f5);
-            margin-bottom: 12px;
-        }
 
         .hero h2 {
             margin: 6px 0 8px;
@@ -244,40 +228,6 @@
             text-decoration: underline
         }
 
-        /* RIGHT RAIL */
-        .right {
-            padding-top: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px
-        }
-
-        .section-title {
-            color: #cfd6dc;
-            font-weight: 700;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px
-        }
-
-        .recent-card {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            padding: 10px;
-            background: transparent;
-            border-radius: 8px;
-            cursor: default;
-        }
-
-        .recent-thumb {
-            width: 40px;
-            height: 28px;
-            border-radius: 6px;
-            background: linear-gradient(135deg, #a06adf, #f285c8);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
 
         .recent-info .title {
             font-weight: 600
@@ -288,18 +238,6 @@
             font-size: 16px
         }
 
-        .create-tile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            width: fit-content;
-            border: 1px solid var(--stroke);
-            border-radius: 8px;
-            background: #2b3038;
-            color: #d9dee3;
-            font-weight: 700;
-        }
 
         .create-tile .plus {
             width: 26px;
@@ -313,6 +251,103 @@
             font-weight: 800;
         }
 
+        /* ===== HOME CONTENT ===== */
+        .main {
+            overflow: auto;
+        }
+
+        .home {
+            padding-top: 8px;
+            max-width: 920px;
+        }
+
+        .section {
+            margin-bottom: 28px;
+        }
+
+        .section h3 {
+            margin: 0 0 14px;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: .2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #e7ecf0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        /* Board thumbnail card */
+        .board-card {
+            background: transparent;
+            border: none;
+        }
+
+        .board-thumb {
+            width: 100%;
+            height: 110px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #a06adf, #f285c8);
+            border: 1px solid rgba(255, 255, 255, .15);
+        }
+
+        .board-title {
+            margin-top: 8px;
+            background: #14171c;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        /* Workspace row + texts */
+        .ws-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 10px 0 12px;
+        }
+
+        .ws-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: #6ea6ff;
+            color: #101418;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, .15);
+        }
+
+        .ws-title {
+            font-weight: 800;
+        }
+
+        .ws-sub {
+            color: #a8b0b8;
+        }
+
+        .inline-link {
+            color: #8fb1ff;
+            text-decoration: underline;
+        }
+
+        /* Button "Xem tất cả..." */
+        .btn-ghost-xl {
+            margin-top: 10px;
+            border: 1px solid var(--stroke);
+            background: #2b3038;
+            color: #d9dee3;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
 
     </style>
 </head>
@@ -342,47 +377,61 @@
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <nav class="nav-group" aria-label="Chính">
-                <div class="nav-item"><span class="glyph">📋</span>Bảng</div>
-                <div class="nav-item active"><span class="glyph">➜</span>Trang chủ</div>
+                <div class="nav-item active"><span class="glyph">📋</span>Bảng</div>
+                <div class="nav-item"><span class="glyph">➜</span>Trang chủ</div>
             </nav>
+
             <div class="add-ws">+ Tạo Không gian làm việc</div>
         </aside>
-
         <!-- MAIN -->
         <main class="main">
-            <section class="hero" aria-label="Giới thiệu">
-                <div class="hero-illustration"></div>
-                <h2>Tổ chức mọi thứ</h2>
-                <p>Đặt tất cả mọi thứ ở một nơi và bắt đầu di chuyển mọi thứ về phía trước với
-                    bảng List đầu tiên của bạn!</p>
-                <div class="cta">
-                    <button class="primary">Tạo một bảng Không gian làm việc</button>
-                    <a href="#">Đã hiểu! Bỏ qua điều này.</a>
-                </div>
-            </section>
+            <div class="home">
+
+                <!-- Đã xem gần đây -->
+                <section class="section">
+                    <h3>🕘 Đã xem gần đây</h3>
+                    <div class="grid">
+                        <article class="board-card">
+                            <div class="board-thumb"></div>
+                            <div class="board-title">Bảng List của tôi</div>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- Các không gian làm việc của bạn -->
+                <section class="section">
+                    <h3>CÁC KHÔNG GIAN LÀM VIỆC CỦA BẠN</h3>
+                    <div class="ws-sub">
+                        Bạn không phải là thành viên của bất kỳ không gian làm việc nào.
+                        <a class="inline-link" href="#">Tạo Không gian làm việc</a>
+                    </div>
+                </section>
+
+                <!-- Các không gian làm việc khách -->
+                <section class="section">
+                    <h3>CÁC KHÔNG GIAN LÀM VIỆC KHÁCH ℹ️</h3>
+
+                    <div class="ws-row">
+                        <div class="ws-badge">T</div>
+                        <div>
+                            <div class="ws-title">List Không gian làm việc</div>
+                        </div>
+                    </div>
+
+                    <div class="grid">
+                        <article class="board-card">
+                            <div class="board-thumb"></div>
+                            <div class="board-title">Bảng List của tôi</div>
+                        </article>
+                    </div>
+
+                    <button class="btn-ghost-xl">Xem tất cả các bảng đã đóng</button>
+                </section>
+
+            </div>
         </main>
 
-        <!-- RIGHT RAIL -->
-        <aside class="right">
-            <div>
-                <div class="section-title">Đã xem gần đây</div>
-                <div class="recent-card">
-                    <div class="recent-thumb"></div>
-                    <div class="recent-info">
-                        <div class="title">Bảng List của tôi</div>
-                        <div class="meta">Không gian làm việc</div>
-                    </div>
-                </div>
-            </div>
 
-            <div>
-                <div class="section-title">Liên Kết</div>
-                <div class="create-tile">
-                    <div class="plus">+</div>
-                    Tạo bảng mới
-                </div>
-            </div>
-        </aside>
     </div>
 </div>
 
