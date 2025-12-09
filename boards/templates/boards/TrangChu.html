@@ -313,6 +313,28 @@
             font-weight: 800;
         }
 
+        /* Hiệu ứng điều hướng  */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 40px;
+            padding: 0 12px;
+            border-radius: 8px;
+            color: #cfd6dc;
+            text-decoration: none;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background: #20242b;
+        }
+
+        .nav-item.active {
+            background: #1f2940;
+            color: #fff;
+            box-shadow: inset 0 0 0 1px #31425d;
+        }
 
     </style>
 </head>
@@ -342,9 +364,11 @@
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <nav class="nav-group" aria-label="Chính">
-                <div class="nav-item"><span class="glyph">📋</span>Bảng</div>
-                <div class="nav-item active"><span class="glyph">➜</span>Trang chủ</div>
+                <a href="TrangChu-Bang.html" class="nav-item"><span class="glyph">📋</span>Bảng</a>
+                <a href="TrangChu.html" class="nav-item active"><span class="glyph">➜</span>Trang chủ</a>
             </nav>
+
+
             <div class="add-ws">+ Tạo Không gian làm việc</div>
         </aside>
 
@@ -357,7 +381,7 @@
                     bảng List đầu tiên của bạn!</p>
                 <div class="cta">
                     <button class="primary">Tạo một bảng Không gian làm việc</button>
-                    <a href="#">Đã hiểu! Bỏ qua điều này.</a>
+                    <a href="Trangchu2.html">Đã hiểu! Bỏ qua điều này.</a>
                 </div>
             </section>
         </main>
