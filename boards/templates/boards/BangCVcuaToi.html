@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>List - Bảng công việc</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* màu chung */
+            --bg-start: #6b2f86;
+            --bg-end: #a64f86;
+            --nav: #181c22;
+            --stroke: #2f343c;
+            --muted: #a8b0b8;
+            --text: #e7ecf0;
+
+            /* layout heights */
+            --topbar: 56px;
+            /* thanh trên cùng */
+            --boardbar: 52px;
+            /* dải tiêu đề board */
+            --footer: 48px;
+            /* footer nổi phía dưới */
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            color: var(--text);
+            background: linear-gradient(180deg, var(--bg-start), var(--bg-end));
+            overflow: hidden;
+            /* ngăn body kéo dọc; phần cuộn ở .board-wrap */
+        }
+
+        /* ===== TOPBAR  ===== */
+        .topbar {
+            position: fixed;
+            inset: 0 0 auto 0;
+            height: var(--topbar);
+            background: var(--nav);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 8px 14px;
+            z-index: 10;
+            box-shadow: 0 1px 0 var(--stroke);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .brand .logo {
+            width: 34px;
+            height: 34px;
+            border-radius: 6px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #111;
+        }
+
+        .brand span {
+            font-weight: 700;
+            color: #cfd6dc
+        }
+
+        .search {
+            flex: 1;
+            display: flex;
+            align-items: center
+        }
+
+        .search input {
+            width: 100%;
+            background: #232831;
+            border: 1px solid #2e3440;
+            border-radius: 8px;
+            height: 36px;
+            padding: 0 12px;
+            color: #cfd6dc;
+            outline: none;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #6ea6ff;
+            color: #0b111a;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+            cursor: default;
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--stroke);
+            background: transparent;
+            color: #cfd6dc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ffb03a;
+            color: #141414;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+        }
+
+        /* ===== DẢI TIÊU ĐỀ BOARD ===== */
+        .board-bar {
+            margin-top: var(--topbar);
+            height: var(--boardbar);
+            width: 100%;
+            box-sizing: border-box;
+            background: #483467;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            gap: 12px;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+        }
+
+        .board-title {
+            font-weight: 800;
+            font-size: 18px
+        }
+
+        .board-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .share-btn {
+            background: #d9d9e3;
+            color: #000;
+            font-weight: 700;
+            border-radius: 6px;
+            padding: 6px 12px;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .more-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid #c5c5d3;
+            background: transparent;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        /* ===== NỘI DUNG BOARD (cuộn trong khung) ===== */
+        .board-wrap {
+            height: calc(100vh - var(--topbar) - var(--boardbar) - var(--footer));
+            overflow: auto;
+            padding: 20px;
+        }
+
+        .lists {
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+            min-width: 100%
+        }
+
+        .add-list {
+            width: 280px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            color: #f5f6f7;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .add-list-form {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 14px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: none; /* Ẩn mặc định */
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .add-list-form input {
+            width: 100%;
+            background: #23252a;
+            border: 1px solid #6ea6ff;
+            border-radius: 8px;
+            padding: 10px;
+            color: #fff;
+            outline: none;
+        }
+
+        .add-list-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-confirm {
+            background: #6ea6ff;
+            color: #000;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 0 8px;
+        }
+
+
+        /* ===== FOOTER NỔI ===== */
+        .floating-footer {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 12px;
+            height: var(--footer);
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px 18px;
+            border-radius: 28px;
+            font-weight: 600;
+            color: #a8b0b8;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            z-index: 11;
+        }
+
+
+        /* Modal chia sẻ*/
+        #modalOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal {
+            background: #2c2c2c;
+            width: 420px;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            animation: popup 0.25s ease;
+            position: relative;
+        }
+
+
+        @keyframes popup {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal h2 {
+            margin-top: 0;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: none;
+            background: #3a3a3a;
+            color: #fff;
+        }
+
+        select {
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            background: #3a3a3a;
+            color: #fff;
+        }
+
+        button.share-btn {
+            background: #579dff;
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .divider {
+            margin: 14px 0;
+            border-top: 1px solid #444;
+        }
+
+        .member-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .member-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            background: #1f70ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 24px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="brand">
+            <div class="logo">L</div>
+            <span>List</span>
+        </div>
+        <div class="search"><input placeholder="Tìm kiếm" aria-label="Tìm kiếm"></div>
+        <div class="top-actions">
+            <button class="btn">Tạo mới</button>
+            <button class="icon-btn" title="Thông báo">🔔</button>
+            <button class="icon-btn" title="Trợ giúp">?</button>
+            <div class="avatar" title="TT">TT</div>
+        </div>
+    </header>
+
+    <!-- Dải tiêu đề của Board -->
+    <div class="board-bar">
+        <div class="board-title">Bảng List của tôi</div>
+        <div class="board-actions">
+            <button class="share-btn" id="openModalBtn">👥 Chia sẻ</button>
+            <button class="more-btn">⋯</button>
+        </div>
+    </div>
+
+    <!-- Nội dung board (cuộn trong khung này) -->
+    <main class="board-wrap" role="main">
+        <div class="lists" role="list">
+           <button class="add-list" id="addListBtn" >+ Thêm danh sách khác</button>
+           <div class="add-list-form" id="addListForm">
+            <input type="text" id="listTitleInput" placeholder="Nhập tên danh sách...">
+    
+            <div class="add-list-actions">
+            <button id="confirmAddList" class="btn-confirm">Thêm danh sách</button>
+            <button id="cancelAddList" class="btn-cancel">✕</button>
+        </div>
+    </div>
+
+        </div>
+    </main>
+
+    <!-- Footer nổi -->
+    <div class="floating-footer">
+        📅 Bảng thông tin &nbsp;&nbsp;|&nbsp;&nbsp; Chuyển đổi các trang
+    </div>
+
+    <div id="modalOverlay">
+        <div class="modal">
+            <div class="close" id="closeBtn">×</div>
+            <h2>Chia sẻ bảng</h2>
+
+            <div class="form-row">
+                <input type="text" placeholder="Địa chỉ email hoặc tên" />
+                <select>
+                    <option>Thành viên</option>
+                    <option>Quản trị viên</option>
+                </select>
+                <button class="share-btn">Chia sẻ</button>
+            </div>
+
+            <div>
+                <strong>Chia sẻ bảng này bằng liên kết</strong>
+            </div>
+            <a href="#" style="color:#579dff; font-size:14px; text-decoration:none;">Tạo liên kết</a>
+
+            <div class="divider"></div>
+
+            <h3 style="margin-bottom: 10px;">Thành viên của bảng</h3>
+            <div class="member-row">
+                <div class="member-info">
+                    <div class="avatar">TA</div>
+                    <div>
+                        <div>Thanh An (bạn)</div>
+                        <div style="font-size:12px; color:#aaa;">Quản trị viên Không gian làm việc</div>
+                    </div>
+                </div>
+                <select>
+                    <option selected>Quản trị viên</option>
+                    <option>Thành viên</option>
+                </select>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // ---- Modal (an toàn: chỉ thao tác khi phần tử tồn tại) ----
+  const modalOverlay = document.getElementById("modalOverlay");
+  const openModalBtn = document.getElementById("openModalBtn");
+  const closeBtn = document.getElementById("closeBtn");
+
+  if (openModalBtn && modalOverlay) {
+    openModalBtn.addEventListener("click", () => {
+      modalOverlay.style.display = "flex";
+      // không gọi boardTitle nếu không tồn tại
+      const boardTitle = document.getElementById("boardTitle");
+      if (boardTitle) boardTitle.focus();
+    });
+  }
+
+  if (closeBtn && modalOverlay) {
+    closeBtn.addEventListener("click", () => {
+      modalOverlay.style.display = "none";
+      // các thao tác validate cũ - làm an toàn (kiểm tra trước khi truy cập)
+      const boardTitle = document.getElementById("boardTitle");
+      const titleError = document.getElementById("titleError");
+      const createBtn = document.getElementById("createBtn");
+      if (boardTitle) boardTitle.value = "";
+      if (titleError) titleError.style.display = "none";
+      if (createBtn) {
+        createBtn.classList.remove("enabled");
+        createBtn.disabled = true;
+      }
+    });
+
+    // đóng khi click ra ngoài
+    modalOverlay.addEventListener("click", (e) => {
+      if (e.target === modalOverlay) closeBtn.click();
+    });
+  }
+
+  // ---- Add-list form logic ----
+  const addListBtn = document.getElementById("addListBtn");
+  const addListForm = document.getElementById("addListForm");
+  const cancelAddList = document.getElementById("cancelAddList");
+  const confirmAddList = document.getElementById("confirmAddList");
+  const listTitleInput = document.getElementById("listTitleInput");
+  const listsContainer = document.querySelector(".lists");
+
+  if (addListBtn && addListForm && listTitleInput) {
+    addListBtn.addEventListener("click", () => {
+      // ẩn nút và hiện form (flex để sử dụng display:flex trong CSS)
+      addListBtn.style.display = "none";
+      addListForm.style.display = "flex";
+      listTitleInput.focus();
+    });
+  }
+
+  if (cancelAddList && addListForm && addListBtn && listTitleInput) {
+    cancelAddList.addEventListener("click", () => {
+      addListForm.style.display = "none";
+      addListBtn.style.display = "flex";
+      listTitleInput.value = "";
+    });
+  }
+
+  // Khi xác nhận thêm danh sách: tạo cột mới (nếu muốn)
+  if (confirmAddList && listsContainer && listTitleInput) {
+    confirmAddList.addEventListener("click", () => {
+      const title = listTitleInput.value.trim();
+      if (!title) {
+        listTitleInput.focus();
+        return;
+      }
+
+      // Tạo phần tử list cơ bản
+      const col = document.createElement("div");
+      col.className = "list-column";
+      col.style.width = "280px";
+      col.style.minHeight = "80px";
+      col.style.background = "rgba(255,255,255,0.06)";
+      col.style.borderRadius = "10px";
+      col.style.padding = "10px";
+      col.style.color = "#fff";
+      col.style.flexShrink = "0";
+      col.style.boxSizing = "border-box";
+
+      const h = document.createElement("div");
+      h.style.fontWeight = "700";
+      h.style.marginBottom = "8px";
+      h.textContent = title;
+
+      col.appendChild(h);
+
+      // chèn trước nút addListBtn (tức là nút nằm cuối cùng)
+      // tìm nút hiện tại trong listsContainer
+      const addBtnNode = document.getElementById("addListBtn");
+      if (addBtnNode) {
+        listsContainer.insertBefore(col, addBtnNode);
+      } else {
+        listsContainer.appendChild(col);
+      }
+      
+
+      // reset form và ẩn form
+      listTitleInput.value = "";
+      addListForm.style.display = "none";
+      addListBtn.style.display = "flex";
+    });
+  }
+});
+</script>
+
+
+</html>

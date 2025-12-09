@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Trang chủ – Bảng</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #1f2329;
+            --nav: #181c22;
+            --panel: #23272f;
+            --panel-2: #2a2f38;
+            --stroke: #2f343c;
+            --muted: #a8b0b8;
+            --text: #e7ecf0;
+            --primary: #6ea6ff;
+            --primary-2: #2b6ef6;
+            --radius: 10px;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            color: var(--text);
+            background: var(--bg);
+            overflow: hidden;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: var(--nav);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 8px 14px;
+            z-index: 10;
+            box-shadow: 0 1px 0 var(--stroke);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+         .brand .logo {
+            width: 34px;
+            height: 33px;
+            border-radius: 6px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0b111a;
+        }
+
+        .brand span {
+            font-weight: 700;
+            color: #cfd6dc
+        }
+
+        .search {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .search input {
+            width: 100%;
+            background: #232831;
+            border: 1px solid #2e3440;
+            border-radius: 8px;
+            height: 36px;
+            padding: 0 12px;
+            color: #cfd6dc;
+            outline: none;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: var(--primary);
+            color: #0b111a;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--stroke);
+            background: transparent;
+            color: #cfd6dc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ffb03a;
+            color: #141414;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+        }
+
+        /* LAYOUT */
+        .shell {
+            padding-top: 56px;
+            height: 100%;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns:260px 1fr 320px;
+            gap: 24px;
+            padding: 24px;
+            height: calc(100vh - 56px);
+            overflow: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            padding-top: 8px
+        }
+
+        .nav-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 40px;
+            padding: 0 12px;
+            border-radius: 8px;
+            color: #cfd6dc;
+        }
+
+        .nav-item:hover {
+            background: #20242b
+        }
+
+        .nav-item.active {
+            background: #1f2940;
+            color: #fff;
+            box-shadow: inset 0 0 0 1px #31425d
+        }
+
+        .nav-item .glyph {
+            width: 20px;
+            text-align: center;
+            opacity: .9;
+        }
+
+        .add-ws {
+            margin-top: 12px;
+            color: #cfd6dc;
+            opacity: .9
+        }
+
+        /* MAIN FEED */
+        .main {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .feed {
+            width: 720px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-top: 12px;
+        }
+
+        .feed-card {
+            background: var(--panel);
+            border: 1px solid var(--stroke);
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, .25);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .feed-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, #b45cff, #ff83d1);
+        }
+
+        .card-header {
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title {
+            flex: 1;
+            background: #2b2f36;
+            color: #e7ecf0;
+            border-radius: 10px;
+            padding: 16px;
+            min-height: 76px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+
+        .assignees {
+            display: flex;
+            gap: 8px;
+        }
+
+        .pill {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ffb03a;
+            color: #141414;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-meta {
+            background: #ff6fb3;
+            color: #1b1b1b;
+            font-weight: 700;
+            padding: 10px 16px;
+            border-top: 1px solid rgba(0, 0, 0, .15);
+        }
+
+        .activity {
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            border-top: 1px solid rgba(255, 255, 255, .06);
+        }
+
+        .actor {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #1ea7ff;
+            color: #07131c;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-row {
+            flex: 1;
+        }
+
+        .action-row .name {
+            font-weight: 700;
+        }
+
+        .action-row .time {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 12px;
+            padding: 12px 16px 16px;
+            border-top: 1px solid rgba(255, 255, 255, .06);
+        }
+
+        .btn-ghost {
+            padding: 10px 16px;
+            border-radius: 10px;
+            background: transparent;
+            color: #d9dee3;
+            border: 1px solid var(--stroke);
+            font-weight: 700;
+        }
+
+        .btn-ghost:hover {
+            background: #2a2f38;
+        }
+
+        .btn-ghost.secondary {
+            opacity: .9;
+        }
+
+        /* RIGHT COLUMN */
+        .right {
+            padding-top: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .section-title {
+            color: #cfd6dc;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .recent-card {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .recent-thumb {
+            width: 40px;
+            height: 28px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #a06adf, #f285c8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .recent-info .title {
+            font-weight: 600
+        }
+
+        .recent-info .meta {
+            color: var(--muted);
+            font-size: 16px
+        }
+
+        .create-tile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            width: fit-content;
+            border: 1px solid var(--stroke);
+            border-radius: 8px;
+            background: #2b3038;
+            color: #d9dee3;
+            font-weight: 700;
+        }
+
+        .create-tile .plus {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            background: #3b4048;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--stroke);
+            font-weight: 800;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+   <div class="brand">
+        <div class="logo">L</div>
+        <span>List</span>
+    </div>
+    <div class="search"><input placeholder="Tìm kiếm" aria-label="Tìm kiếm"></div>
+    <div class="top-actions">
+        <button class="btn">Tạo mới</button>
+        <button class="icon-btn" title="Thông báo">🔔</button>
+        <button class="icon-btn" title="Trợ giúp">?</button>
+        <div class="avatar" title="TT">TT</div>
+    </div>
+</header>
+
+<!-- PAGE WRAPPER -->
+<div class="shell">
+    <div class="container">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <nav class="nav-group">
+                <div class="nav-item"><span class="glyph">📋</span>Bảng</div>
+                <div class="nav-item active"><span class="glyph">➜</span>Trang chủ</div>
+            </nav>
+            <div class="add-ws">+ Tạo Không gian làm việc</div>
+        </aside>
+
+        <!-- MAIN FEED -->
+        <main class="main">
+            <section class="feed" aria-label="Tiếp theo">
+
+                <!-- Feed Item 1 -->
+                <article class="feed-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <div style="width:100%">
+                                <div style="height:10px; width:80px; border-radius:6px; background:#ff78c6; margin-bottom:10px"></div>
+                                <div>Công việc</div>
+                            </div>
+                        </div>
+                        <div class="assignees">
+                            <div class="pill">TT</div>
+                        </div>
+                    </div>
+                    <div class="card-meta">Không gian làm việc | Bảng List của tôi: <strong>Làm web</strong>
+                    </div>
+                    <div class="activity">
+                        <div class="actor">NB</div>
+                        <div class="action-row">
+                            <div class="name">Nguyễn Văn B</div>
+                            <div class="time">đã thêm bạn vào thẻ này · 36 ngày trước</div>
+                        </div>
+                        <button class="icon-btn">⋯</button>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-ghost">✈ Trả lời</button>
+                        <button class="btn-ghost secondary">✕ Bỏ qua</button>
+                    </div>
+                </article>
+
+
+
+            </section>
+        </main>
+
+        <!-- RIGHT COLUMN -->
+        <aside class="right">
+            <div>
+                <div class="section-title">Đã xem gần đây</div>
+                <div class="recent-card">
+                    <div class="recent-thumb"></div>
+                    <div class="recent-info">
+                        <div class="title">Bảng List của tôi</div>
+                        <div class="meta">Không gian làm việc</div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="section-title">Liên Kết</div>
+                <div class="create-tile">
+                    <div class="plus">+</div>
+                    Tạo bảng mới
+                </div>
+            </div>
+        </aside>
+
+    </div>
+</div>
+</body>
+</html>

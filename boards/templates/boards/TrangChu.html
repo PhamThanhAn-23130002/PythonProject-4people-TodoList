@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Trang chủ – List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #1f2329;
+            /* nền trang chủ tối */
+            --nav: #181c22;
+            /* topbar */
+            --panel: #23272f;
+            /* thẻ/panel */
+            --panel-2: #2a2f38;
+            /* panel hover/đậm hơn chút */
+            --stroke: #2f343c;
+            /* viền mảnh */
+            --muted: #a8b0b8;
+            /* chữ phụ */
+            --text: #e7ecf0;
+            /* chữ chính */
+            --primary: #6ea6ff;
+            /* xanh nút */
+            --primary-2: #2b6ef6;
+            /* xanh đậm khi hover */
+            --radius: 10px;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            color: var(--text);
+            background: var(--bg);
+        }
+
+        /* TOPBAR */
+        .topbar {
+            position: fixed;
+            inset: 0 0 auto 0;
+            height: 56px;
+            background: var(--nav);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 8px 14px;
+            z-index: 10;
+            box-shadow: 0 1px 0 var(--stroke);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .brand .logo {
+            width: 34px;
+            height: 33px;
+            border-radius: 6px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0b111a;
+        }
+
+        .brand span {
+            font-weight: 700;
+            color: #cfd6dc
+        }
+
+        .search {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .search input {
+            width: 100%;
+            background: #232831;
+            border: 1px solid #2e3440;
+            border-radius: 8px;
+            height: 36px;
+            padding: 0 12px;
+            color: #cfd6dc;
+            outline: none;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: var(--primary);
+            color: #0b111a;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+            cursor: default;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--stroke);
+            background: transparent;
+            color: #cfd6dc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ffb03a;
+            color: #141414;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+        }
+
+        /* LAYOUT */
+        .shell {
+            padding-top: 56px;
+            height: 100%;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 260px 1fr 320px;
+            gap: 24px;
+            padding: 24px;
+            height: calc(100vh - 56px);
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            padding-top: 8px
+        }
+
+        .nav-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 40px;
+            padding: 0 12px;
+            border-radius: 8px;
+            color: #cfd6dc;
+        }
+
+        .nav-item:hover {
+            background: #20242b
+        }
+
+        .nav-item.active {
+            background: #1f2940;
+            color: #fff;
+            box-shadow: inset 0 0 0 1px #31425d
+        }
+
+        .nav-item .glyph {
+            width: 20px;
+            text-align: center;
+            opacity: .9;
+        }
+
+        .add-ws {
+            margin-top: 12px;
+            color: #cfd6dc;
+            opacity: .9
+        }
+
+        /* MAIN */
+        .main {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center
+        }
+
+        .hero {
+            width: 640px;
+            background: var(--panel);
+            border: 1px solid var(--stroke);
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 24px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+        }
+
+        .hero-illustration {
+            height: 140px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #4b2f6f, #9866c5 60%, #dde6f5);
+            margin-bottom: 12px;
+        }
+
+        .hero h2 {
+            margin: 6px 0 8px;
+            font-weight: 800;
+            text-align: center
+        }
+
+        .hero p {
+            margin: 0 0 14px;
+            color: var(--muted);
+            text-align: center
+        }
+
+        .hero .cta {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero .cta .primary {
+            background: #5ea1ff;
+            border: 1px solid #8ab8ff;
+            color: #0b111a;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+
+        .hero .cta a {
+            color: #a7c2ff;
+            text-decoration: underline
+        }
+
+        /* RIGHT RAIL */
+        .right {
+            padding-top: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px
+        }
+
+        .section-title {
+            color: #cfd6dc;
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .recent-card {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            padding: 10px;
+            background: transparent;
+            border-radius: 8px;
+            cursor: default;
+        }
+
+        .recent-thumb {
+            width: 40px;
+            height: 28px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #a06adf, #f285c8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .recent-info .title {
+            font-weight: 600
+        }
+
+        .recent-info .meta {
+            color: var(--muted);
+            font-size: 12px
+        }
+
+        .create-tile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            width: fit-content;
+            border: 1px solid var(--stroke);
+            border-radius: 8px;
+            background: #2b3038;
+            color: #d9dee3;
+            font-weight: 700;
+        }
+
+        .create-tile .plus {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            background: #3b4048;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--stroke);
+            font-weight: 800;
+        }
+
+        /* Modal */
+        #modalOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal {
+            width: 420px;
+            background: #2c2c2c;
+            padding: 20px;
+            border-radius: 12px;
+            animation: popup 0.25s ease;
+            position: relative;
+        }
+
+
+        @keyframes popup {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal h2 {
+            margin-top: 0;
+            margin-bottom: 14px;
+            font-size: 20px;
+        }
+
+        .close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+        input,
+        select {
+            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            background: #3a3a3a;
+            color: #fff;
+        }
+
+        .error-text {
+            font-size: 13px;
+            color: #ff8e8e;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .btn-create {
+            width: 100%;
+            padding: 12px;
+            background: #5c5c5c;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 15px;
+            margin-top: 16px;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .btn-create.enabled {
+            background: #579dff;
+            cursor: pointer;
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="brand">
+            <div class="logo">L</div>
+            <span>List</span>
+        </div>
+
+        <div class="search">
+            <input placeholder="Tìm kiếm" aria-label="Tìm kiếm">
+        </div>
+
+        <div class="top-actions">
+            <button id="openModalBtn" class="btn">Tạo mới</button>
+            <button class="icon-btn" title="Thông báo">🔔</button>
+            <button class="icon-btn" title="Trợ giúp">?</button>
+            <div class="avatar" title="TT">TT</div>
+        </div>
+    </header>
+    
+
+    <div class="shell">
+        <div class="container">
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+                <nav class="nav-group" aria-label="Chính">
+                    <div class="nav-item"><span class="glyph">📋</span>Bảng</div>
+                    <div class="nav-item"><span class="glyph">🧩</span>Mẫu</div>
+                    <div class="nav-item active"><span class="glyph">➜</span>Trang chủ</div>
+                </nav>
+                <div class="add-ws">+ Tạo Không gian làm việc</div>
+            </aside>
+
+            <!-- MAIN -->
+            <main class="main">
+    <div class="hero">
+        <div class="hero-illustration" style="display:flex; align-items:center; justify-content:center; font-size:48px; color:white;">
+            +
+        </div>
+        <h2>Tạo bảng mới</h2>
+        <p>Bắt đầu với một bảng trống để sắp xếp công việc của bạn</p>
+        <div class="cta">
+            <button class="primary" id="openModalCreate">Tạo mới</button>
+        </div>
+    </div>
+</main>
+
+
+            <!-- RIGHT RAIL -->
+            <aside class="right">
+                <div>
+                    <div class="section-title">Đã xem gần đây</div>
+                    <div class="recent-card">
+                        <div class="recent-thumb"></div>
+                        <div class="recent-info">
+                            <div class="title">Bảng List của tôi</div>
+                            <div class="meta">List Không gian làm việc</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="section-title">Liên Kết</div>
+                    <div class="create-tile">
+                        <div class="plus">+</div>
+                        Tạo bảng mới
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- OVERLAY (ẩn ban đầu) -->
+    <div id="modalOverlay">
+        <div class="modal">
+            <div class="close" id="closeBtn">×</div>
+            <h2>Tạo bảng</h2>
+            <div class="input-group">
+                <label >Tiêu đề bảng *</label>
+                <input id="boardTitle" type="text" placeholder="Nhập tiêu đề" />
+                <div class="error-text" id="titleError">👋 Tiêu đề bảng là bắt buộc</div>
+            </div>
+
+            <div class="input-group">
+                <label >Quyền xem</label>
+                <select>
+                    <option>Không gian làm việc</option>
+                    <option>Riêng tư</option>
+                    <option>Công khai</option>
+                </select>
+            </div>
+
+            <button class="btn-create" id="createBtn" onclick="window.location.href='{% url 'create_board' %}'">Tạo mới</button>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        const modalOverlay = document.getElementById("modalOverlay");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const openModalCreate = document.getElementById("openModalCreate");
+        const closeBtn = document.getElementById("closeBtn");
+
+        const boardTitle = document.getElementById("boardTitle");
+        const titleError = document.getElementById("titleError");
+        const createBtn = document.getElementById("createBtn");
+
+        // MỞ MODAL
+        openModalCreate.onclick = () => {
+            modalOverlay.style.display = "flex";
+            boardTitle.focus();
+        };
+        openModalBtn.onclick = () => {
+            modalOverlay.style.display = "flex";
+            boardTitle.focus();
+        };
+
+        //ĐÓNG MODAL
+        closeBtn.onclick = () => {
+            modalOverlay.style.display = "none";
+            boardTitle.value = "";
+            titleError.style.display = "none";
+            createBtn.classList.remove("enabled");
+            createBtn.disabled = true;
+        };
+
+        // CLICK RA NGOÀI ĐỂ ĐÓNG
+        modalOverlay.onclick = (e) => {
+            if (e.target === modalOverlay) closeBtn.onclick();
+        };
+
+        // VALIDATE input tiêu đề
+        boardTitle.oninput = () => {
+            if (boardTitle.value.trim() === "") {
+                titleError.style.display = "block";
+                createBtn.classList.remove("enabled");
+                createBtn.disabled = true;
+            } else {
+                titleError.style.display = "none";
+                createBtn.classList.add("enabled");
+                createBtn.disabled = false;
+            }
+        };
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="stylesheets/font-awesome.css" rel="stylesheet">
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href='https://fonts.googleapis.com/css?family=Roboto Condensed' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link rel="icon" href="image/Screenshot%20From%202025-11-26%2010-49-26.png" type="image/x-icon">
+    <title>Personal Site</title>
+    <style>
+        body {
+    margin: 0px;
+    padding: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 100%;
+    color: #75777d;
+
+}
+
+body a {
+    text-decoration: none;
+}
+
+.div_toal {
+    position: relative;
+    height: 100vh;
+    display: flex;
+}
+
+.d_bar {
+    background-color: #18191a;
+    color: white;
+}
+
+.d_bar a {
+    color: white;
+}
+
+.section_bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    gap: 10px;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    width: 100%;
+
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    padding-left: 0px;
+}
+
+.options li {
+    list-style: none;
+}
+
+.line {
+    width: 70%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.infor {
+    background-color: #1f1f21;
+    color: #75777d;
+    width: 100%;
+}
+
+.infor_personal {
+    margin: auto;
+    width: 530px;
+    margin-left: 25%;
+}
+
+.infor_personal p {
+    margin-bottom: 0px;
+    margin-top: 10px;
+}
+
+#fileanddisplay {}
+
+.img_infor {
+    margin-bottom: 20px;
+}
+
+.input {
+    width: 100%;
+    background-color: #242528;
+    border-radius: 5px;
+    border-color: #7e8188;
+    color: #75777d;
+}
+
+.textarea {
+    width: 100%;
+    height: 72px;
+    background-color: #242528;
+    color: #75777d
+}
+
+.x {
+    font-size: 30px;
+    cursor: ponter;
+    top: 1px;
+    right: 10px;
+    position: absolute;
+    color: #75777d;
+    cursor: pointer;
+}
+
+@media(max-width:800px) {
+    .x {
+        position: absolute;
+        right: 10px;
+    }
+
+    .section_bar {
+        width: 100%;
+    }
+
+    .div_toal {
+        position: relative;
+    }
+
+    .img_infor {
+        width: 5px;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <div class="div_toal">
+    <div class="col-xl-2 col-md-6 col-sm-12 col-12 d_bar">
+        <section class="section_bar">
+            <div class="setting_personal">
+                <h5>THÔNG TIN CÁ NHÂN</h5>
+                <ul class="options">
+                <li><a href="r">hồ sơ hiển thị</a></li>
+                <li><a href="r">cài đặt</a></li>
+                <li><a href="r">hoạt động</a></li>
+                <li><a href="r">thẻ</a></li>
+                </ul>
+            </div>
+            <hr class="line">
+            <div class="work_space">
+                <h5>KHÔNG GIAN LÀM VIỆC</h5>
+                <ul class="options">
+                <li><a href="r">Bảng</a></li>
+                <li><a href="r">thành viên</a></li>
+                </ul>
+            </div>
+        </section>
+    </div>
+    <div class="col-xl-10 col-md-6 col-sm-12 col-12 infor">
+        <div class="infor_personal" id="fileanddisplay">
+            <h3>Hồ sơ và hiển thị</h3>
+            <img  class='img_infor'src="https://trello.com/assets/eff3d701a9c3a71105ea.svg" alt="error">
+            <h3>về tôi</h3>
+            <p>các trường bắt buộc phải được đánh dấu bằng dấu</p>
+            <p >tên người dùng</p>
+            <input class="input" type="text" >
+            <p>lý lịch</p>
+            <textarea class="textarea" type="text"></textarea>
+            <p>kinh nghiệm làm việc</p>
+            <textarea class="textarea" type="text"></textarea>
+        </div>
+                <div class="x">
+            <p class="x">&#10005</p>
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>
