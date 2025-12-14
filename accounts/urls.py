@@ -9,4 +9,10 @@ urlpatterns = [
     path("finish_signup/", views.finish_signup, name="finish_signup"),
     path("create_name_pass/", views.create_name_pass, name="create_name_pass"),
     path("verify_acc/", views.verify_acc, name="verify_acc"),
+    path("sitepersonal/",views.SitePerSonal,name="sitepersonal"),
+    path("setting/",views.setting,name="setting"),
+    path("hoatdong/",views.action,name="action"),
+    path("the/",views.card,name="cards"),
+    path("boadsPersonal/",views.boardspersonal,name="boards"),
+    path("members/",views.members,name="members")
 ]

@@ -14,8 +14,7 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto Condensed' rel='stylesheet'>
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
     <link rel="icon" href="image/Screenshot%20From%202025-11-26%2010-49-26.png" type="image/x-icon">
-    <title>Personal Site</title>
-    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+    <title>Action</title>
     <style>
         body {
             margin: 0px;
@@ -94,28 +93,6 @@
             margin-top: 10px;
         }
 
-        #fileanddisplay {
-        }
-
-        .img_infor {
-            margin-bottom: 20px;
-        }
-
-        .input {
-            width: 100%;
-            background-color: #242528;
-            border-radius: 5px;
-            border-color: #7e8188;
-            color: #75777d;
-        }
-
-        .textarea {
-            width: 100%;
-            height: 72px;
-            background-color: #242528;
-            color: #75777d
-        }
-
         .x {
             font-size: 30px;
             cursor: pointer;
@@ -124,6 +101,7 @@
             position: absolute;
             color: #75777d;
             cursor: pointer;
+            padding-left:5px;
         }
 
         @media (max-width: 800px) {
@@ -148,7 +126,6 @@
                 font-size: 10px;
                 color: orange;
             }
-
         }
 
         .mucchon {
@@ -156,6 +133,7 @@
             background-color: #1C2B42;
             border-radius: 5px;
             border: solid 1px;
+
         }
     </style>
 </head>
@@ -163,12 +141,12 @@
 
 <div class="div_toal">
     <div class="col-xl-2 col-md-6 col-sm-12 col-12 d_bar">
-        <section class="section_bar">
+                <section class="section_bar">
             <div class="setting_personal">
                 <h5 class="h5_setting">THÔNG TIN CÁ NHÂN</h5>
                 <ul class="options">
                     <form action="SitePersonal.html" method="get">
-                    <li class="mucchon"><a href="{% url 'sitepersonal' %}"><i class="fa-regular fa-user"></i> Hồ sơ và hiển thị</a></li>
+                    <li ><a href="{% url 'sitepersonal' %}"><i class="fa-regular fa-user"></i> Hồ sơ và hiển thị</a></li>
                     </form>
                     <form action="setting.html" method="get">
                     <li><a href="{% url 'setting'%}"><i class="fa-sharp fa-solid fa-gear"></i>  Cài đặt</a></li>
@@ -177,7 +155,7 @@
                     <li ><a href="{% url 'action'%}"><i class="fa-solid fa-list"></i>  Hoạt động</a></li>
                     </form>
                     <form action="Card.html" method="get">
-                    <li><a href="{% url 'cards'%}"><i class="fa-solid fa-credit-card"></i> Thẻ</a></li>
+                    <li class="mucchon" ><a href="{% url 'cards'%}"><i class="fa-solid fa-credit-card"></i> Thẻ</a></li>
                     </form>
                 </ul>
             </div>
@@ -197,25 +175,12 @@
     </div>
     <div class="col-xl-10 col-md-6 col-sm-12 col-12 infor">
         <div class="infor_personal" id="fileanddisplay">
-            <h3>Hồ sơ và hiển thị</h3>
-            <img class='img_infor' src="https://trello.com/assets/eff3d701a9c3a71105ea.svg" alt="error">
-            <h3>về tôi</h3>
-            <p>các trường bắt buộc phải được đánh dấu bằng dấu</p>
-            <p>tên người dùng</p>
-            <input class="input" type="text">
-            <p>lý lịch</p>
-            <textarea class="textarea" type="text"></textarea>
-            <p>kinh nghiệm và làm việc</p>
-            <textarea class="textarea" type="text"></textarea>
-            <p>các kĩ năng</p>
-            <textarea class="textarea" type="text"></textarea>
         </div>
         <div class="x">
-            <a><p class="x">&#10005</p></a>
+            <p class="x">&#10005</p>
         </div>
     </div>
 </div>
-
 <script>
 
 </script>
