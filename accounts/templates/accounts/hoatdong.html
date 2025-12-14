@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="stylesheets/font-awesome.css" rel="stylesheet">
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href='https://fonts.googleapis.com/css?family=Roboto Condensed' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link rel="icon" href="image/Screenshot%20From%202025-11-26%2010-49-26.png" type="image/x-icon">
+    <title>Action</title>
+    <style>
+        body {
+            margin: 0px;
+            padding: 0px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            height: 100%;
+            color: #75777d;
+
+        }
+
+        body a {
+            text-decoration: none;
+        }
+
+        .div_toal {
+            position: relative;;
+            display: flex;
+        }
+
+        .d_bar {
+            background-color: #18191a;
+            color: white;
+            position: fixed;
+            height:100%;
+        }
+
+        .d_bar a {
+            color: white;
+        }
+
+        .section_bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+            font-size: 14px;
+            font-family: Arial, Helvetica, sans-serif;
+            width: 100%;
+
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            padding-left: 0px;
+        }
+
+        .options li {
+            list-style: none;
+            padding-bottom: 5px;
+            padding-top: 5px;
+            margin-bottom: 10px;
+            padding-left:10px;
+        }
+
+        .line {
+            width: 70%;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .infor {
+            background-color: #1f1f21;
+            color: #75777d;
+            width: 100%;
+        }
+
+        .infor_personal {
+            margin: auto;
+            width: 530px;
+            margin-left: 25%;
+        }
+
+        .infor_personal p {
+            margin-bottom: 0px;
+            margin-top: 10px;
+        }
+
+        .x {
+            font-size: 30px;
+            cursor: pointer;
+            top: 1px;
+            right: 10px;
+            position: fixed;
+            color: #75777d;
+            cursor: pointer;
+            padding-left:5px;
+            z-index: 1000;
+        }
+
+        @media (max-width: 800px) {
+            .x {
+                position: absolute;
+                right: 10px;
+            }
+
+            .section_bar {
+                width: 100%;
+            }
+
+            .img_infor {
+                width: 5px;
+            }
+
+            .h5_setting {
+                font-size: 10px;
+                color: orange;
+            }
+        }
+
+        .mucchon {
+            color: #0079BF;
+            background-color: #1C2B42;
+            border-radius: 5px;
+            border: solid 1px;
+
+        }
+        .main-header h1 {
+            font-size: 2em;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 30px;
+        }
+
+        
+        .workspace-section {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #333;
+        }
+        .workspace-header {
+            display: flex;
+            align-items: center;
+            font-size: 1.1em;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+        .workspace-header i {
+            margin-right: 10px;
+        }
+        .workspace-name {
+            display: flex;
+            align-items: center;
+            font-size: 1.2em;
+            color: #fff;
+        }
+        .lock-icon {
+            color: #ff4d4d; /* Màu đỏ cho khóa */
+            margin-left: 8px;
+            font-size: 0.8em;
+        }
+
+      
+        .activity-list-header {
+            display: flex;
+            align-items: center;
+            font-size: 1.2em;
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .activity-list-header i {
+            margin-right: 10px;
+        }
+
+        
+        .activity-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 10px 0;
+        }
+
+        /* Avatar và tên người dùng */
+        .member-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #5593ff; /* Màu xanh đại diện */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.8em;
+            color: #fff;
+            flex-shrink: 0; /* Ngăn không cho avatar bị co lại */
+            margin-right: 15px;
+            margin-top: 2px;
+        }
+        
+        /* Nội dung chi tiết hoạt động */
+        .activity-details {
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+        .activity-details strong {
+            color: #fff;
+            font-weight: 600;
+        }
+        .activity-details a {
+            color: #5593ff; /* Màu xanh liên kết */
+            text-decoration: none;
+        }
+        .activity-details a:hover {
+            text-decoration: underline;
+        }
+
+        /* Dòng thời gian và nơi xảy ra hoạt động */
+        .activity-meta {
+            color: #aaa;
+            font-size: 0.9em;
+            margin-top: 2px;
+        }
+        .activity-meta span {
+            margin-right: 10px;
+        }
+        .activity-meta .board-name, .activity-meta .workspace-name-link {
+            font-weight: 600;
+            color: #fff;
+        }
+        .activity-meta .board-name {
+            color: #9f66ff; /* Màu tím nổi bật cho tên bảng */
+        }
+        .activity-meta i {
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+        
+        .activity-meta-line-break {
+            display: block;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        
+        .activity-action {
+            color: #ccc;
+        }
+        
+        .text-bold {
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .comment-text {
+            color: #ccc;
+            background-color: #333;
+            padding: 5px 8px;
+            border-radius: 4px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="div_toal">
+    <div class="col-xl-2 col-md-6 col-sm-12 col-12 d_bar">
+                <section class="section_bar">
+            <div class="setting_personal">
+                <h5 class="h5_setting">THÔNG TIN CÁ NHÂN</h5>
+                <ul class="options">
+                    <form action="SitePersonal.html" method="get">
+                    <li><a href="{% url 'sitepersonal' %}"><i class="fa-regular fa-user"></i> Hồ sơ và hiển thị</a></li>
+                    </form>
+                    <form action="setting.html" method="get">
+                    <li><a href="{% url 'setting'%}"><i class="fa-sharp fa-solid fa-gear"></i>  Cài đặt</a></li>
+                    </form>
+                    <form action="hoatdong.html" method="get">
+                    <li class="mucchon" ><a href="{% url 'action'%}"><i class="fa-solid fa-list"></i>  Hoạt động</a></li>
+                    </form>
+                    <form action="Card.html" method="get">
+                    <li><a href="{% url 'cards'%}"><i class="fa-solid fa-credit-card"></i> Thẻ</a></li>
+                    </form>
+                </ul>
+            </div>
+            <hr class="line">
+            <div class="work_space">
+                <h5 class="h5_setting">KHÔNG GIAN LÀM VIỆC</h5>
+                <ul class="options">
+                    <form action="boards.html" method="get">
+                    <li><a href="{%url 'boards' %}"><i class="fa-solid fa-clipboard-list"></i> Bảng</a></li>
+                    </form>
+                    <form action="members.html" method="get">
+                    <li><a href="{%url 'members'%}"><i class="fa-solid fa-users"></i> Thành viên</a></li>
+                    </form>
+                </ul>
+            </div>
+        </section>
+    </div>
+    <div class="col-xl-10 col-md-6 col-sm-12 col-12 infor">
+        <div class="infor_personal" id="fileanddisplay">
+            <div class="activity-container">
+
+    <div class="main-header">
+        <h3>Hoạt động</h3>
+    </div>
+
+    <div class="workspace-section">
+        <div class="workspace-header">
+            <i class="fas fa-users"></i>
+            <span>Các Không gian làm việc</span>
+        </div>
+        <div class="workspace-name">
+            Trello Không gian làm việc
+            <span class="lock-icon"><i class="fas fa-lock"></i></span>
+        </div>
+    </div>
+
+    <div class="activity-list-header">
+        <i class="fas fa-list-ul"></i>
+        Hoạt động
+    </div>
+
+    <ul class="activity-list">
+        
+        <li class="activity-item">
+            <div class="member-avatar">QC</div>
+            <div class="activity-details">
+                <span class="activity-action">
+                    <strong>Quyết Nguyên Công</strong> đã thêm <span class="text-bold">test2</span> vào nhóm <span class="text-bold">Trello Không gian làm việc</span>
+                </span>
+                <span class="activity-meta-line-break">
+                    <span class="time">20:17 11 Thg 12, 2025</span>
+                    • trên bảng <a href="#">test2</a>
+                    • ở Không gian làm việc: <span class="workspace-name-link">Trello Không gian làm việc</span>
+                    <span class="lock-icon"><i class="fas fa-lock"></i></span>
+                </span>
+            </div>
+        </li>
+
+        <li class="activity-item">
+            <div class="member-avatar">QC</div>
+            <div class="activity-details">
+                <span class="activity-action">
+                    <strong>Quyết Nguyên Công</strong> đã tạo bảng <span class="text-bold">test2</span>
+                </span>
+                <span class="activity-meta-line-break">
+                    <span class="time">20:17 11 Thg 12, 2025</span>
+                    • trên bảng <a href="#">test2</a>
+                </span>
+            </div>
+        </li>
+
+        <li class="activity-item">
+            <div class="member-avatar">QC</div>
+            <div class="activity-details">
+                <span class="activity-action">
+                    <strong>Quyết Nguyên Công</strong> đã đánh dấu thẻ <span class="comment-text">kk</span> là chưa hoàn tất
+                </span>
+                <span class="activity-meta-line-break">
+                    <span class="time">22:02 4 Thg 12, 2025</span>
+                    • trên bảng <a href="#" class="board-name">Bảng Trello của tôi</a>
+                </span>
+            </div>
+        </li>
+        
+        <li class="activity-item">
+            <div class="member-avatar">QC</div>
+            <div class="activity-details">
+                <span class="activity-action">
+                    <strong>Quyết Nguyên Công</strong> đã đánh dấu <span class="comment-text">kk</span> là hoàn tất
+                </span>
+                <span class="activity-meta-line-break">
+                    <span class="time">22:02 4 Thg 12, 2025</span>
+                    • trên bảng <a href="#" class="board-name">Bảng Trello của tôi</a>
+                </span>
+            </div>
+        </li>
+        
+        <li class="activity-item">
+            <div class="member-avatar">QC</div>
+            <div class="activity-details">
+                <span class="activity-action">
+                    <strong>Quyết Nguyên Công</strong> đã đánh dấu thẻ <span class="comment-text">kk</span> là chưa hoàn tất
+                </span>
+                <span class="activity-meta-line-break">
+                    <span class="time">22:02 4 Thg 12, 2025</span>
+                    • trên bảng <a href="#" class="board-name">Bảng Trello của tôi</a>
+                </span>
+            </div>
+        </li>
+        
+        <li class="activity-item">
+            <div class="member-avatar">QC</div>
+            <div class="activity-details">
+                <span class="activity-action">
+                    <strong>Quyết Nguyên Công</strong> đã đánh dấu <span class="comment-text">kk</span> là hoàn tất
+                </span>
+                <span class="activity-meta-line-break">
+                    <span class="time">22:02 4 Thg 12, 2025</span>
+                    • trên bảng <a href="#" class="board-name">Bảng Trello của tôi</a>
+                </span>
+            </div>
+        </li>
+        
+        <li class="activity-item">
+            <div class="member-avatar">QC</div>
+            <div class="activity-details">
+                <span class="activity-action">
+                    <strong>Quyết Nguyên Công</strong> đã thêm thẻ <span class="comment-text">kk</span> vào danh sách Hôm nay
+                </span>
+                <span class="activity-meta-line-break">
+                    <span class="time">22:02 4 Thg 12, 2025</span>
+                    • trên bảng <a href="#" class="board-name">Bảng Trello của tôi</a>
+                </span>
+            </div>
+        </li>
+        
+        <li class="activity-item">
+            <div class="member-avatar">QC</div>
+            <div class="activity-details">
+                <span class="activity-action">
+                    <strong>Quyết Nguyên Công</strong> đã đánh dấu thẻ <span class="comment-text">ffff</span> là chưa hoàn tất
+                </span>
+                <span class="activity-meta-line-break">
+                    <span class="time">22:02 4 Thg 12, 2025</span>
+                    • trên bảng <a href="#" class="board-name">Bảng Trello của tôi</a>
+                </span>
+            </div>
+        </li>
+        </ul>
+</div>
+        </div>
+        <div class="x">
+            <p class="x">&#10005</p>
+        </div>
+    </div>
+</div>
+<script>
+
+</script>
+</body>
+</html>

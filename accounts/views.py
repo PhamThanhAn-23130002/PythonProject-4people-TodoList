@@ -22,5 +22,20 @@ def create_name_pass(request):
 def verify_acc(request):
      return render(request, 'accounts/finishResetPassword.html')
 
+def SitePerSonal(request):
+    return render(request,'accounts/SitePersonal.html')
 
+def setting(request):
+    return render(request,'accounts/setting.html')
 
+def action(request):
+    return render(request,'accounts/hoatdong.html')
+
+def card(request):
+    return render(request,'accounts/card.html')
+
+def boardspersonal(request):
+    return render(request,'accounts/boards.html')
+
+def members(request):
+    return render(request,'accounts/members.html')

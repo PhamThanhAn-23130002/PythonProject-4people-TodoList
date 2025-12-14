@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="stylesheets/font-awesome.css" rel="stylesheet">
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href='https://fonts.googleapis.com/css?family=Roboto Condensed' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link rel="icon" href="image/Screenshot%20From%202025-11-26%2010-49-26.png" type="image/x-icon">
+    <title>Action</title>
+    <style>
+        body {
+            margin: 0px;
+            padding: 0px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            height: 100%;
+            color: #75777d;
+        }
+
+        body a {
+            text-decoration: none;
+        }
+
+        .div_toal {
+            position: relative;
+            height: 100vh;
+            display: flex;
+        }
+
+        .d_bar {
+            background-color: #18191a;
+            color: white;
+            padding-right: 0; /* Đảm bảo không gian cột sidebar không bị lấn */
+        }
+
+        .d_bar a {
+            color: white;
+        }
+
+        .section_bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+            font-size: 14px;
+            font-family: Arial, Helvetica, sans-serif;
+            width: 100%;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            padding-left: 0px;
+        }
+
+        .options li {
+            list-style: none;
+            padding-bottom: 5px;
+            padding-top: 5px;
+            margin-bottom: 10px;
+            padding-left:10px;
+        }
+
+        .line {
+            width: 70%;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .infor {
+            background-color: #1f1f21;
+            color: #75777d;
+            width: 100%;
+            overflow-y: auto; /* Thêm thanh cuộn nếu nội dung dài */
+        }
+
+        .infor_personal {
+            /* Loại bỏ căn giữa và đặt chiều rộng cố định để phù hợp với bố cục nội dung */
+            margin: 30px;
+            width: auto; 
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .infor_personal p {
+            margin-bottom: 0px;
+            margin-top: 10px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .x {
+            font-size: 30px;
+            cursor: pointer;
+            top: 1px;
+            right: 10px;
+            position: absolute;
+            color: #75777d;
+            cursor: pointer;
+            padding-left:5px;
+        }
+
+        /* CSS MỚI CHO NỘI DUNG TRANG THÀNH VIÊN */
+        .page-content-wrapper {
+            background-color: #1f1f21; /* Giữ màu nền khớp với .infor */
+            color: #fff;
+            padding: 0; /* Đã có padding ở .infor_personal */
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .header-section button {
+            background-color: #5593ff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .section-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #ccc;
+        }
+        .section-description {
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+        .invite-section {
+            border: 1px solid #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            background-color: #121212;
+        }
+        .invite-section p {
+            margin-top: 0;
+            color: #ccc;
+            margin-bottom: 0;
+        }
+        .invite-section .link-button {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+        .invite-header {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 10px;
+        }
+
+        .member-list {
+            list-style: none;
+            padding: 0;
+        }
+        .member-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #333;
+        }
+        .member-info {
+            display: flex;
+            align-items: center;
+        }
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #5593ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-right: 15px;
+            color: #fff;
+        }
+        .member-details h4 {
+            margin: 0;
+            font-size: 1.1em;
+            color: #fff;
+        }
+        .member-details p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+        .member-actions button {
+            background: none;
+            border: 1px solid #555;
+            color: #ccc;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 0.9em;
+        }
+        .member-actions button.leave {
+            border-color: #ff4d4d;
+            color: #ff4d4d;
+        }
+        .search-box {
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #333;
+            border: none;
+            border-radius: 4px;
+            width: 250px;
+            color: #fff;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .search-container label {
+            color: #aaa;
+            margin-right: 10px;
+        }
+        /* KẾT THÚC CSS NỘI DUNG TRANG THÀNH VIÊN */
+
+
+        @media (max-width: 800px) {
+            .x {
+                position: absolute;
+                right: 10px;
+            }
+
+            .section_bar {
+                width: 100%;
+            }
+
+            .div_toal {
+                position: relative;
+            }
+
+            .img_infor {
+                width: 5px;
+            }
+
+            .h5_setting {
+                font-size: 10px;
+                color: orange;
+            }
+
+            .infor_personal {
+                margin: 10px; /* Giảm margin trên thiết bị nhỏ */
+            }
+        }
+
+        .mucchon {
+            color: #0079BF;
+            background-color: #1C2B42;
+            border-radius: 5px;
+            border: solid 1px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="div_toal">
+    <div class="col-xl-2 col-md-6 col-sm-12 col-12 d_bar">
+        <section class="section_bar">
+            <div class="setting_personal">
+                <h5 class="h5_setting">THÔNG TIN CÁ NHÂN</h5>
+                <ul class="options">
+                    <form action="SitePersonal.html" method="get">
+                    <li><a href="{% url 'sitepersonal' %}"><i class="fa-regular fa-user"></i> Hồ sơ và hiển thị</a></li>
+                    </form>
+                    <form action="setting.html" method="get">
+                    <li><a href="{% url 'setting'%}"><i class="fa-sharp fa-solid fa-gear"></i>  Cài đặt</a></li>
+                    </form>
+                    <form action="hoatdong.html" method="get">
+                    <li><a href="{% url 'action'%}"><i class="fa-solid fa-list"></i>  Hoạt động</a></li>
+                    </form>
+                    <form action="Card.html" method="get">
+                    <li><a href="{% url 'cards'%}"><i class="fa-solid fa-credit-card"></i> Thẻ</a></li>
+                    </form>
+                </ul>
+            </div>
+            <hr class="line">
+            <div class="work_space">
+                <h5 class="h5_setting">KHÔNG GIAN LÀM VIỆC</h5>
+                <ul class="options">
+                    <form action="boards.html" method="get">
+                    <li><a href="{%url 'boards' %}"><i class="fa-solid fa-clipboard-list"></i> Bảng</a></li>
+                    </form>
+                    <form action="members.html" method="get">
+                    <li class="mucchon"><a href="{%url 'members'%}"><i class="fa-solid fa-users"></i> Thành viên</a></li>
+                    </form>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-xl-10 col-md-6 col-sm-12 col-12 infor">
+        <div class="infor_personal" id="fileanddisplay">
+            <div class="page-content-wrapper">
+                <div class="header-section">
+                    <h2 class="section-title">Thành viên trong không gian làm việc (1)</h2>
+                    <button>👥 Mời các thành viên Không gian làm việc</button>
+                </div>
+
+                <p class="section-description">Các thành viên trong Không gian làm việc có thể xem và tham gia tất cả các bảng Không gian làm việc hiện thị và tạo ra các bảng mới trong Không gian làm việc.</p>
+
+                <div class="invite-section">
+                    <div class="invite-header">
+                        <h3 style="margin: 0; font-size: 1.2em; color: #fff;">Mời các thành viên tham gia cùng bạn</h3>
+                        <button class="link-button">🔗 Mở bảng liên kết</button>
+                    </div>
+                    <p>Bất kỳ ai có liên kết mời đều có thể tham gia Không gian làm việc miễn phí này. Bạn cũng có thể tắt và tạo liên kết mời mới cho Không gian làm việc này bất cứ lúc nào. Số lời mời đang chờ xử lý được tính vào giới hạn 10 người cộng tác.</p>
+                </div>
+
+                <div class="search-container">
+                    <input type="text" class="search-box" placeholder="Lọc theo tên">
+                </div>
+
+                <ul class="member-list">
+                    <li class="member-item">
+                        <div class="member-info">
+                            <div class="member-avatar">QC</div>
+                            <div class="member-details">
+                                <h4>Quyết Nguyên Công</h4>
+                                <p style="margin-top: 5px;">@quytnguyncong2 • Lần hoạt động gần nhất December 2025</p>
+                            </div>
+                        </div>
+                        <div class="member-actions">
+                            <button>Xem bảng thông tin (2)</button>
+                            <button>Quản trị viên 🔽</button>
+                            <button class="leave">❌ Rời khỏi...</button>
+                        </div>
+                    </li>
+                    </ul>
+            </div>
+            </div>
+        <div class="x">
+            <p class="x">&#10005</p>
+        </div>
+    </div>
+</div>
+<script>
+    // Có thể thêm mã JavaScript để xử lý sự kiện đóng cửa sổ hoặc lọc thành viên tại đây
+</script>
+</body>
+</html>
+</html>
