@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="c0c3e29d-a7eb-4c08-afd4-dd7de57c1bd6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,7 +27,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Django Server.PythonProject-4people-TodoList.executor": "Run",
+    "Django Server.PythonProject-4people-TodoList.executor": "Debug",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -94,7 +94,7 @@
       <updated>1765289197022</updated>
       <workItem from="1765289198963" duration="201000" />
       <workItem from="1765289429308" duration="1288000" />
-      <workItem from="1765884977205" duration="12030000" />
+      <workItem from="1765884977205" duration="13163000" />
     </task>
     <servers />
   </component>
