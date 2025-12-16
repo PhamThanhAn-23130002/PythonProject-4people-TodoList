@@ -109,7 +109,7 @@ def create_name_pass(request):
             login(request, new_user)
 
             # 5. Chuyển hướng về trang chủ
-            return redirect('boards_home')
+            return redirect('home_page')
 
         except Exception as e:
             print("Lỗi tạo user:", e)
