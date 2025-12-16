@@ -1,13 +1,11 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 import datetime
 
 # Create your models here.
-class User(models.Model):
-    id = models.CharField(max_length=10, primary_key=True)
-    username = models.CharField(max_length=30)
-    password = models.CharField(max_length=100)
-    email = models.EmailField(max_length=50)
+class User(AbstractUser):
+    pass
 
 class Skill(models.Model):
     id = models.CharField(max_length=10 , primary_key=True)
