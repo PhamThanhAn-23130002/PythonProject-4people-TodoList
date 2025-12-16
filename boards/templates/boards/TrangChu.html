@@ -490,13 +490,13 @@
         <div class="modal">
             <div class="close" id="closeBtn">×</div>
             <h2>Tạo bảng</h2>
-            <div class="input-group">
+            <div class="input-group" >
                 <label >Tiêu đề bảng *</label>
                 <input id="boardTitle" type="text" placeholder="Nhập tiêu đề" />
                 <div class="error-text" id="titleError">👋 Tiêu đề bảng là bắt buộc</div>
             </div>
 
-            <div class="input-group" onclick="taoboard" value ="nameboard">
+            <div class="input-group" >
                 <label >Quyền xem</label>
                 <select>
                     <option>Không gian làm việc</option>
@@ -505,7 +505,7 @@
                 </select>
             </div>
 
-            <button class="btn-create" id="createBtn" onclick="window.location.href='{% url 'create_board' %}'">Tạo mới</button>
+            <button class="btn-create" id="createBtn" onclick="chuyenSangTrangDich()">Tạo mới</button>
         </div>
     </div>
     </div>
@@ -556,6 +556,12 @@
                 createBtn.disabled = false;
             }
         };
+  function chuyenSangTrangDich() {
+            let v =document.getElementById("boardTitle");
+            let urlTrangDich ="{% url 'bangcvcuatoi' %}"; 
+            let linkHoanChinh = urlTrangDich + "?name=" + encodeURIComponent(v.value);
+            window.location.href = linkHoanChinh;
+    }
     </script>
 
 </body>
