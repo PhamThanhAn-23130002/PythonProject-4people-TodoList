@@ -413,7 +413,7 @@
 
     <!-- Dải tiêu đề của Board -->
     <div class="board-bar">
-        <div class="board-title">Bảng List của tôi</div>
+        <div id="nameboard" class="board-title">Bảng List của tôi</div>
         <div class="board-actions">
             <button class="share-btn" id="openModalBtn">👥 Chia sẻ</button>
             <button class="more-btn">⋯</button>
@@ -589,6 +589,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+window.onload = function() {
+    const params = new URLSearchParams(window.location.search);
+    const tenBang = params.get('name');
+    
+    if (tenBang) {
+        document.getElementById('nameboard').innerText = tenBang;
+    }
+}
 </script>
 
 
