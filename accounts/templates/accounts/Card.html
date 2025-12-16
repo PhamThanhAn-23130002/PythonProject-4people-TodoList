@@ -14,8 +14,7 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto Condensed' rel='stylesheet'>
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
     <link rel="icon" href="image/Screenshot%20From%202025-11-26%2010-49-26.png" type="image/x-icon">
-    <title>Personal Site</title>
-    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+    <title>Action</title>
     <style>
         body {
             margin: 0px;
@@ -83,38 +82,6 @@
             width: 100%;
         }
 
-        .infor_personal {
-            margin: auto;
-            width: 530px;
-            margin-left: 25%;
-        }
-
-        .infor_personal p {
-            margin-bottom: 0px;
-            margin-top: 10px;
-        }
-
-        #fileanddisplay {
-        }
-
-        .img_infor {
-            margin-bottom: 20px;
-        }
-
-        .input {
-            width: 100%;
-            background-color: #242528;
-            border-radius: 5px;
-            border-color: #7e8188;
-            color: #75777d;
-        }
-
-        .textarea {
-            width: 100%;
-            height: 72px;
-            background-color: #242528;
-            color: #75777d
-        }
 
         .x {
             font-size: 30px;
@@ -124,6 +91,7 @@
             position: absolute;
             color: #75777d;
             cursor: pointer;
+            padding-left:5px;
         }
 
         @media (max-width: 800px) {
@@ -148,7 +116,6 @@
                 font-size: 10px;
                 color: orange;
             }
-
         }
 
         .mucchon {
@@ -156,19 +123,153 @@
             background-color: #1C2B42;
             border-radius: 5px;
             border: solid 1px;
+
         }
+    .infor_personal {
+    width: 90% !important; 
+    max-width: 1000px;
+    margin-left:60px;
+    margin-right: auto;
+    padding-top: 20px;
+}
+
+.cards-interface {
+    color: #b6c2cf;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.page-title {
+    color: #b6c2cf;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* Toolbar Lọc */
+.filter-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.sort-dropdown {
+    background-color: transparent;
+    color: #b6c2cf;
+    padding: 6px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.sort-dropdown:hover {
+    background-color: #333c43;
+}
+
+.btn-filter {
+    background-color: transparent;
+    border: 1px solid #b6c2cf; /* Màu viền nút */
+    color: #b6c2cf;
+    padding: 6px 12px;
+    border-radius: 3px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.btn-filter:hover {
+    background-color: #333c43;
+}
+
+.btn-clear-filter {
+    background: none;
+    border: none;
+    color: #9fadbc;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* Table Custom Styles */
+.table-dark-custom {
+    width: 100%;
+    border-collapse: collapse;
+    color: #b6c2cf;
+}
+
+.table-dark-custom thead th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: #9fadbc;
+    border-bottom: 1px solid #738496;
+    padding: 8px;
+}
+
+.table-dark-custom tbody td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #384148;
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+.table-dark-custom tbody tr:hover {
+    background-color: #2c333a;
+}
+
+/* Board Info Column */
+.board-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.board-thumb {
+    width: 32px;
+    height: 32px;
+    background-color: #9fadbc; /* Giả lập ảnh board */
+    border-radius: 4px;
+}
+
+.board-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.board-name {
+    font-weight: bold;
+    color: #b6c2cf;
+    font-size: 14px;
+}
+
+.workspace-name {
+    font-size: 12px;
+    color: #9fadbc;
+}
+.cards-interface{
+     background-color: #1f1f21;
+}
+.table-responsive{
+    background-color: #1f1f21;
+    color: #9fadbc;
+}
+.table-dark-custom{
+--bs-table-bg: transparent;       
+    --bs-table-color: #b6c2cf;        
+}
     </style>
 </head>
 <body>
 
 <div class="div_toal">
     <div class="col-xl-2 col-md-6 col-sm-12 col-12 d_bar">
-        <section class="section_bar">
+                <section class="section_bar">
             <div class="setting_personal">
                 <h5 class="h5_setting">THÔNG TIN CÁ NHÂN</h5>
                 <ul class="options">
                     <form action="SitePersonal.html" method="get">
-                    <li class="mucchon"><a href="{% url 'sitepersonal' %}"><i class="fa-regular fa-user"></i> Hồ sơ và hiển thị</a></li>
+                    <li ><a href="{% url 'sitepersonal' %}"><i class="fa-regular fa-user"></i> Hồ sơ và hiển thị</a></li>
                     </form>
                     <form action="setting.html" method="get">
                     <li><a href="{% url 'setting'%}"><i class="fa-sharp fa-solid fa-gear"></i>  Cài đặt</a></li>
@@ -177,7 +278,7 @@
                     <li ><a href="{% url 'action'%}"><i class="fa-solid fa-list"></i>  Hoạt động</a></li>
                     </form>
                     <form action="Card.html" method="get">
-                    <li><a href="{% url 'cards'%}"><i class="fa-solid fa-credit-card"></i> Thẻ</a></li>
+                    <li class="mucchon" ><a href="{% url 'cards'%}"><i class="fa-solid fa-credit-card"></i> Thẻ</a></li>
                     </form>
                 </ul>
             </div>
@@ -197,21 +298,56 @@
     </div>
     <div class="col-xl-10 col-md-6 col-sm-12 col-12 infor">
         <div class="infor_personal" id="fileanddisplay">
-            <h3>Hồ sơ và hiển thị</h3>
-            <img class='img_infor' src="https://trello.com/assets/eff3d701a9c3a71105ea.svg" alt="error">
-            <h3>về tôi</h3>
-            <p>các trường bắt buộc phải được đánh dấu bằng dấu</p>
-            <p>tên người dùng</p>
-            <input class="input" type="text">
-            <p>lý lịch</p>
-            <textarea class="textarea" type="text"></textarea>
-            <p>kinh nghiệm và làm việc</p>
-            <textarea class="textarea" type="text"></textarea>
-            <p>các kĩ năng</p>
-            <textarea class="textarea" type="text"></textarea>
+            <div class="cards-interface">
+        <h3 class="page-title">Thẻ</h3>
+        
+        <div class="filter-toolbar">
+            <div class="sort-dropdown">
+                <select  class="sort-dropdown">
+                    <option>Sắp xếp theo bảng thông tin</option>
+                    <option>Sắp xếp theo ngay</option>
+                </select>
+            </div>
+            <button class="btn-filter">
+                <i class="fa-solid fa-filter"></i> Lọc thẻ
+            </button>
+            <button class="btn-clear-filter">Xóa bộ lọc</button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-dark-custom">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Thẻ</th>
+                        <th style="width: 15%;">Danh sách</th>
+                        <th style="width: 15%;">Nhãn</th>
+                        <th style="width: 15%;">Ngày đến hạn</th>
+                        <th style="width: 30%;">Bảng thông tin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="fw-bold">vvvv</td>
+                        <td>ngay</td>
+                        <td></td>
+                        <td>.</td>
+                        <td>
+                            <div class="board-info">
+                                <div class="board-thumb"></div>
+                                <div class="board-text">
+                                    <span class="board-name">test</span>
+                                    <span class="workspace-name">Trello Không gian làm việc</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+            </table>
+        </div>
+    </div>
         </div>
         <div class="x">
-            <a><p class="x">&#10005</p></a>
+            <p class="x">&#10005</p>
         </div>
     </div>
 </div>
