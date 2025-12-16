@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+import datetime
 
 # Create your models here.
 class User(models.Model):
@@ -18,3 +20,27 @@ class UserProfile(models.Model):
     experience_level = models.CharField(max_length=10)
     skill = models.ManyToManyField(Skill)
     role = models.CharField(max_length=10)
+
+
+class EmailOTP(models.Model):
+    # Email là unique để đảm bảo chỉ có 1 mã OTP hiệu lực tại 1 thời điểm
+    email = models.EmailField(unique=True, null=False, blank=False)
+
+    # Mã OTP
+    otp = models.CharField(max_length=6, null=False, blank=False)
+
+    # Thời điểm tạo mã, dùng để tính toán hết hạn
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_valid(self):
+        """
+        Kiểm tra xem OTP còn hiệu lực không.
+        Mặc định set là 5 phút (300 giây).
+        """
+        lifespan = datetime.timedelta(minutes=5)
+        now = timezone.now()
+
+        return now - self.created_at < lifespan
+
+    def __str__(self):
+        return f"{self.email} - {self.otp}"
