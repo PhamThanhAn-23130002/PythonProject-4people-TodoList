@@ -319,6 +319,129 @@
             font-weight: 600;
         }
 
+        /* ===== BOARD MORE MENU ===== */
+        .board-more-wrap {
+            position: relative;
+        }
+
+        .board-more-menu {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            width: 280px;
+            background: #2b2f36;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .5);
+            padding: 12px 0;
+            display: none;
+            z-index: 1000;
+            overflow-y: auto;
+             max-height: calc(100vh - 120px);
+        }
+
+        .board-more-menu.show {
+            display: block;
+        }
+
+        .more-title {
+            text-align: center;
+            font-weight: 700;
+            padding: 6px 0 10px;
+            color: #cfd6dc;
+            border-bottom: 1px solid #3a3f47;
+            margin-bottom: 6px;
+        }
+
+        .more-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            color: #e7ecf0;
+            font-size: 14px;
+        }
+
+        .more-item:hover {
+            background: #3a3f47;
+        }
+
+        /* ===== USERS IN MORE MENU ===== */
+        .menu-users {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0 6px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 13px;
+            font-weight: 800;
+            color: #141414;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #2b2f36;
+            margin-left: -6px;
+        }
+
+        .user-avatar:first-child {
+            margin-left: 0;
+        }
+
+        /* màu avatar */
+        .u-orange {
+            background: #ffb03a;
+        }
+
+        .u-cyan {
+            background: #2dc9c9;
+        }
+
+        .u-blue {
+            background: #6ea6ff;
+            color: #0b111a;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: #3a3f47;
+            margin: 8px 0;
+        }
+
+        /* ===== SHARE + USERS ROW ===== */
+        .menu-share-users {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+        }
+
+        .menu-share-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #e7ecf0;
+            cursor: pointer;
+        }
+
+        .menu-share-btn:hover {
+            text-decoration: underline;
+        }
+
+        .menu-users {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .share-icon {
+            width: 18px;
+            height: 18px;
+            fill: #ffffff;
+            flex-shrink: 0;
+        }
+
     </style>
 
 
@@ -382,7 +505,92 @@
     <div class="board-title">Bảng List của tôi</div>
     <div class="board-actions">
         <button class="share-btn">👥 Chia sẻ</button>
-        <button class="more-btn">⋯</button>
+        <div class="board-more-wrap">
+            <button class="more-btn" id="boardMoreBtn">⋯</button>
+
+            <div class="board-more-menu" id="boardMoreMenu">
+
+                <div class="menu-share-users">
+                    <div class="menu-share-btn">
+                        <svg class="share-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M16 11c1.66 0 3-1.34 3-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                        </svg>
+                        Chia sẻ
+                    </div>
+
+                    <div class="menu-users">
+                        <div class="user-avatar u-orange">TT</div>
+                        <div class="user-avatar u-cyan">TA</div>
+                        <div class="user-avatar u-blue">
+                            <span class="user-icon">👤</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="more-title">Menu</div>
+
+                <div class="more-item">
+                    ℹ️ Về bảng này
+                </div>
+
+                <div class="more-item">
+                    👥 Khả năng hiển thị: <span class="muted">Không gian làm việc</span>
+                </div>
+
+                <div class="more-item">
+                    🔗 In, xuất và chia sẻ
+                </div>
+
+                <div class="more-item">
+                    ⭐ Gắn sao
+                </div>
+
+                <div class="menu-divider"></div>
+
+                <div class="more-item">
+                    ⚙️ Cài đặt
+                </div>
+
+                <div class="more-item">
+                    🎨 Thay đổi hình nền
+                </div>
+
+                <div class="menu-divider"></div>
+
+                <div class="more-item">
+                    ⚡ Tự động hóa
+                </div>
+
+                <div class="more-item">
+                    🧩 Tiện ích bổ sung
+                </div>
+
+                <div class="more-item">
+                    🏷️ Nhãn
+                </div>
+
+                <div class="more-item">
+                    🏷️ Các nhãn dán
+                </div>
+
+                <div class="more-item">
+                    📝 Hoạt động
+                </div>
+
+                <div class="more-item">
+                    🗄️ Mục đã lưu trữ
+                </div>
+
+                <div class="menu-divider"></div>
+
+                <div class="more-item">
+                    👁️ Theo dõi
+                </div>
+            </div>
+
+        </div>
+
     </div>
 </div>
 
@@ -412,6 +620,19 @@
 
     document.addEventListener('click', () => {
         menu.classList.remove('show');
+    });
+</script>
+<script>
+    const moreBtn = document.getElementById('boardMoreBtn');
+    const moreMenu = document.getElementById('boardMoreMenu');
+
+    moreBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        moreMenu.classList.toggle('show');
+    });
+
+    document.addEventListener('click', () => {
+        moreMenu.classList.remove('show');
     });
 </script>
 
