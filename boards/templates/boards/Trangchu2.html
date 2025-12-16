@@ -1,3 +1,5 @@
+{% load static %}
+
 <!doctype html>
 <html lang="vi">
 <head>
@@ -58,7 +60,7 @@
             gap: 10px
         }
 
-         .brand .logo {
+        .brand .logo {
             width: 34px;
             height: 33px;
             border-radius: 6px;
@@ -395,13 +397,51 @@
             font-weight: 800;
         }
 
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 40px;
+            padding: 0 12px;
+            border-radius: 8px;
+            color: #cfd6dc;
+            text-decoration: none;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background: #20242b;
+        }
+
+        .nav-item.active {
+            background: #1f2940;
+            color: #fff;
+            box-shadow: inset 0 0 0 1px #31425d;
+        }
+
+        .nav-item .glyph {
+            width: 20px;
+            text-align: center;
+            opacity: .9;
+        }
+
+        .recent-link {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .recent-link:hover .recent-card {
+            background: #20242b;
+        }
     </style>
 </head>
 <body>
 
 <!-- TOPBAR -->
 <header class="topbar">
-   <div class="brand">
+    <div class="brand">
         <div class="logo">L</div>
         <span>List</span>
     </div>
@@ -420,12 +460,13 @@
 
         <!-- SIDEBAR -->
         <aside class="sidebar">
-            <nav class="nav-group">
-                <div class="nav-item"><span class="glyph">📋</span>Bảng</div>
-                <div class="nav-item active"><span class="glyph">➜</span>Trang chủ</div>
+            <nav class="nav-group" aria-label="Chính">
+                <a href="{% url 'home_page_Table' %}" class="nav-item"><span class="glyph">📋</span>Bảng</a>
+                <a href="{% url 'home_page2' %}" class="nav-item active"><span class="glyph">➜</span>Trang chủ</a>
             </nav>
             <div class="add-ws">+ Tạo Không gian làm việc</div>
         </aside>
+
 
         <!-- MAIN FEED -->
         <main class="main">
@@ -461,22 +502,23 @@
                 </article>
 
 
-
             </section>
         </main>
 
         <!-- RIGHT COLUMN -->
         <aside class="right">
-            <div>
-                <div class="section-title">Đã xem gần đây</div>
-                <div class="recent-card">
-                    <div class="recent-thumb"></div>
-                    <div class="recent-info">
-                        <div class="title">Bảng List của tôi</div>
-                        <div class="meta">Không gian làm việc</div>
+            <a href="{% url 'create_board' %}" class="recent-link">
+                <div>
+                    <div class="section-title">Đã xem gần đây</div>
+                    <div class="recent-card">
+                        <div class="recent-thumb"></div>
+                        <div class="recent-info">
+                            <div class="title">Bảng List của tôi</div>
+                            <div class="meta">Không gian làm việc</div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </a>
             <div>
                 <div class="section-title">Liên Kết</div>
                 <div class="create-tile">

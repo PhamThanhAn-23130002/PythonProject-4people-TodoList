@@ -1,3 +1,5 @@
+from django.shortcuts import render
+from django.http import HttpResponse
 import random
 
 from django.shortcuts import render, redirect
@@ -7,7 +9,6 @@ from django.urls import reverse
 from accounts.models import EmailOTP
 from todo import settings
 
-
 def sign_in(request):
     return render(request, 'accounts/login.html')
 
@@ -16,6 +17,9 @@ def sign_up(request):
 
 def reset_pass(request):
     return render(request, 'accounts/resetPassword.html')
+
+
+
 
 # API nhận yêu cầu gửi OTP từ Javascript (AJAX)
 def send_otp_api(request):
@@ -69,29 +73,42 @@ def verify_code(request):
 
     return render(request, 'accounts/verify.html', {'email': email, 'error': error})
 
+
+
+
+
+
 def finish_signup(request):
     return render(request, 'accounts/finishSettingUpAccount.html')
 
+
 def create_name_pass(request):
-     return render(request, 'boards/TrangChu.html')
- 
+    return render(request, 'boards/TrangChu.html')
+
+
 def verify_acc(request):
-     return render(request, 'accounts/finishResetPassword.html')
+    return render(request, 'accounts/finishResetPassword.html')
+
 
 def SitePerSonal(request):
-    return render(request,'accounts/SitePersonal.html')
+    return render(request, 'accounts/SitePersonal.html')
+
 
 def setting(request):
-    return render(request,'accounts/setting.html')
+    return render(request, 'accounts/setting.html')
+
 
 def action(request):
-    return render(request,'accounts/hoatdong.html')
+    return render(request, 'accounts/hoatdong.html')
+
 
 def card(request):
-    return render(request,'accounts/card.html')
+    return render(request, 'accounts/card.html')
+
 
 def boardspersonal(request):
-    return render(request,'accounts/boards.html')
+    return render(request, 'accounts/boards.html')
+
 
 def members(request):
-    return render(request,'accounts/members.html')
+    return render(request, 'accounts/members.html')
