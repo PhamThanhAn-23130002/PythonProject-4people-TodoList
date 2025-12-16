@@ -1,9 +1,9 @@
+{% load static %}
 <!doctype html>
 <html lang="vi">
-
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <title>List - Bảng công việc</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -17,20 +17,16 @@
             --text: #e7ecf0;
 
             /* layout heights */
-            --topbar: 56px;
-            /* thanh trên cùng */
-            --boardbar: 52px;
-            /* dải tiêu đề board */
-            --footer: 48px;
-            /* footer nổi phía dưới */
+            --topbar: 56px; /* thanh trên cùng */
+            --boardbar: 52px; /* dải tiêu đề board */
+            --footer: 48px; /* footer nổi phía dưới */
         }
 
         * {
             box-sizing: border-box
         }
 
-        html,
-        body {
+        html, body {
             height: 100%
         }
 
@@ -39,8 +35,7 @@
             font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
             color: var(--text);
             background: linear-gradient(180deg, var(--bg-start), var(--bg-end));
-            overflow: hidden;
-            /* ngăn body kéo dọc; phần cuộn ở .board-wrap */
+            overflow: hidden; /* ngăn body kéo dọc; phần cuộn ở .board-wrap */
         }
 
         /* ===== TOPBAR  ===== */
@@ -217,53 +212,6 @@
             border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
-        .add-list-form {
-            width: 280px;
-            background: rgba(0, 0, 0, 0.55);
-            border-radius: 14px;
-            padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            display: none; /* Ẩn mặc định */
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .add-list-form input {
-            width: 100%;
-            background: #23252a;
-            border: 1px solid #6ea6ff;
-            border-radius: 8px;
-            padding: 10px;
-            color: #fff;
-            outline: none;
-        }
-
-        .add-list-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-confirm {
-            background: #6ea6ff;
-            color: #000;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .btn-cancel {
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-size: 22px;
-            cursor: pointer;
-            padding: 0 8px;
-        }
-
-
         /* ===== FOOTER NỔI ===== */
         .floating-footer {
             position: fixed;
@@ -284,319 +232,538 @@
         }
 
 
-        /* Modal chia sẻ*/
-        #modalOverlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.45);
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal {
-            background: #2c2c2c;
-            width: 420px;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            animation: popup 0.25s ease;
+        /* ===== ACCOUNT MENU ===== */
+        .account-wrap {
             position: relative;
         }
 
-
-        @keyframes popup {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+        .account-menu {
+            position: absolute;
+            top: 44px;
+            right: 0;
+            width: 300px;
+            background: #2b2f36;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .5);
+            padding: 12px 0;
+            display: none;
+            z-index: 1000;
         }
 
-        .modal h2 {
-            margin-top: 0;
-            font-size: 20px;
-            margin-bottom: 16px;
+        .account-menu.show {
+            display: block;
         }
 
-        .form-row {
+        .menu-section {
+            padding: 0 16px;
+        }
+
+        .menu-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #9aa3ad;
+            margin-bottom: 8px;
+        }
+
+        .account-info {
             display: flex;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        input {
-            flex: 1;
-            padding: 10px 12px;
-            border-radius: 6px;
-            border: none;
-            background: #3a3a3a;
-            color: #fff;
-        }
-
-        select {
-            padding: 10px;
-            border-radius: 6px;
-            border: none;
-            background: #3a3a3a;
-            color: #fff;
-        }
-
-        button.share-btn {
-            background: #579dff;
-            color: #fff;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .divider {
-            margin: 14px 0;
-            border-top: 1px solid #444;
-        }
-
-        .member-row {
-            display: flex;
-            justify-content: space-between;
+            gap: 12px;
             align-items: center;
             padding: 8px 0;
+            cursor: pointer;
+
         }
 
-        .member-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .avatar {
-            width: 36px;
-            height: 36px;
-            background: #1f70ff;
+        .account-avatar {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
+            background: #ffb03a;
+            color: #141414;
+            font-weight: 800;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-        }
-
-        .close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
             cursor: pointer;
-            font-size: 24px;
-        }
-    </style>
-</head>
 
+        }
+
+        .account-name {
+            font-weight: 700;
+        }
+
+        .account-email {
+            font-size: 13px;
+            color: #a8b0b8;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: #3a3f47;
+            margin: 10px 0;
+        }
+
+        .menu-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            color: #e7ecf0;
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background: #3a3f47;
+        }
+
+        .menu-item.logout {
+            color: #ff8b8b;
+            font-weight: 600;
+        }
+
+        /* ===== BOARD MORE MENU ===== */
+        .board-more-wrap {
+            position: relative;
+        }
+
+        .board-more-menu {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            width: 280px;
+            background: #2b2f36;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .5);
+            padding: 12px 0;
+            display: none;
+            z-index: 1000;
+            overflow-y: auto;
+            max-height: calc(100vh - 120px);
+        }
+
+        .board-more-menu.show {
+            display: block;
+        }
+
+        .more-title {
+            text-align: center;
+            font-weight: 700;
+            padding: 6px 0 10px;
+            color: #cfd6dc;
+            border-bottom: 1px solid #3a3f47;
+            margin-bottom: 6px;
+        }
+
+        .more-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            color: #e7ecf0;
+            font-size: 14px;
+        }
+
+        .more-item:hover {
+            background: #3a3f47;
+        }
+
+        /* ===== USERS IN MORE MENU ===== */
+        .menu-users {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0 6px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 13px;
+            font-weight: 800;
+            color: #141414;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #2b2f36;
+            margin-left: -6px;
+        }
+
+        .user-avatar:first-child {
+            margin-left: 0;
+        }
+
+        /* màu avatar */
+        .u-orange {
+            background: #ffb03a;
+        }
+
+        .u-cyan {
+            background: #2dc9c9;
+        }
+
+        .u-blue {
+            background: #6ea6ff;
+            color: #0b111a;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: #3a3f47;
+            margin: 8px 0;
+        }
+
+        /* ===== SHARE + USERS ROW ===== */
+        .menu-share-users {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+        }
+
+        .menu-share-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #e7ecf0;
+            cursor: pointer;
+        }
+
+        .menu-share-btn:hover {
+            text-decoration: underline;
+        }
+
+        .menu-users {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .share-icon {
+            width: 18px;
+            height: 18px;
+            fill: #ffffff;
+            flex-shrink: 0;
+        }
+
+        /* ===== ADD LIST FORM ===== */
+        .add-list-form {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 14px;
+            padding: 12px;
+            display: none;
+            flex-shrink: 0;
+        }
+
+        .add-list-form input {
+            width: 100%;
+            height: 36px;
+            border-radius: 6px;
+            border: 2px solid #6ea6ff;
+            padding: 0 10px;
+            background: #1f2329;
+            color: #e7ecf0;
+            outline: none;
+            margin-bottom: 10px;
+        }
+
+        .add-list-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .add-list-actions button:first-child {
+            background: #6ea6ff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .add-list-actions button:last-child {
+            background: transparent;
+            border: none;
+            color: #cfd6dc;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* ===== LIST (DANH SÁCH) ===== */
+        .list {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 14px;
+            padding: 12px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* tiêu đề danh sách */
+        .list-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: #e7ecf0;
+        }
+
+        /* nút thêm thẻ */
+        .add-card {
+            padding: 8px 10px;
+            border-radius: 8px;
+            color: #cfd6dc;
+            cursor: pointer;
+        }
+
+        .add-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+    </style>
+
+
+</head>
 <body>
 
-    <!-- TOPBAR -->
-    <header class="topbar">
-        <div class="brand">
-            <div class="logo">L</div>
-            <span>List</span>
-        </div>
-        <div class="search"><input placeholder="Tìm kiếm" aria-label="Tìm kiếm"></div>
-        <div class="top-actions">
-            <button class="btn">Tạo mới</button>
-            <button class="icon-btn" title="Thông báo">🔔</button>
-            <button class="icon-btn" title="Trợ giúp">?</button>
-            <div class="avatar" title="TT">TT</div>
-        </div>
-    </header>
-
-    <!-- Dải tiêu đề của Board -->
-    <div class="board-bar">
-        <div id="nameboard" class="board-title">Bảng List của tôi</div>
-        <div class="board-actions">
-            <button class="share-btn" id="openModalBtn">👥 Chia sẻ</button>
-            <button class="more-btn">⋯</button>
-        </div>
+<!-- TOPBAR -->
+<header class="topbar">
+    <div class="brand">
+        <div class="logo">L</div>
+        <span>List</span>
     </div>
+    <div class="search"><input placeholder="Tìm kiếm" aria-label="Tìm kiếm"></div>
+    <div class="top-actions">
+        <button class="btn">Tạo mới</button>
+        <button class="icon-btn" title="Thông báo">🔔</button>
+        <button class="icon-btn" title="Trợ giúp">?</button>
 
-    <!-- Nội dung board (cuộn trong khung này) -->
-    <main class="board-wrap" role="main">
-        <div class="lists" role="list">
-           <button class="add-list" id="addListBtn" >+ Thêm danh sách khác</button>
-           <div class="add-list-form" id="addListForm">
-            <input type="text" id="listTitleInput" placeholder="Nhập tên danh sách...">
-    
-            <div class="add-list-actions">
-            <button id="confirmAddList" class="btn-confirm">Thêm danh sách</button>
-            <button id="cancelAddList" class="btn-cancel">✕</button>
-        </div>
-    </div>
+        <div class="account-wrap">
+            <div class="avatar" id="accountBtn">TT</div>
 
-        </div>
-    </main>
-
-    <!-- Footer nổi -->
-    <div class="floating-footer">
-        📅 Bảng thông tin &nbsp;&nbsp;|&nbsp;&nbsp; Chuyển đổi các trang
-    </div>
-
-    <div id="modalOverlay">
-        <div class="modal">
-            <div class="close" id="closeBtn">×</div>
-            <h2>Chia sẻ bảng</h2>
-
-            <div class="form-row">
-                <input type="text" placeholder="Địa chỉ email hoặc tên" />
-                <select>
-                    <option>Thành viên</option>
-                    <option>Quản trị viên</option>
-                </select>
-                <button class="share-btn">Chia sẻ</button>
-            </div>
-
-            <div>
-                <strong>Chia sẻ bảng này bằng liên kết</strong>
-            </div>
-            <a href="#" style="color:#579dff; font-size:14px; text-decoration:none;">Tạo liên kết</a>
-
-            <div class="divider"></div>
-
-            <h3 style="margin-bottom: 10px;">Thành viên của bảng</h3>
-            <div class="member-row">
-                <div class="member-info">
-                    <div class="avatar">TA</div>
-                    <div>
-                        <div>Thanh An (bạn)</div>
-                        <div style="font-size:12px; color:#aaa;">Quản trị viên Không gian làm việc</div>
+            <div class="account-menu" id="accountMenu">
+                <!-- TÀI KHOẢN -->
+                <div class="menu-section">
+                    <div class="menu-title">TÀI KHOẢN</div>
+                    <div class="account-info">
+                        <div class="account-avatar">TT</div>
+                        <div>
+                            <div class="account-name">Tran Anh Tuan</div>
+                            <div class="account-email">23130372@st.hcmuaf.edu.vn</div>
+                        </div>
                     </div>
                 </div>
-                <select>
-                    <option selected>Quản trị viên</option>
-                    <option>Thành viên</option>
-                </select>
+
+                <div class="menu-divider"></div>
+
+                <!-- TRELLO -->
+                <div class="menu-section">
+                    <div class="menu-title">LIST</div>
+
+                    <div class="menu-item">Chuyển đổi tài khoản</div>
+                    <div class="menu-item">Quản lý tài khoản</div>
+
+                    <div class="menu-item">Hồ sơ và Hiển thị</div>
+                    <div class="menu-item">Cài đặt</div>
+                </div>
+
+                <div class="menu-divider"></div>
+
+                <!-- ĐĂNG XUẤT -->
+                <div class="menu-item logout">Đăng xuất</div>
+            </div>
+        </div>
+
+
+    </div>
+</header>
+
+<!-- Dải tiêu đề của Board -->
+<div class="board-bar">
+    <div class="board-title">Bảng List của tôi</div>
+    <div class="board-actions">
+        <button class="share-btn">👥 Chia sẻ</button>
+        <div class="board-more-wrap">
+            <button class="more-btn" id="boardMoreBtn">⋯</button>
+
+            <div class="board-more-menu" id="boardMoreMenu">
+
+                <div class="menu-share-users">
+                    <div class="menu-share-btn">
+                        <svg class="share-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M16 11c1.66 0 3-1.34 3-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                        </svg>
+                        Chia sẻ
+                    </div>
+
+                    <div class="menu-users">
+                        <div class="user-avatar u-orange">TT</div>
+                        <div class="user-avatar u-cyan">TA</div>
+                        <div class="user-avatar u-blue">
+                            <span class="user-icon">👤</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="more-title">Menu</div>
+
+                <div class="more-item">
+                    ℹ️ Về bảng này
+                </div>
+
+                <div class="more-item">
+                    👥 Khả năng hiển thị: <span class="muted">Không gian làm việc</span>
+                </div>
+
+                <div class="more-item">
+                    🔗 In, xuất và chia sẻ
+                </div>
+
+                <div class="more-item">
+                    ⭐ Gắn sao
+                </div>
+
+                <div class="menu-divider"></div>
+
+                <div class="more-item">
+                    ⚙️ Cài đặt
+                </div>
+
+                <div class="more-item">
+                    🎨 Thay đổi hình nền
+                </div>
+
+                <div class="menu-divider"></div>
+
+                <div class="more-item">
+                    ⚡ Tự động hóa
+                </div>
+
+                <div class="more-item">
+                    🧩 Tiện ích bổ sung
+                </div>
+
+                <div class="more-item">
+                    🏷️ Nhãn
+                </div>
+
+                <div class="more-item">
+                    🏷️ Các nhãn dán
+                </div>
+
+                <div class="more-item">
+                    📝 Hoạt động
+                </div>
+
+                <div class="more-item">
+                    🗄️ Mục đã lưu trữ
+                </div>
+
+                <div class="menu-divider"></div>
+
+                <div class="more-item">
+                    👁️ Theo dõi
+                </div>
             </div>
 
         </div>
+
     </div>
+</div>
+
+<!-- Nội dung board (cuộn trong khung này) -->
+<main class="board-wrap" role="main">
+    <div class="lists" role="list" id="listsContainer">
+
+        <!-- FORM ADD LIST -->
+        <div class="add-list" id="addListBtn">+ Thêm danh sách khác</div>
+
+        <div class="add-list-form" id="addListForm">
+            <input type="text" id="listTitleInput" placeholder="Nhập tên danh sách..."/>
+            <div class="add-list-actions">
+                <button id="confirmAddList">Thêm danh sách</button>
+                <button id="cancelAddList">✕</button>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<!-- Footer nổi -->
+<div class="floating-footer">
+    📅 Bảng thông tin &nbsp;&nbsp;|&nbsp;&nbsp; Chuyển đổi các trang
+</div>
 
 </body>
 
+
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  // ---- Modal (an toàn: chỉ thao tác khi phần tử tồn tại) ----
-  const modalOverlay = document.getElementById("modalOverlay");
-  const openModalBtn = document.getElementById("openModalBtn");
-  const closeBtn = document.getElementById("closeBtn");
+    const btn = document.getElementById('accountBtn');
+    const menu = document.getElementById('accountMenu');
 
-  if (openModalBtn && modalOverlay) {
-    openModalBtn.addEventListener("click", () => {
-      modalOverlay.style.display = "flex";
-      // không gọi boardTitle nếu không tồn tại
-      const boardTitle = document.getElementById("boardTitle");
-      if (boardTitle) boardTitle.focus();
-    });
-  }
-
-  if (closeBtn && modalOverlay) {
-    closeBtn.addEventListener("click", () => {
-      modalOverlay.style.display = "none";
-      // các thao tác validate cũ - làm an toàn (kiểm tra trước khi truy cập)
-      const boardTitle = document.getElementById("boardTitle");
-      const titleError = document.getElementById("titleError");
-      const createBtn = document.getElementById("createBtn");
-      if (boardTitle) boardTitle.value = "";
-      if (titleError) titleError.style.display = "none";
-      if (createBtn) {
-        createBtn.classList.remove("enabled");
-        createBtn.disabled = true;
-      }
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('show');
     });
 
-    // đóng khi click ra ngoài
-    modalOverlay.addEventListener("click", (e) => {
-      if (e.target === modalOverlay) closeBtn.click();
+    document.addEventListener('click', () => {
+        menu.classList.remove('show');
     });
-  }
+</script>
+<script>
+    const moreBtn = document.getElementById('boardMoreBtn');
+    const moreMenu = document.getElementById('boardMoreMenu');
 
-  // ---- Add-list form logic ----
-  const addListBtn = document.getElementById("addListBtn");
-  const addListForm = document.getElementById("addListForm");
-  const cancelAddList = document.getElementById("cancelAddList");
-  const confirmAddList = document.getElementById("confirmAddList");
-  const listTitleInput = document.getElementById("listTitleInput");
-  const listsContainer = document.querySelector(".lists");
-
-  if (addListBtn && addListForm && listTitleInput) {
-    addListBtn.addEventListener("click", () => {
-      // ẩn nút và hiện form (flex để sử dụng display:flex trong CSS)
-      addListBtn.style.display = "none";
-      addListForm.style.display = "flex";
-      listTitleInput.focus();
+    moreBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        moreMenu.classList.toggle('show');
     });
-  }
 
-  if (cancelAddList && addListForm && addListBtn && listTitleInput) {
-    cancelAddList.addEventListener("click", () => {
-      addListForm.style.display = "none";
-      addListBtn.style.display = "flex";
-      listTitleInput.value = "";
+    document.addEventListener('click', () => {
+        moreMenu.classList.remove('show');
     });
-  }
+</script>
 
-  // Khi xác nhận thêm danh sách: tạo cột mới (nếu muốn)
-  if (confirmAddList && listsContainer && listTitleInput) {
-    confirmAddList.addEventListener("click", () => {
-      const title = listTitleInput.value.trim();
-      if (!title) {
-        listTitleInput.focus();
-        return;
-      }
+<script>
+    const addBtn = document.getElementById('addListBtn');
+    const form = document.getElementById('addListForm');
+    const input = document.getElementById('listTitleInput');
+    const confirmBtn = document.getElementById('confirmAddList');
+    const cancelBtn = document.getElementById('cancelAddList');
+    const container = document.getElementById('listsContainer');
 
-      // Tạo phần tử list cơ bản
-      const col = document.createElement("div");
-      col.className = "list-column";
-      col.style.width = "280px";
-      col.style.minHeight = "80px";
-      col.style.background = "rgba(255,255,255,0.06)";
-      col.style.borderRadius = "10px";
-      col.style.padding = "10px";
-      col.style.color = "#fff";
-      col.style.flexShrink = "0";
-      col.style.boxSizing = "border-box";
+    // mở form
+    addBtn.onclick = () => {
+        addBtn.style.display = 'none';
+        form.style.display = 'block';
+        input.focus();
+    };
 
-      const h = document.createElement("div");
-      h.style.fontWeight = "700";
-      h.style.marginBottom = "8px";
-      h.textContent = title;
+    // hủy
+    cancelBtn.onclick = () => {
+        form.style.display = 'none';
+        addBtn.style.display = 'flex';
+        input.value = '';
+    };
 
-      col.appendChild(h);
+    // thêm danh sách
+    confirmBtn.onclick = () => {
+        const title = input.value.trim();
+        if (!title) return;
 
-      // chèn trước nút addListBtn (tức là nút nằm cuối cùng)
-      // tìm nút hiện tại trong listsContainer
-      const addBtnNode = document.getElementById("addListBtn");
-      if (addBtnNode) {
-        listsContainer.insertBefore(col, addBtnNode);
-      } else {
-        listsContainer.appendChild(col);
-      }
-      
+        const list = document.createElement('div');
+        list.className = 'list';
+        list.innerHTML = `
+            <div class="list-title">${title}</div>
+            <div class="add-card">+ Thêm thẻ</div>
+        `;
 
-      // reset form và ẩn form
-      listTitleInput.value = "";
-      addListForm.style.display = "none";
-      addListBtn.style.display = "flex";
-    });
-  }
-});
-window.onload = function() {
-    const params = new URLSearchParams(window.location.search);
-    const tenBang = params.get('name');
-    
-    if (tenBang) {
-        document.getElementById('nameboard').innerText = tenBang;
-    }
-}
+        container.insertBefore(list, addBtn);
+
+        input.value = '';
+        form.style.display = 'none';
+        addBtn.style.display = 'flex';
+    };
 </script>
 
 
