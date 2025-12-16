@@ -1,3 +1,5 @@
+{% load static %}
+
 <!doctype html>
 <html lang="vi">
 <head>
@@ -336,6 +338,17 @@
             box-shadow: inset 0 0 0 1px #31425d;
         }
 
+        .recent-link {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .recent-link:hover .recent-card {
+            background: #20242b;
+        }
+
+
     </style>
 </head>
 <body>
@@ -364,8 +377,8 @@
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <nav class="nav-group" aria-label="Chính">
-                <a href="TrangChu-Bang.html" class="nav-item"><span class="glyph">📋</span>Bảng</a>
-                <a href="TrangChu.html" class="nav-item active"><span class="glyph">➜</span>Trang chủ</a>
+                <a href="{% url 'home_page_Table' %}" class="nav-item"><span class="glyph">📋</span>Bảng</a>
+                <a href="{% url 'home_page' %}" class="nav-item active"><span class="glyph">➜</span>Trang chủ</a>
             </nav>
 
 
@@ -381,24 +394,25 @@
                     bảng List đầu tiên của bạn!</p>
                 <div class="cta">
                     <button class="primary">Tạo một bảng Không gian làm việc</button>
-                    <a href="Trangchu2.html">Đã hiểu! Bỏ qua điều này.</a>
+                    <a href="{% url 'home_page2' %}">Đã hiểu! Bỏ qua điều này.</a>
                 </div>
             </section>
         </main>
 
         <!-- RIGHT RAIL -->
         <aside class="right">
-            <div>
-                <div class="section-title">Đã xem gần đây</div>
-                <div class="recent-card">
-                    <div class="recent-thumb"></div>
-                    <div class="recent-info">
-                        <div class="title">Bảng List của tôi</div>
-                        <div class="meta">Không gian làm việc</div>
+            <a href="{% url 'create_board' %}" class="recent-link">
+                <div>
+                    <div class="section-title">Đã xem gần đây</div>
+                    <div class="recent-card">
+                        <div class="recent-thumb"></div>
+                        <div class="recent-info">
+                            <div class="title">Bảng List của tôi</div>
+                            <div class="meta">Không gian làm việc</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-
+            </a>
             <div>
                 <div class="section-title">Liên Kết</div>
                 <div class="create-tile">

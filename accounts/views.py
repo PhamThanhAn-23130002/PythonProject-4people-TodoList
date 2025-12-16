@@ -16,11 +16,6 @@ def verify_code(request):
 def finish_signup(request):
     return render(request, 'accounts/finishSettingUpAccount.html')
 
+
 def create_name_pass(request):
      return render(request, 'boards/TrangChu.html')
- 
-def verify_acc(request):
-     return render(request, 'accounts/finishResetPassword.html')
-
-
-

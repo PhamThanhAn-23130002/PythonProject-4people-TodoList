@@ -1,3 +1,5 @@
+{% load static %}
+
 <!doctype html>
 <html lang="vi">
 <head>
@@ -401,8 +403,8 @@
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <nav class="nav-group" aria-label="Chính">
-                <a href="TrangChu-Bang.html" class="nav-item active"><span class="glyph">📋</span>Bảng</a>
-                <a href="TrangChu.html" class="nav-item"><span class="glyph">➜</span>Trang chủ</a>
+                <a href="{% url 'home_page_Table' %}" class="nav-item active"><span class="glyph">📋</span>Bảng</a>
+                <a href="{% url 'home_page' %}" class="nav-item"><span class="glyph">➜</span>Trang chủ</a>
             </nav>
 
 

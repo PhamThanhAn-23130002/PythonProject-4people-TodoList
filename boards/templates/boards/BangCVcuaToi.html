@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="vi">
 <head>
@@ -229,7 +230,98 @@
             align-items: center;
             z-index: 11;
         }
+
+
+        /* ===== ACCOUNT MENU ===== */
+        .account-wrap {
+            position: relative;
+        }
+
+        .account-menu {
+            position: absolute;
+            top: 44px;
+            right: 0;
+            width: 300px;
+            background: #2b2f36;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .5);
+            padding: 12px 0;
+            display: none;
+            z-index: 1000;
+        }
+
+        .account-menu.show {
+            display: block;
+        }
+
+        .menu-section {
+            padding: 0 16px;
+        }
+
+        .menu-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #9aa3ad;
+            margin-bottom: 8px;
+        }
+
+        .account-info {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            padding: 8px 0;
+            cursor: pointer;
+
+        }
+
+        .account-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ffb03a;
+            color: #141414;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+        }
+
+        .account-name {
+            font-weight: 700;
+        }
+
+        .account-email {
+            font-size: 13px;
+            color: #a8b0b8;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: #3a3f47;
+            margin: 10px 0;
+        }
+
+        .menu-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            color: #e7ecf0;
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background: #3a3f47;
+        }
+
+        .menu-item.logout {
+            color: #ff8b8b;
+            font-weight: 600;
+        }
+
     </style>
+
+
 </head>
 <body>
 
@@ -244,7 +336,44 @@
         <button class="btn">Tạo mới</button>
         <button class="icon-btn" title="Thông báo">🔔</button>
         <button class="icon-btn" title="Trợ giúp">?</button>
-        <div class="avatar" title="TT">TT</div>
+
+        <div class="account-wrap">
+            <div class="avatar" id="accountBtn">TT</div>
+
+            <div class="account-menu" id="accountMenu">
+                <!-- TÀI KHOẢN -->
+                <div class="menu-section">
+                    <div class="menu-title">TÀI KHOẢN</div>
+                    <div class="account-info">
+                        <div class="account-avatar">TT</div>
+                        <div>
+                            <div class="account-name">Tran Anh Tuan</div>
+                            <div class="account-email">23130372@st.hcmuaf.edu.vn</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-divider"></div>
+
+                <!-- TRELLO -->
+                <div class="menu-section">
+                    <div class="menu-title">LIST</div>
+
+                    <div class="menu-item">Chuyển đổi tài khoản</div>
+                    <div class="menu-item">Quản lý tài khoản</div>
+
+                    <div class="menu-item">Hồ sơ và Hiển thị</div>
+                    <div class="menu-item">Cài đặt</div>
+                </div>
+
+                <div class="menu-divider"></div>
+
+                <!-- ĐĂNG XUẤT -->
+                <div class="menu-item logout">Đăng xuất</div>
+            </div>
+        </div>
+
+
     </div>
 </header>
 
@@ -270,4 +399,20 @@
 </div>
 
 </body>
+
+
+<script>
+    const btn = document.getElementById('accountBtn');
+    const menu = document.getElementById('accountMenu');
+
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('show');
+    });
+
+    document.addEventListener('click', () => {
+        menu.classList.remove('show');
+    });
+</script>
+
 </html>
