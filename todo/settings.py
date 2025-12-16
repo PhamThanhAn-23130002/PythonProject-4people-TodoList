@@ -134,5 +134,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = '23130069@st.hcmuaf.edu.vn'
 EMAIL_HOST_PASSWORD = 'amlb aadj aeus rohb'
 
+AUTH_USER_MODEL = 'accounts.User'
+
 
 
