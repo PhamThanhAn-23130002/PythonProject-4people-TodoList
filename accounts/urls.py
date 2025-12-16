@@ -14,5 +14,6 @@ urlpatterns = [
     path("hoatdong/",views.action,name="action"),
     path("the/",views.card,name="cards"),
     path("boadsPersonal/",views.boardspersonal,name="boards"),
-    path("members/",views.members,name="members")
+    path("members/",views.members,name="members"),
+    path('api/send-otp/', views.send_otp_api, name='send_otp_api'),
 ]
