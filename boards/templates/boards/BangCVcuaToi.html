@@ -518,6 +518,114 @@
             background: rgba(255, 255, 255, 0.08);
         }
 
+        /* Modal chia sẻ*/
+        #modalOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal {
+            background: #2c2c2c;
+            width: 420px;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            animation: popup 0.25s ease;
+            position: relative;
+        }
+
+
+        @keyframes popup {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal h2 {
+            margin-top: 0;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: none;
+            background: #3a3a3a;
+            color: #fff;
+        }
+
+        select {
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            background: #3a3a3a;
+            color: #fff;
+        }
+
+        button.share-btn {
+            background: #579dff;
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .divider {
+            margin: 14px 0;
+            border-top: 1px solid #444;
+        }
+
+        .member-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .member-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            background: #1f70ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 24px;
+        }
+
     </style>
 
 
@@ -580,7 +688,7 @@
 <div class="board-bar">
     <div class="board-title">Bảng List của tôi</div>
     <div class="board-actions">
-        <button class="share-btn">👥 Chia sẻ</button>
+        <button class="share-btn" id="openModalBtn">👥 Chia sẻ</button>
         <div class="board-more-wrap">
             <button class="more-btn" id="boardMoreBtn">⋯</button>
 
@@ -663,6 +771,15 @@
                 <div class="more-item">
                     👁️ Theo dõi
                 </div>
+
+                <div class="menu-divider"></div>
+
+<form method="POST" action="{% url 'delete_board' board.id %}" onsubmit="return confirm('CẢNH BÁO: Bạn có chắc chắn muốn xóa bảng này không? Hành động này không thể hoàn tác!');">
+    {% csrf_token %}
+    <button type="submit" class="more-item" style="width: 100%; text-align: left; background: none; border: none; color: #ff6b6b; font-weight: bold;">
+        🗑️ Xóa bảng này
+    </button>
+</form>
             </div>
 
         </div>
@@ -693,6 +810,73 @@
 <div class="floating-footer">
     📅 Bảng thông tin &nbsp;&nbsp;|&nbsp;&nbsp; Chuyển đổi các trang
 </div>
+
+   <form method="POST" action="{% url 'add_member' board.id %}">
+         {% csrf_token %}
+    <div id="modalOverlay">
+        <div class="modal">
+            <div class="close" id="closeBtn">×</div>
+            <h2>Chia sẻ bảng</h2>
+
+
+            <div class="form-row">
+                <input type="text" name= "email" placeholder="Địa chỉ email hoặc tên" />
+                <select>
+                    <option>Thành viên</option>
+                    <option>Quản trị viên</option>
+                </select>
+               <!--<button class="share-btn">Chia sẻ</button>-->
+               <button type= "submit" class="share-btn">Chia sẻ</button>
+            </div>
+            <div class="board-actions">
+    
+    <div style="display: flex; margin-right: 8px;">
+        {% for member in members %}
+            <div title="{{ member.user.email }}" 
+                 style="width: 32px; height: 32px; background: #ffb03a; color: #141414; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border: 2px solid white; margin-left: -8px;">
+                {{ member.user.username|slice:":2"|upper }}
+            </div>
+        {% endfor %}
+    </div> 
+    </div>
+
+            <div>
+                <strong>Chia sẻ bảng này bằng liên kết</strong>
+            </div>
+            <a href="#" style="color:#579dff; font-size:14px; text-decoration:none;">Tạo liên kết</a>
+
+            <div class="divider"></div>
+
+<h3 style="margin-bottom: 10px;">Thành viên của bảng</h3>
+
+<div style="max-height: 200px; overflow-y: auto;"> {% for member in members %}
+        <div class="member-row" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+            <div class="member-info" style="display: flex; align-items: center; gap: 10px;">
+                <div class="avatar" style="width: 32px; height: 32px; background: #ffb03a; color: #141414; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                    {{ member.user.username|slice:":2"|upper }}
+                </div>
+                
+                <div>
+                    <div style="font-weight: 600;">{{ member.user.username }} {% if member.user == request.user %}(bạn){% endif %}</div>
+                    <div style="font-size:12px; color:#aaa;">{{ member.user.email }}</div>
+                </div>
+            </div>
+
+            <span style="color: #a8b0b8; font-size: 13px;">{{ member.role }}</span>
+        </div>
+    {% empty %}
+        <p>Chưa có thành viên nào.</p>
+    {% endfor %}
+</div>
+                <select>
+                    <option selected>Quản trị viên</option>
+                    <option>Thành viên</option>
+                </select>
+            </div>
+
+        </div>
+    </div>
+</form>
 
 </body>
 
@@ -764,6 +948,121 @@
         form.style.display = 'none';
         addBtn.style.display = 'flex';
     };
+
+    document.addEventListener("DOMContentLoaded", () => {
+  // ---- Modal (an toàn: chỉ thao tác khi phần tử tồn tại) ----
+  const modalOverlay = document.getElementById("modalOverlay");
+  const openModalBtn = document.getElementById("openModalBtn");
+  const closeBtn = document.getElementById("closeBtn");
+
+  if (openModalBtn && modalOverlay) {
+    openModalBtn.addEventListener("click", () => {
+      modalOverlay.style.display = "flex";
+      // không gọi boardTitle nếu không tồn tại
+      const boardTitle = document.getElementById("boardTitle");
+      if (boardTitle) boardTitle.focus();
+    });
+  }
+
+  if (closeBtn && modalOverlay) {
+    closeBtn.addEventListener("click", () => {
+      modalOverlay.style.display = "none";
+      // các thao tác validate cũ - làm an toàn (kiểm tra trước khi truy cập)
+      const boardTitle = document.getElementById("boardTitle");
+      const titleError = document.getElementById("titleError");
+      const createBtn = document.getElementById("createBtn");
+      if (boardTitle) boardTitle.value = "";
+      if (titleError) titleError.style.display = "none";
+      if (createBtn) {
+        createBtn.classList.remove("enabled");
+        createBtn.disabled = true;
+      }
+    });
+
+    // đóng khi click ra ngoài
+    modalOverlay.addEventListener("click", (e) => {
+      if (e.target === modalOverlay) closeBtn.click();
+    });
+  }
+
+  // ---- Add-list form logic ----
+  const addListBtn = document.getElementById("addListBtn");
+  const addListForm = document.getElementById("addListForm");
+  const cancelAddList = document.getElementById("cancelAddList");
+  const confirmAddList = document.getElementById("confirmAddList");
+  const listTitleInput = document.getElementById("listTitleInput");
+  const listsContainer = document.querySelector(".lists");
+
+  if (addListBtn && addListForm && listTitleInput) {
+    addListBtn.addEventListener("click", () => {
+      // ẩn nút và hiện form (flex để sử dụng display:flex trong CSS)
+      addListBtn.style.display = "none";
+      addListForm.style.display = "flex";
+      listTitleInput.focus();
+    });
+  }
+
+  if (cancelAddList && addListForm && addListBtn && listTitleInput) {
+    cancelAddList.addEventListener("click", () => {
+      addListForm.style.display = "none";
+      addListBtn.style.display = "flex";
+      listTitleInput.value = "";
+    });
+  }
+
+  // Khi xác nhận thêm danh sách: tạo cột mới (nếu muốn)
+  if (confirmAddList && listsContainer && listTitleInput) {
+    confirmAddList.addEventListener("click", () => {
+      const title = listTitleInput.value.trim();
+      if (!title) {
+        listTitleInput.focus();
+        return;
+      }
+
+      // Tạo phần tử list cơ bản
+      const col = document.createElement("div");
+      col.className = "list-column";
+      col.style.width = "280px";
+      col.style.minHeight = "80px";
+      col.style.background = "rgba(255,255,255,0.06)";
+      col.style.borderRadius = "10px";
+      col.style.padding = "10px";
+      col.style.color = "#fff";
+      col.style.flexShrink = "0";
+      col.style.boxSizing = "border-box";
+
+      const h = document.createElement("div");
+      h.style.fontWeight = "700";
+      h.style.marginBottom = "8px";
+      h.textContent = title;
+
+      col.appendChild(h);
+
+      // chèn trước nút addListBtn (tức là nút nằm cuối cùng)
+      // tìm nút hiện tại trong listsContainer
+      const addBtnNode = document.getElementById("addListBtn");
+      if (addBtnNode) {
+        listsContainer.insertBefore(col, addBtnNode);
+      } else {
+        listsContainer.appendChild(col);
+      }
+      
+
+      // reset form và ẩn form
+      listTitleInput.value = "";
+      addListForm.style.display = "none";
+      addListBtn.style.display = "flex";
+    });
+  }
+});
+window.onload = function() {
+    const params = new URLSearchParams(window.location.search);
+    const tenBang = params.get('name');
+    
+    if (tenBang) {
+        document.getElementById('nameboard').innerText = tenBang;
+    }
+}
 </script>
 
 
