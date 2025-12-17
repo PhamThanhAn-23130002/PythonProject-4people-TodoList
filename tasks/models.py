@@ -27,7 +27,7 @@ class Task(models.Model):
     update_at =models.DateTimeField(auto_now_add=True)
     
 class Tag(models.Model):
-    id = models.ManyToManyField(Task)
+    tasks = models.ManyToManyField(Task, related_name='tags')
     name = models.CharField(max_length=50)
     color = models.CharField(max_length=10)
     
@@ -48,10 +48,4 @@ class Comment(models.Model):
     author_id = models.ForeignKey(User, on_delete=models.CASCADE) 
     content = models.TextField(max_length=2000)
     created_at = models.DateTimeField(auto_now_add=True)
-    
-
-    
-
-    
-
     
