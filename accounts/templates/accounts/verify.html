@@ -215,7 +215,7 @@
 
 
         <!-- TITLE -->
-        <h2>We've emailed you a code</h2>
+        <h2>Chúng tôi đã gửi mã cho bạn</h2>
 
         <div id="alert-container">
             {% if error %}
@@ -225,7 +225,7 @@
             {% endif %}
         </div>
 
-        <p>To complete your account setup, enter the code we've sent to:</p>
+        <p>Để hoàn thành thiết lập tài khoản, hãy nhập mã được chúng tôi gửi đến:</p>
         <h3> <strong id="emailDisplay">{{ email }}</strong> </h3>
 
         <form method="POST" id="otpForm" onsubmit="combineOtp()">
@@ -244,12 +244,12 @@
                 <input type="text" maxlength="1" class="otp-input otp-field" required>
             </div>
 
-            <button type="submit" class="btn-primary">Verify</button>
+            <button type="submit" class="btn-primary">Xác thực</button>
         </form>
 
         <!-- BOTTOM LINKS -->
         <div class="bottom-links">
-            <a href="javascript:void(0);" id="resendLink" onclick="triggerResend()">Didn't receive an email? Resend email</a>
+            <a href="javascript:void(0);" id="resendLink" onclick="triggerResend()">Chưa nhận được email? Gửi lại</a>
         </div>
 
         <div class="extra-links">
@@ -258,8 +258,8 @@
             <img src="{% static 'accounts/logo_alassian.png' %}"/>
 
             <div class="recaptcha-text">
-                One account for Trello, Jira, Confluence and
-                <a href="https://support.atlassian.com/atlassian-account/docs/what-is-an-atlassian-account/">more.</a>
+                Một tài khoản cho Trello, Jira, Confluence và
+                <a href="https://support.atlassian.com/atlassian-account/docs/what-is-an-atlassian-account/">các sản phẩm khác.</a>
             </div>
         </div>
 

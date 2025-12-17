@@ -208,11 +208,11 @@
 
         <!-- TITLE -->
         <div class="title-text">
-            <h2>Email address verified <img src="{% static 'accounts/green_tick.png' %}" alt="Tick"></h2>
-            <p>Finish setting up your account</p>
+            <h2>Địa chỉ email đã được xác thực <img src="{% static 'accounts/green_tick.png' %}" alt="Tick"></h2>
+            <p>Hoàn thành thiết lập tài khoản của bạn</p>
         </div>
 
-        <label>Email address</label>
+        <label>Địa chỉ email</label>
         <h3 id="emailDisplay">Loading...</h3>
 
         <form method="POST" action="{% url 'create_name_pass' %}">
@@ -221,27 +221,28 @@
             <input type="hidden" name="email" id="hiddenEmail">
 
             <div class="input-area">
-                <label>Full name</label>
-                <input type="text" name="fullname" placeholder="Enter full name" required>
+                <label>Họ và tên</label>
+                <input type="text" name="fullname" placeholder="Nhập họ tên của bạn" required>
 
-                <label>Password</label>
-                <input type="password" name="password" placeholder="Create password" required>
+                <label>Mật khẩu</label>
+                <input type="password" name="password" placeholder="Tạo mật khẩu" required>
 
                 <div class="strength-meter">
                     <div class="meter-bar" id="meter-bar"></div>
                 </div>
 
-                <p class="password-note">Password must have at least 8 characters</p>
+                <p class="password-note">Mật khẩu phải trên 8 ký tự</p>
             </div>
 
             <div class="policy-text">
-                    By signing up, I accept the Atlassian
-                    <a href="https://www.atlassian.com/legal/atlassian-customer-agreement"> Cloud Terms of Service</a>
-                     and acknowledge the
-                    <a href="https://www.atlassian.com/legal/privacy-policy">Privacy Policy</a>.
-            </div>
+                Bằng cách đăng ký, tôi chấp nhận
+                <a href="https://www.atlassian.com/legal/atlassian-customer-agreement"> điều khoản dịch vụ của Atlassian Cloud</a>
+                 và công nhận
+                <a href="https://www.atlassian.com/legal/privacy-policy">quyền riêng tư</a>
+                .
+        </div>
 
-            <button type="submit" class="btn-primary">Continue</button>
+            <button type="submit" class="btn-primary">Tiếp tục</button>
         </form>
 
         <!-- BOTTOM LINKS -->
@@ -252,15 +253,15 @@
             <img src="{% static 'accounts/logo_alassian.png' %}"/>
 
             <div class="recaptcha-text">
-                <div >One account for Trello, Jira, Confluence and
-                <a href="https://support.atlassian.com/atlassian-account/docs/what-is-an-atlassian-account/">more.</a>
+                <div >Một tài khoản cho Trello, Jira, Confluence và
+                <a href="https://support.atlassian.com/atlassian-account/docs/what-is-an-atlassian-account/">các sản phẩm khác.</a>
                 </div>
 
-                This site is protected by reCAPTCHA and the Google
-                <a href="https://policies.google.com/privacy">Privacy Policy</a>
-                and
-                <a href="https://policies.google.com/terms">Terms of Service</a>
-                apply.
+                Trang này được bảo vệ bởi reCAPTCHA và tuân theo
+                <a href="https://policies.google.com/privacy">Chính sách quyền riêng tư</a>
+                và
+                <a href="https://policies.google.com/terms">Điều khoản dịch vụ</a>
+                của Google.
             </div>
         </div>
 
