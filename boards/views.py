@@ -1,20 +1,111 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, redirect,get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Board, BoardMember, User
+from django.contrib import messages # Để thông báo lỗi/thành công
+from django.http import HttpResponse,request
+
+
+
 
 def create_board(request):
-    return render(request, 'boards/BangCVcuaToi.html')
+    return render(request, "boards/BangCVcuaToi.html")
+
 
 def card_detail(request):
-    return render(request, 'boards/CardDetail.html')
+    return render(request, "boards/CardDetail.html")
 
 
 def home_page(request):
-    return render(request, 'boards/TrangChu.html')
+    return render(request, "boards/TrangChu.html")
+
 
 def home_page2(request):
-    return render(request, 'boards/TrangChu2.html')
+    return render(request, "boards/TrangChu2.html")
+
 
 def home_page_Table(request):
-    return render(request, 'boards/TrangChu-Bang.html')
+    return render(request, "boards/TrangChu-Bang.html")
+
+# 1. Hiển thị trang chủ và danh sách Board
+@login_required(login_url='/login/')
+def home_page(request):
+    boards = Board.objects.filter(owner=request.user).order_by('-created_at')
+    
+    context = {
+        'boards': boards
+    }
+    return render(request, "boards/TrangChu.html", context)
+
+# 2. Xử lý logic tạo Board mới
+@login_required(login_url='/login/')
+def create_board(request):
+    if request.method == "POST":
+        board_name = request.POST.get('title') 
+        board_visibility = request.POST.get('visibility')
+
+        if board_name:
+
+            new_board = Board.objects.create(
+                name=board_name,
+                visibility=board_visibility,
+                owner=request.user, 
+                description=""
+            )
+            
+            BoardMember.objects.create(
+                project=new_board,
+                user=request.user,
+                role='admin'
+            )
+            return redirect('home_page')
+    
+   
+    return redirect('home_page')
 
 
+def board_detail(request, board_id):
+    board = get_object_or_404(Board, id=board_id)
+    
+
+    members = BoardMember.objects.filter(project=board) 
+    
+    context = {
+        'board': board,
+        'members': members 
+    }
+    return render(request, "boards/BangCVcuaToi.html", context) 
+
+# 2. Hàm xử lý thêm thành viên bằng Email
+def add_member(request, board_id):
+    if request.method == "POST":
+        board = get_object_or_404(Board, id=board_id)
+        email = request.POST.get('email')
+        
+        try:
+            user_to_add = User.objects.get(email=email)
+            
+            if BoardMember.objects.filter(project=board, user=user_to_add).exists():
+                messages.warning(request, f'Thành viên {email} đã có trong bảng này!')
+            else:
+                BoardMember.objects.create(project=board, user=user_to_add, role='member')
+                messages.success(request, f'Đã thêm {email} vào bảng thành công!')
+                
+        except User.DoesNotExist:
+            messages.error(request, f'Không tìm thấy người dùng với email: {email}')
+            
+    return redirect('board_detail', board_id=board_id)
+
+
+
+def delete_board(request, board_id):
+    board = get_object_or_404(Board, id=board_id)
+    
+    if request.user != board.owner:
+        messages.error(request, "Bạn không có quyền xóa bảng này!")
+        return redirect('board_detail', board_id=board_id)
+    
+    if request.method == "POST":
+        board.delete()
+        messages.success(request, "Đã xóa bảng thành công!")
+        return redirect('home_page')
+    return redirect('home_page')
