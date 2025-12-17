@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c0c3e29d-a7eb-4c08-afd4-dd7de57c1bd6" name="Changes" comment="" />
+    <list default="true" id="c0c3e29d-a7eb-4c08-afd4-dd7de57c1bd6" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -32,7 +34,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "django.template.preview.state": "SHOW_EDITOR",
     "git-widget-placeholder": "Tuan",
-    "last_opened_file_path": "C:/Users/User/OneDrive/Documents/GitHub/PythonProject-4people-TodoList/boards/templates/boards",
+    "last_opened_file_path": "C:/Users/User/OneDrive/Documents/GitHub/PythonProject-4people-TodoList",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -44,6 +46,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\User\OneDrive\Documents\GitHub\PythonProject-4people-TodoList" />
       <recent name="C:\Users\User\OneDrive\Documents\GitHub\PythonProject-4people-TodoList\boards\templates\boards" />
     </key>
   </component>
@@ -91,7 +94,7 @@
       <updated>1765289197022</updated>
       <workItem from="1765289198963" duration="201000" />
       <workItem from="1765289429308" duration="1288000" />
-      <workItem from="1765884977205" duration="13492000" />
+      <workItem from="1765884977205" duration="14112000" />
     </task>
     <servers />
   </component>
