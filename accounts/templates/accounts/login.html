@@ -34,6 +34,17 @@
         text-align: center;
     }
 
+    .error-msg {
+        color: #d32f2f;
+        background-color: #ffebee;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        border: 1px solid #ffcdd2;
+        text-align: center;
+    }
+
     /* LOGO + TITLE */
     .logo-row {
     display: flex;
@@ -250,35 +261,42 @@
 
 
         <!-- TITLE -->
-        <h2>Log in to continue</h2>
+        <h2>Đăng nhập để tiếp tục</h2>
 
-        <!-- EMAIL INPUT -->
-        <div class="input-area">
-            <label>Email</label>
-            <input type="email" placeholder="Enter your email">
-
-            <label>Password</label>
-            <input type="password" placeholder="Enter your password">
+        {% if error %}
+        <div class="error-msg">
+            {{ error }}
         </div>
+        {% endif %}
 
-        <!-- REMEMBER ME -->
-        <div class="remember-box">
-            <input type="checkbox" id="remember">
-            <label for="remember" style="margin:0;">Remember me</label>
+        <form method="POST">
+            {% csrf_token %}
 
-            <div class="info-icon">
-                i
-                <div class="tooltip">
-                    We remember your account information for the next time you log in.
+            <div class="input-area">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="Nhập email của bạn" required>
+
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Nhập mật khẩu của bạn" required>
+            </div>
+
+            <div class="remember-box">
+                <input type="checkbox" id="remember" name="remember_me">
+                <label for="remember" style="margin:0;">Nhớ mật khẩu</label>
+
+                <div class="info-icon">
+                    i
+                    <div class="tooltip">
+                        Chúng tôi sẽ nhớ thông tin tài khoản của bạn cho lần đăng nhập tiếp theo.
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- CONTINUE BUTTON -->
-        <button class="btn-primary" onclick="window.location.href='{% url 'create_name_pass' %}'">Continue</button>
+            <button type="submit" class="btn-primary">Đăng nhập</button>
+        </form>
 
         <!-- COUNTINUE WITH -->
-        <div class="line-text">Or continue with:</div>
+        <div class="line-text">Hoặc tiếp tục với:</div>
 
         <button class="oauth-btn">
             <img src="{% static 'accounts/logo_google.png' %}" width="18">
@@ -297,7 +315,7 @@
 
         <!-- BOTTOM LINKS -->
         <div class="bottom-links">
-            <a href="{% url 'reset_pass' %}">Can't log in?</a> • <a href="{% url 'sign_up' %}">Create an account</a>
+            <a href="{% url 'reset_pass' %}">Không thể đăng nhập?</a> • <a href="{% url 'sign_up' %}">Tạo tài khoản mới</a>
         </div>
         
 
@@ -307,20 +325,20 @@
             <img src="{% static 'accounts/logo_alassian.png' %}"/>
 
             <div class="recaptcha-text">
-                <div >One account for Trello, Jira, Confluence and
-                <a href="https://support.atlassian.com/atlassian-account/docs/what-is-an-atlassian-account/">more.</a>
+                <div >Một tài khoản cho Trello, Jira, Confluence và
+                <a href="https://support.atlassian.com/atlassian-account/docs/what-is-an-atlassian-account/">các sản phẩm khác.</a>
                 </div>
 
-                <div><a href="https://www.atlassian.com/legal/privacy-policy">Privacy Policy</a>
+                <div><a href="https://www.atlassian.com/legal/privacy-policy">Chính sách quyền riêng tư</a>
                     <span>•</span>
-                    <a href="https://www.atlassian.com/legal/user-notice#atlassian-user-notice">User Notice</a>
+                    <a href="https://www.atlassian.com/legal/user-notice#atlassian-user-notice">Thông báo người dùng</a>
                 </div>
 
-                This site is protected by reCAPTCHA and the Google
-                <a href="https://policies.google.com/privacy">Privacy Policy</a>
-                and
-                <a href="https://policies.google.com/terms">Terms of Service</a>
-                apply.
+                Trang này được bảo vệ bởi reCAPTCHA và tuân theo
+                <a href="https://policies.google.com/privacy">Chính sách quyền riêng tư</a>
+                và
+                <a href="https://policies.google.com/terms">Điều khoản dịch vụ</a>
+                của Google.
             </div>
         </div>
 

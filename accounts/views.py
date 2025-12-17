@@ -1,16 +1,17 @@
 import random
 
-from django.contrib.auth import login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.urls import reverse
 from accounts.models import EmailOTP, User
 from todo import settings
+from django.contrib import messages
 
 
-def sign_in(request):
-    return render(request, 'accounts/login.html')
+# def sign_in(request):
+#     return render(request, 'accounts/login.html')
 
 def sign_up(request):
     return render(request, 'accounts/register.html')
@@ -137,3 +138,46 @@ def boardspersonal(request):
 
 def members(request):
     return render(request,'accounts/members.html')
+
+
+def sign_in(request):
+    # Nếu người dùng đã đăng nhập rồi thì về trang chủ luôn, không cần hiện form login nữa
+    if request.user.is_authenticated:
+        return redirect('home_page')
+
+    error_message = None
+
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        # Kiểm tra xem có nhập đủ thông tin không
+        if not email or not password:
+            error_message = "Vui lòng nhập đầy đủ Email và Mật khẩu."
+        else:
+            # --- QUAN TRỌNG ---
+            # Hàm authenticate kiểm tra user trong database.
+            # Vì lúc đăng ký ta lưu username = email, nên ở đây tham số username ta truyền vào email.
+            user = authenticate(request, username=email, password=password)
+
+            if user is not None:
+                # Đăng nhập thành công
+                login(request, user)
+
+                # Kiểm tra xem có tick vào ô "Nhớ mật khẩu" không
+                remember = request.POST.get('remember_me')
+                if not remember:
+                    # Nếu không tick, session sẽ hết hạn khi đóng trình duyệt
+                    request.session.set_expiry(0)
+
+                    # Chuyển hướng về trang chủ
+                return redirect('home_page')
+            else:
+                # Đăng nhập thất bại
+                error_message = "Tài khoản hoặc mật khẩu không chính xác."
+
+    return render(request, 'accounts/login.html', {'error': error_message})
+
+def logout_view(request):
+    logout(request)
+    return redirect('sign_in')
