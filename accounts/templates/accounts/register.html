@@ -208,27 +208,27 @@
 
 
         <!-- TITLE -->
-        <h2>Sign up to continue</h2>
+        <h2>Đăng ký để tiếp tục</h2>
 
         <!-- EMAIL INPUT -->
         <div class="input-area">
             <label>Email</label>
-            <input type="email" id="email" placeholder="Enter your email">
+            <input type="email" id="email" placeholder="Nhập email của bạn">
         </div>
 
         <div class="policy-text">
-                By signing up, I accept the Atlassian
-                <a href="https://www.atlassian.com/legal/atlassian-customer-agreement"> Cloud Terms of Service</a>
-                 and acknowledge the
-                <a href="https://www.atlassian.com/legal/privacy-policy">Privacy Policy</a>
+                Bằng cách đăng ký, tôi chấp nhận
+                <a href="https://www.atlassian.com/legal/atlassian-customer-agreement"> điều khoản dịch vụ của Atlassian Cloud</a>
+                 và công nhận
+                <a href="https://www.atlassian.com/legal/privacy-policy">quyền riêng tư</a>
                 .
         </div>
 
         <!-- CONTINUE BUTTON -->
-        <button class="btn-primary" id="btnSignUp" onclick="goVerify()">Sign Up</button>
+        <button class="btn-primary" id="btnSignUp" onclick="goVerify()">Đăng ký</button>
 
         <!-- COUNTINUE WITH -->
-        <div class="line-text">Or continue with:</div>
+        <div class="line-text">Hoặc tiếp tục với:</div>
 
         <button class="oauth-btn">
             <img src="{% static 'accounts/logo_google.png' %}" width="18">
@@ -247,7 +247,7 @@
 
         <!-- BOTTOM LINKS -->
         <div class="bottom-links">
-            <a href="{% url 'sign_in' %}">Already have an Atlassian account? Log in</a>
+            <a href="{% url 'sign_in' %}">Bạn đã có tài khoản Atlassian? Đăng nhập</a>
         </div>
 
         <div class="extra-links">
@@ -256,14 +256,14 @@
             <img src="{% static 'accounts/logo_alassian.png' %}"/>
 
             <div class="recaptcha-text">
-                <div >One account for Trello, Jira, Confluence and
-                <a href="https://support.atlassian.com/atlassian-account/docs/what-is-an-atlassian-account/">more.</a>
+                <div >Một tài khoản cho Trello, Jira, Confluence và
+                <a href="https://support.atlassian.com/atlassian-account/docs/what-is-an-atlassian-account/">các sản phẩm khác.</a>
                 </div>
-                This site is protected by reCAPTCHA and the Google
-                <a href="https://policies.google.com/privacy">Privacy Policy</a>
-                and
-                <a href="https://policies.google.com/terms">Terms of Service</a>
-                apply.
+                Trang này được bảo vệ bởi reCAPTCHA và tuân theo
+                <a href="https://policies.google.com/privacy">Chính sách quyền riêng tư</a>
+                và
+                <a href="https://policies.google.com/terms">Điều khoản dịch vụ</a>
+                của Google.
             </div>
         </div>
 
@@ -298,7 +298,7 @@ function goVerify() {
 
     // Hiệu ứng Loading
     btn.classList.add("btn-loading");
-    btn.innerText = "Sending code...";
+    btn.innerText = "Đang gửi mã...";
 
     // Gửi AJAX request lên server
     const formData = new FormData();
