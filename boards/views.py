@@ -28,6 +28,12 @@ def home_page2(request):
 def home_page_Table(request):
     return render(request, "boards/TrangChu-Bang.html")
 
+def log_out(request):
+    return render(request, "accounts/login.html")
+
+def about_me(request):
+    return render(request, "accounts/SitePersonal.html")
+
 # 1. Hiển thị trang chủ và danh sách Board
 @login_required(login_url='/login/')
 def home_page(request):
