@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('role', models.CharField(default='member', max_length=20)),
                 ('joined_at', models.DateTimeField(auto_now_add=True)),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='boards.board')),
+                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='boards.board',null="TRUE")),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='accounts.user')),
             ],
         ),

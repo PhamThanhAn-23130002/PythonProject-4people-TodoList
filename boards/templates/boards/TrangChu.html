@@ -348,6 +348,107 @@
             background: #20242b;
         }
 
+        /* --- PHẦN CSS CÒN THIẾU CHO MODAL --- */
+        #modalOverlay {
+            display: none; /* Ẩn mặc định */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Nền đen mờ */
+            z-index: 1000; /* Nổi lên trên cùng */
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            background: #2b3038; /* Màu nền giống sidebar */
+            padding: 24px;
+            border-radius: 8px;
+            width: 400px;
+            max-width: 90%;
+            border: 1px solid var(--stroke);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            position: relative;
+            color: #d9dee3;
+        }
+
+        .modal h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #e7ecf0;
+        }
+
+        .modal .close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #a8b0b8;
+        }
+
+        .modal .close:hover {
+            color: #fff;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .input-group input, 
+        .input-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #454d59;
+            background: #1f2329;
+            color: white;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .error-text {
+            color: #ff6b6b;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none; /* Ẩn mặc định */
+        }
+
+        .btn-create {
+            width: 100%;
+            padding: 10px;
+            background: var(--primary);
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            opacity: 0.5;
+            pointer-events: none; /* Khóa nút khi chưa nhập */
+            transition: 0.2s;
+        }
+
+        .btn-create.enabled {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .btn-create:hover {
+            background: var(--primary-2);
+        }
+
 
     </style>
 </head>
@@ -365,7 +466,7 @@
     </div>
 
     <div class="top-actions">
-        <button class="btn">Tạo mới</button>
+        <button id="openModalBtn" class="btn">Tạo mới</button>
         <button class="icon-btn" title="Thông báo">🔔</button>
         <button class="icon-btn" title="Trợ giúp">?</button>
         <div class="avatar" title="TT">TT</div>
@@ -400,7 +501,7 @@
         </main>
 
         <!-- RIGHT RAIL -->
-        <aside class="right">
+        {% comment %} <aside class="right">
             <a href="{% url 'create_board' %}" class="recent-link">
                 <div>
                     <div class="section-title">Đã xem gần đây</div>
@@ -422,7 +523,129 @@
             </div>
         </aside>
     </div>
-</div>
+</div> {% endcomment %}
+
+<aside class="right">
+    <div class="section-title">Các bảng của bạn</div>
+    
+    {% for board in boards %}
+        <a href="{% url 'board_detail' board.id %}" class="recent-link"> <div>
+                <div class="recent-card">
+                    <div class="recent-thumb" style="background-color: #519839;"></div>
+                    <div class="recent-info">
+                        <div class="title">{{ board.name }}</div>
+                        <div class="meta">
+                            {% if board.visibility == 'workspace' %}
+                                Không gian làm việc
+                            {% elif board.visibility == 'public' %}
+                                Công khai
+                            {% else %}
+                                Riêng tư
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    {% empty %}
+        <p style="color: #a8b0b8; font-size: 14px; padding: 10px;">Bạn chưa có bảng nào.</p>
+    {% endfor %}
+    <div style="margin-top: 20px;">
+        <div class="section-title">Liên Kết</div>
+        <div class="create-tile" id="openModalCreate" style="cursor: pointer;">
+            <div class="plus">+</div>
+            Tạo bảng mới
+        </div>
+    </div>
+</aside>
+
+        <!-- OVERLAY (ẩn ban đầu) -->
+   <form method="post" action="{% url 'create_board' %}"> 
+    {% csrf_token %}  <div id="modalOverlay">
+        <div class="modal">
+            <div class="close" id="closeBtn">×</div>
+            <h2>Tạo bảng</h2>
+
+            <div class="input-group">
+                <label>Tiêu đề bảng *</label>
+                <input id="boardTitle" name="title" type="text" placeholder="Nhập tiêu đề" required />
+                <div class="error-text" id="titleError">👋 Tiêu đề bảng là bắt buộc</div>
+            </div>
+
+            <div class="input-group">
+                <label>Quyền xem</label>
+                <select name="visibility">
+                    <option value="workspace">Không gian làm việc</option>
+                    <option value="private">Riêng tư</option>
+                    <option value="public">Công khai</option>
+                </select>
+            </div>
+
+            <button class="btn-create" id="createBtn" type="submit">Tạo mới</button>
+        </div>
+    </div>
+</form>
+
+<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const modalOverlay = document.getElementById("modalOverlay");
+            const openModalBtn = document.getElementById("openModalBtn");     // Nút trên topbar
+            const openModalCreate = document.getElementById("openModalCreate"); // Nút ở sidebar phải
+            const closeBtn = document.getElementById("closeBtn");
+            
+            const boardTitle = document.getElementById("boardTitle");
+            const titleError = document.getElementById("titleError");
+            const createBtn = document.getElementById("createBtn");
+
+            // Hàm mở Modal
+            function openModal() {
+                if(modalOverlay) {
+                    modalOverlay.style.display = "flex";
+                    if(boardTitle) boardTitle.focus();
+                }
+            }
+
+            // Hàm đóng Modal
+            function closeModal() {
+                if(modalOverlay) {
+                    modalOverlay.style.display = "none";
+                    if(boardTitle) boardTitle.value = "";
+                    if(titleError) titleError.style.display = "none";
+                    if(createBtn) {
+                        createBtn.classList.remove("enabled");
+                        createBtn.disabled = true;
+                    }
+                }
+            }
+
+            // Gắn sự kiện click
+            if (openModalBtn) openModalBtn.onclick = openModal;
+            if (openModalCreate) openModalCreate.onclick = openModal;
+            if (closeBtn) closeBtn.onclick = closeModal;
+
+            // Click ra ngoài vùng đen để đóng
+            if (modalOverlay) {
+                modalOverlay.onclick = (e) => {
+                    if (e.target === modalOverlay) closeModal();
+                };
+            }
+
+            // Validate Input
+            if (boardTitle) {
+                boardTitle.oninput = () => {
+                    if (boardTitle.value.trim() === "") {
+                        titleError.style.display = "block";
+                        createBtn.classList.remove("enabled");
+                        createBtn.disabled = true;
+                    } else {
+                        titleError.style.display = "none";
+                        createBtn.classList.add("enabled");
+                        createBtn.disabled = false;
+                    }
+                };
+            }
+        });
+    </script>
 
 </body>
 </html>

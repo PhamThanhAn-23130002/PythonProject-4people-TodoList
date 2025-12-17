@@ -1,5 +1,3 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-
 def task_list(request):
-    return render(request, 'tasks/TrangChu.html')
+    return render(request, 'boards/TrangChu.html')
