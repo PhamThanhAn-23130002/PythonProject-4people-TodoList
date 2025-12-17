@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Board, BoardMember, User
 from django.contrib import messages # Để thông báo lỗi/thành công
-from django.http import HttpResponse,request
-
+from django.http import HttpResponse, request, JsonResponse
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 
 
@@ -65,13 +67,14 @@ def create_board(request):
 
 def board_detail(request, board_id):
     board = get_object_or_404(Board, id=board_id)
-    
+    members = BoardMember.objects.filter(project=board)
 
-    members = BoardMember.objects.filter(project=board) 
-    
+    session_key = f"board_{board_id}_lists"
+    lists = request.session.get(session_key, [])
     context = {
         'board': board,
-        'members': members 
+        'members': members,
+        'lists': lists,
     }
     return render(request, "boards/BangCVcuaToi.html", context) 
 
@@ -109,3 +112,32 @@ def delete_board(request, board_id):
         messages.success(request, "Đã xóa bảng thành công!")
         return redirect('home_page')
     return redirect('home_page')
+
+
+
+@csrf_exempt
+def save_board_session(request, board_id):
+    #Lưu danh sách + thẻ tạm thời vào session (chưa DB)
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        # key session theo từng board
+        session_key = f"board_{board_id}_lists"
+
+        request.session[session_key] = data.get("lists", [])
+        request.session.modified = True
+
+        return JsonResponse({"status": "ok"})
+
+
+
+
+
+
+
+
+
+
+
+
+
