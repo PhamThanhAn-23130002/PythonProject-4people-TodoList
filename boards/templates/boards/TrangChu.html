@@ -348,7 +348,7 @@
             background: #20242b;
         }
 
-        /* --- PHẦN CSS CÒN THIẾU CHO MODAL --- */
+        /* --- PHẦN CSS CHO MODAL --- */
         #modalOverlay {
             display: none; /* Ẩn mặc định */
             position: fixed;
@@ -449,6 +449,96 @@
             background: var(--primary-2);
         }
 
+        /* ===== ACCOUNT MENU ===== */
+        .account-wrap {
+            position: relative;
+        }
+
+        .account-menu {
+            position: absolute;
+            top: 44px;
+            right: 0;
+            width: 300px;
+            background: #2b2f36;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .5);
+            padding: 12px 0;
+            display: none;
+            z-index: 1000;
+        }
+
+        .account-menu.show {
+            display: block;
+        }
+
+        .menu-section {
+            padding: 0 16px;
+        }
+
+        .menu-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #9aa3ad;
+            margin-bottom: 8px;
+        }
+
+        .account-info {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            padding: 8px 0;
+            cursor: pointer;
+
+        }
+
+        .account-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ffb03a;
+            color: #141414;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+        }
+
+        .account-name {
+            font-weight: 700;
+        }
+
+        .account-email {
+            font-size: 13px;
+            color: #a8b0b8;
+        }
+
+        .menu-item {
+    display: block; 
+    width: 100%;   
+    padding: 10px 16px;
+    cursor: pointer;
+    color: #e7ecf0;
+    font-size: 14px;
+    text-decoration: none; 
+    box-sizing: border-box; 
+    transition: background 0.2s; 
+}
+
+.menu-item:hover {
+    background: #3a3f47;
+}
+
+
+.menu-item.logout {
+    color: #ff8b8b;
+    font-weight: 600;
+    margin-left: 0 !important; 
+    border-top: 1px solid #3a3f47; 
+    margin-top: 4px;
+}
+
 
     </style>
 </head>
@@ -469,7 +559,41 @@
         <button id="openModalBtn" class="btn">Tạo mới</button>
         <button class="icon-btn" title="Thông báo">🔔</button>
         <button class="icon-btn" title="Trợ giúp">?</button>
-        <div class="avatar" title="TT">TT</div>
+               <div class="account-wrap">
+            <div class="avatar" id="accountBtn">TT</div>
+
+            <div class="account-menu" id="accountMenu">
+                <!-- TÀI KHOẢN -->
+                <div class="menu-section">
+                    <div class="menu-title">TÀI KHOẢN</div>
+                    <div class="account-info">
+                        <div class="account-avatar">TT</div>
+                        <div>
+                            <div class="account-name">Tran Anh Tuan</div>
+                            <div class="account-email">23130372@st.hcmuaf.edu.vn</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-divider"></div>
+
+                <!-- TRELLO -->
+                <div class="menu-section">
+                    <div class="menu-title">LIST</div>
+
+                   <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Chuyển đổi tài khoản</a>
+                   <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Quản lý tài khoản</a>
+                    <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Hồ sơ và hiển thị</a>
+                    <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Cài đặt</a>
+                </div>
+
+                <div class="menu-divider"></div>
+
+                <!-- ĐĂNG XUẤT -->
+                <a class="menu-item logout" href = "{% url 'log_out' %}" style = "text-decoration:none;
+                margin-left: 20px">Đăng xuất</a>
+            </div>
+        </div>
     </div>
 </header>
 
@@ -645,6 +769,16 @@
                 };
             }
         });
+
+    const btn = document.getElementById('accountBtn'); 
+    const menu = document.getElementById('accountMenu');
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation(); 
+        menu.classList.toggle('show'); 
+    });
+    document.addEventListener('click', () => {
+        menu.classList.remove('show');
+    });
     </script>
 
 </body>
