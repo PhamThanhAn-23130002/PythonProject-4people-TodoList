@@ -25,6 +25,7 @@
                 border-radius: 12px;      
                 padding: 20px; 
                 box-shadow: 0 8px 20px rgba(0,0,0,0.5); 
+                position:relatives;
             }
             .headerchild{
                 display:flex;
@@ -203,6 +204,16 @@
 .activity-input{
     margin-left: 10px;
 }
+.optionchecklist{
+    display:none;
+    position:absolute;
+    background-color: #2a2b2f;
+    border: 1px solid #3d3d3d;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
         </style>
     </head>
     <body>
@@ -221,17 +232,18 @@
                 <input class="complete" type="checkbox">
                 <textarea class="subject"></textarea>
                 <div class="buttons">
-                    <button>add</button>
-                    <button>ngày</button>
+                    <button>thêm</button>
+                    <button onclick="date(this)">ngày</button>
                     <button>cần làm</button>
-                    <button>thành viên</button>
+                    <button onclick="addmember(this)">thành viên</button>
                 </div>
+
                 <h6 class="decriptionh6" >mô tả</h6>
                 <textarea class="description" rows="4" cols="50"></textarea>
                 <h6 class="decriptionh6"> trường tùy chỉnh</h6>
                 <div class="dtuychinh">
                     <div class="detailtuychinh">
-                    <p>priority</p>
+                    <p>ưu tiên</p>
                    <select class="priority">
                     <option value="">--</option>
                     <option value="">ưu tiên cao nhất</option>
@@ -243,7 +255,7 @@
                    </select>
                    </div>
                 <div class="detailtuychinh">
-                    <p>priority</p>
+                    <p>trang thái</p>
                    <select class="priority">
                     <option value="">--</option>
                     <option value="">việc cần làm</option>
@@ -254,7 +266,7 @@
                    </select>
                    </div>
                 <div class="detailtuychinh">
-                    <p>risk</p>
+                    <p>phức tạp</p>
                    <select class="priority">
                     <option value="">--</option>
                     <option value="">ưu tiên cao nhất</option>
@@ -296,8 +308,36 @@
             <span class="time">vừa xong</span>
         </div>
     </div>
+    
             </div>
         </div>
         </div>
+        <div class="optionchecklist" id="choosedate">
+            <input type="date" >
+            <button>choose</button>
+            <button id=xdate onclick="date(this)">&#10005</button>
+        </div>
+        <div class="optionchecklist" id="member">
+            <input type="text"><br>
+            <button id=xdate onclick="addmember(this)">&#10005</button>
+        </div>
+    <Script>
+        function date(e){
+        if(e.id=="xdate"){
+            document.getElementById("choosedate").style.display = 'none';
+        }else{document.getElementById("choosedate").style.display = 'block';
+        document.getElementById("member").style.display = 'none';
+        document.getElementById("member").style.display = 'none';}
+        }
+        function addmember(e){
+        if(e.id=="xdate"){
+            document.getElementById("member").style.display = 'none';
+        }else {document.getElementById("member").style.display = 'block';
+        document.getElementById("choosedate").style.display = 'none';
+        document.getElementById("choosedate").style.display = 'none';
+    }
+        
+    }
+    </Script>
     </body>
 </html>

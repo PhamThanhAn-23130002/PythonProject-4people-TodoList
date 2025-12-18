@@ -4,9 +4,6 @@ from .models import Board, BoardMember, User
 from django.contrib import messages # Để thông báo lỗi/thành công
 from django.http import HttpResponse,request
 
-
-
-
 def create_board(request):
     return render(request, "boards/BangCVcuaToi.html")
 
