@@ -299,21 +299,30 @@
         }
 
 
-        .menu-item {
-            padding: 10px 16px;
-            cursor: pointer;
-            color: #e7ecf0;
-            font-size: 14px;
-        }
+.menu-item {
+    display: block; 
+    width: 100%;   
+    padding: 10px 16px;
+    cursor: pointer;
+    color: #e7ecf0;
+    font-size: 14px;
+    text-decoration: none; 
+    box-sizing: border-box; 
+    transition: background 0.2s; 
+}
 
-        .menu-item:hover {
-            background: #3a3f47;
-        }
+.menu-item:hover {
+    background: #3a3f47;
+}
 
-        .menu-item.logout {
-            color: #ff8b8b;
-            font-weight: 600;
-        }
+
+.menu-item.logout {
+    color: #ff8b8b;
+    font-weight: 600;
+    margin-left: 0 !important; 
+    border-top: 1px solid #3a3f47; 
+    margin-top: 4px;
+}
 
         /* ===== BOARD MORE MENU ===== */
         .board-more-wrap {
@@ -662,7 +671,7 @@
         .avatar {
             width: 36px;
             height: 36px;
-            background: #1f70ff;
+            background: #ffb03a;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -777,7 +786,6 @@
     </div>
     <div class="search"><input placeholder="Tìm kiếm" aria-label="Tìm kiếm"></div>
     <div class="top-actions">
-        <button class="btn">Tạo mới</button>
         <button class="icon-btn" title="Thông báo">🔔</button>
         <button class="icon-btn" title="Trợ giúp">?</button>
 
@@ -803,11 +811,10 @@
                 <div class="menu-section">
                     <div class="menu-title">LIST</div>
 
-                    <div class="menu-item">Chuyển đổi tài khoản</div>
-                    <div class="menu-item">Quản lý tài khoản</div>
-
+                   <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Chuyển đổi tài khoản</a>
+                   <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Quản lý tài khoản</a>
                     <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Hồ sơ và hiển thị</a>
-                    <div class="menu-item">Cài đặt</div>
+                    <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Cài đặt</a>
                 </div>
 
                 <div class="menu-divider"></div>
@@ -834,7 +841,7 @@
 
                 <div class="menu-share-users">
                     <div class="menu-share-btn">
-                        <svg class="share-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        {% comment %} <svg class="share-icon" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M16 11c1.66 0 3-1.34 3-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
                         </svg>
                         Chia sẻ
@@ -845,7 +852,7 @@
                         <div class="user-avatar u-cyan">TA</div>
                         <div class="user-avatar u-blue">
                             <span class="user-icon">👤</span>
-                        </div>
+                        </div> {% endcomment %}
                     </div>
                 </div>
 
