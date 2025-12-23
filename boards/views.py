@@ -75,6 +75,10 @@ def create_board(request):
 def board_detail(request, board_id):
     board = get_object_or_404(Board, id=board_id)
     members = BoardMember.objects.filter(project=board)
+    
+    all_boards = Board.objects.filter(
+        Q(owner=request.user) | Q(boardmember__user=request.user)
+    ).distinct().order_by('-created_at')
 
     session_key = f"board_{board_id}_lists"
     lists = request.session.get(session_key, [])
@@ -82,6 +86,7 @@ def board_detail(request, board_id):
         'board': board,
         'members': members,
         'lists': lists,
+        'all_boards': all_boards,
     }
     return render(request, "boards/BangCVcuaToi.html", context) 
 
