@@ -14,4 +14,5 @@ urlpatterns = [
     path("boards/<int:board_id>/save-session/",views.save_board_session,name="save_board_session"),
     path("log_out", av.logout_view, name="log_out"),
     path("about_me", views.about_me, name="about_me"),
+    path('join/<uuid:token>/', views.join_via_link, name='join_via_link'),
 ]

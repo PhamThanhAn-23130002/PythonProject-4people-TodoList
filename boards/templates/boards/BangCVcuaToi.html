@@ -1085,18 +1085,16 @@
             <div class="close" id="closeBtn">×</div>
             <h2>Chia sẻ bảng</h2>
 
-
             <div class="form-row">
-                <input type="text" name="email" placeholder="Địa chỉ email hoặc tên"/>
-                <select>
-                    <option>Thành viên</option>
-                    <option>Quản trị viên</option>
+                <input type="text" name="email" placeholder="Địa chỉ email hoặc tên" required />
+                <select name="role">
+                    <option value="member">Thành viên</option>
+                    <option value="admin">Quản trị viên</option>
                 </select>
-                <!--<button class="share-btn">Chia sẻ</button>-->
                 <button type="submit" class="share-btn">Chia sẻ</button>
             </div>
-            <div class="board-actions">
 
+            <div class="board-actions" style="margin-bottom: 15px;">
                 <div style="display: flex; margin-right: 8px;">
                     {% for member in members %}
                         <div title="{{ member.user.email }}"
@@ -1110,42 +1108,59 @@
             <div>
                 <strong>Chia sẻ bảng này bằng liên kết</strong>
             </div>
-            <a href="#" style="color:#579dff; font-size:14px; text-decoration:none;">Tạo liên kết</a>
+            
+            <div id="linkSection" style="margin-top: 8px;">
+                <a href="javascript:void(0)" id="createLinkBtn" style="color:#579dff; font-size:14px; text-decoration:none;">
+                    Tạo liên kết
+                </a>
+
+                <div id="linkDisplay" style="display: none; align-items: center; gap: 5px;">
+                    <input type="text" id="shareUrlInput" 
+                           value="{{ request.scheme }}://{{ request.get_host }}{% url 'join_via_link' board.share_token %}" 
+                           readonly 
+                           style="font-size: 13px; color: #aaa; background: #222; border: 1px solid #444; width: 100%; padding: 8px;">
+                    
+                    <button type="button" id="copyLinkBtn" title="Sao chép" 
+                            style="background: #3a3f47; border: none; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer;">
+                        📋
+                    </button>
+                </div>
+                
+                <div id="copySuccess" style="display:none; color: #4bce97; font-size: 12px; margin-top: 5px;">
+                    ✅ Đã sao chép vào bộ nhớ tạm!
+                </div>
+            </div>
 
             <div class="divider"></div>
 
             <h3 style="margin-bottom: 10px;">Thành viên của bảng</h3>
 
-            <div style="max-height: 200px; overflow-y: auto;"> {% for member in members %}
-                <div class="member-row"
-                     style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-                    <div class="member-info" style="display: flex; align-items: center; gap: 10px;">
-                        <div class="avatar"
-                             style="width: 32px; height: 32px; background: #ffb03a; color: #141414; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
-                            {{ member.user.username|slice:":2"|upper }}
+            <div style="max-height: 200px; overflow-y: auto;"> 
+                {% for member in members %}
+                    <div class="member-row" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <div class="member-info" style="display: flex; align-items: center; gap: 10px;">
+                            <div class="avatar" style="width: 32px; height: 32px; background: #ffb03a; color: #141414; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                {{ member.user.username|slice:":2"|upper }}
+                            </div>
+
+                            <div>
+                                <div style="font-weight: 600;">
+                                    {{ member.user.username }}
+                                    {% if member.user == request.user %}(bạn){% endif %}
+                                </div>
+                                <div style="font-size:12px; color:#aaa;">{{ member.user.email }}</div>
+                            </div>
                         </div>
 
-                        <div>
-                            <div style="font-weight: 600;">{{ member.user.username }}
-                                {% if member.user == request.user %}(bạn){% endif %}</div>
-                            <div style="font-size:12px; color:#aaa;">{{ member.user.email }}</div>
-                        </div>
+                        <span style="color: #a8b0b8; font-size: 13px;">{{ member.role }}</span>
                     </div>
-
-                    <span style="color: #a8b0b8; font-size: 13px;">{{ member.role }}</span>
-                </div>
                 {% empty %}
-                <p>Chưa có thành viên nào.</p>
-            {% endfor %}
+                    <p style="color: #aaa; font-style: italic;">Chưa có thành viên nào.</p>
+                {% endfor %}
             </div>
-            <select>
-                <option selected>Quản trị viên</option>
-                <option>Thành viên</option>
-            </select>
-        </div>
-
+            
+            </div>
     </div>
-
 </form>
 
 <div class="floating-footer">
@@ -1525,5 +1540,41 @@
             }
         });
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // --- Xử lý Logic Link Chia sẻ ---
+        const createLinkBtn = document.getElementById("createLinkBtn");
+        const linkDisplay = document.getElementById("linkDisplay");
+        const copyLinkBtn = document.getElementById("copyLinkBtn");
+        const shareUrlInput = document.getElementById("shareUrlInput");
+        const copySuccess = document.getElementById("copySuccess");
+
+        // 1. Khi bấm "Tạo liên kết"
+        if(createLinkBtn) {
+            createLinkBtn.onclick = function() {
+                createLinkBtn.style.display = "none"; // Ẩn chữ Tạo liên kết
+                linkDisplay.style.display = "flex";   // Hiện ô input link
+                shareUrlInput.select();               // Bôi đen sẵn link
+            };
+        }
+
+        // 2. Khi bấm nút Copy
+        if(copyLinkBtn) {
+            copyLinkBtn.onclick = function() {
+                // Copy nội dung
+                shareUrlInput.select();
+                shareUrlInput.setSelectionRange(0, 99999); // Cho điện thoại
+                navigator.clipboard.writeText(shareUrlInput.value);
+
+                // Hiện thông báo thành công
+                copySuccess.style.display = "block";
+                
+                // Tắt thông báo sau 2 giây
+                setTimeout(() => {
+                    copySuccess.style.display = "none";
+                }, 2000);
+            };
+        }
+    });
 </script>
 </html>

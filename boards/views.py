@@ -140,6 +140,27 @@ def save_board_session(request, board_id):
         request.session.modified = True
 
         return JsonResponse({"status": "ok"})
+    
+
+def join_via_link(request, token):
+    # Tìm bảng dựa trên token (chứ không phải ID)
+    board = get_object_or_404(Board, share_token=token)
+    
+    # Nếu user chưa đăng nhập thì bắt đăng nhập trước
+    if not request.user.is_authenticated:
+        # (Chỗ này bạn có thể redirect sang trang login)
+        return redirect('/login/') 
+        
+    # Kiểm tra xem đã là thành viên chưa
+    if not BoardMember.objects.filter(project=board, user=request.user).exists():
+        # Chưa thì thêm vào làm thành viên
+        BoardMember.objects.create(project=board, user=request.user, role='member')
+        messages.success(request, f"Bạn đã tham gia vào bảng {board.name} thành công!")
+    else:
+        messages.info(request, "Bạn đã là thành viên của bảng này rồi.")
+        
+    # Chuyển hướng vào trang chi tiết bảng
+    return redirect('board_detail', board_id=board.id)
 
 
 
