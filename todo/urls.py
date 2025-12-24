@@ -19,8 +19,9 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('accounts.urls')),   # 👈 Trang chủ load app tasks
+    path('', include('accounts.urls')),   # 
     # path('accounts/', include('accounts.urls')),
     path('boards/', include('boards.urls')),
     # path('notifications/', include('notifications.urls')),
+    path('tasks/',include('tasks.urls'))
 ]

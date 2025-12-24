@@ -35,7 +35,7 @@ class Checklist(models.Model):
     id = models.CharField(max_length=10, primary_key=True)
     task_id = models.OneToOneField(Task, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
-    
+   
 class ChecklistItem(models.Model):
     id = models.CharField(max_length=10, primary_key=True)
     checklist_id = models.ForeignKey(Checklist, on_delete=models.CASCADE)

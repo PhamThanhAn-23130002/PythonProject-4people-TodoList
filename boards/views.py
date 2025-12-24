@@ -6,6 +6,7 @@ from django.contrib import messages # Để thông báo lỗi/thành công
 from django.http import HttpResponse, request, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from tasks.models import Task
 import json
 from django.db.models import Q #phép tuyển
 from .models import Board, List, Card
