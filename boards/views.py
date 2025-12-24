@@ -34,14 +34,26 @@ def home_page_Table(request):
 def about_me(request):
     return render(request, "accounts/SitePersonal.html")
 
+
+def dismiss_intro(request):
+    # Lưu vào session là đã tắt intro rồi
+    request.session['intro_dismissed'] = True
+    return redirect('home_page')
+
+
 # 1. Hiển thị trang chủ và danh sách Board
 @login_required(login_url='/login/')
 def home_page(request):
     boards = Board.objects.filter(
         Q(owner=request.user) | Q(boardmember__user=request.user)
     ).distinct().order_by('-created_at')  # .distinct() giúp loại bỏ trùng lặp nếu lỡ bạn vừa là chủ vừa là thành viên
+    
+    # Kiểm tra xem người dùng đã tắt intro chưa (mặc định là False - tức là chưa tắt)
+    # Nếu trong session có 'intro_dismissed' = True thì show_intro sẽ là False
+    show_intro = not request.session.get('intro_dismissed', False)
     context = {
-        'boards': boards
+        'boards': boards,
+        'show_intro': show_intro,
     }
     return render(request, "boards/TrangChu.html", context)
 
