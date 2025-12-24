@@ -609,7 +609,7 @@
 <header class="topbar">
     <div class="brand">
         <div class="logo">L</div>
-        <span>List</span>
+        <span >List</span>
     </div>
 
     <div class="search">
@@ -643,7 +643,6 @@
                     <div class="menu-title">LIST</div>
 
                    <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Chuyển đổi tài khoản</a>
-                   <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Quản lý tài khoản</a>
                     <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Hồ sơ và hiển thị</a>
                     <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Cài đặt</a>
                 </div>
@@ -681,7 +680,7 @@
             <p>Đặt tất cả mọi thứ ở một nơi và bắt đầu di chuyển mọi thứ về phía trước với
                 bảng List đầu tiên của bạn!</p>
             <div class="cta">
-                <button class="primary" id="createBoardHeroBtn">Tạo một bảng Không gian làm việc</button>
+                {% comment %} <button class="primary" id="createBoardHeroBtn">Tạo một bảng Không gian làm việc</button> {% endcomment %}
                 <a href="{% url 'dismiss_intro' %}" style="cursor: pointer;">Đã hiểu! Bỏ qua điều này.</a>
             </div>
         </section>

@@ -10,7 +10,6 @@ import json
 from django.db.models import Q #phép tuyển
 
 
-
 def create_board(request):
     return render(request, "boards/BangCVcuaToi.html")
 
