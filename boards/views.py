@@ -11,7 +11,6 @@ from django.db.models import Q #phép tuyển
 from .models import Board, List, Card
 
 
-
 def create_board(request):
     return render(request, "boards/BangCVcuaToi.html")
 

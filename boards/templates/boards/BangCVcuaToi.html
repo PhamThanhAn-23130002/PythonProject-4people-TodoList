@@ -908,7 +908,7 @@
 <!-- TOPBAR -->
 <header class="topbar">
     <div class="brand">
-        <div class="logo">L</div>
+        <a class="logo" onclick="window.location.href='{% url 'home_page' %}''">L</a>
         <span>List</span>
     </div>
     <div class="search"><input placeholder="Tìm kiếm" aria-label="Tìm kiếm"></div>
@@ -944,11 +944,17 @@
                 <div class="menu-section">
                     <div class="menu-title">LIST</div>
 
+<<<<<<< HEAD
+                   <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Chuyển đổi tài khoản</a>
+                    <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Hồ sơ và hiển thị</a>
+                    <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Cài đặt</a>
+=======
                     <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Chuyển đổi tài
                         khoản</a>
                     <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Quản lý tài khoản</a>
                     <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Hồ sơ và hiển thị</a>
                     <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Cài đặt</a>
+>>>>>>> main
                 </div>
 
                 <div class="menu-divider"></div>
@@ -1154,8 +1160,8 @@
             <div class="form-row">
                 <input type="text" name="email" placeholder="Địa chỉ email hoặc tên" required/>
                 <select name="role">
-                    <option value="member">Thành viên</option>
-                    <option value="admin">Quản trị viên</option>
+                    <option value="Thành viên">Thành viên</option>
+                    <option value="Quản trị viên">Quản trị viên</option>
                 </select>
                 <button type="submit" class="share-btn">Chia sẻ</button>
             </div>
