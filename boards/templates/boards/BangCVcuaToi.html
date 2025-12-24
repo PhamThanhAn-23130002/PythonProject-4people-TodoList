@@ -868,6 +868,37 @@
         .card:hover {
             background: #2d2d2d;
         }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 16px;
+            cursor: pointer;
+            color: #a8b0b8;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+
+        /* hover */
+        .footer-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #e7ecf0;
+        }
+
+        /* ACTIVE (đang ở trang đó) */
+        .footer-item.active {
+            background: rgba(110, 166, 255, 0.15);
+            color: #6ea6ff;
+            font-weight: 700;
+        }
+
+        /* gạch phân cách */
+        .footer-divider {
+            color: #555;
+            margin: 0 6px;
+        }
     </style>
 
 
@@ -877,7 +908,7 @@
 <!-- TOPBAR -->
 <header class="topbar">
     <div class="brand">
-        <div class="logo">L</div>
+        <a class="logo" onclick="window.location.href='{% url 'home_page' %}''">L</a>
         <span>List</span>
     </div>
     <div class="search"><input placeholder="Tìm kiếm" aria-label="Tìm kiếm"></div>
@@ -893,12 +924,18 @@
                 <div class="menu-section">
                     <div class="menu-title">TÀI KHOẢN</div>
                     <div class="account-info">
-                        <div class="account-avatar">TT</div>
-                        <div>
-                            <div class="account-name">Tran Anh Tuan</div>
-                            <div class="account-email">23130372@st.hcmuaf.edu.vn</div>
+                        <div class="account-avatar">
+                            {{ request.user.username|slice:":2"|upper }}
                         </div>
-                    </div>
+                        <div>
+                            <div class="account-name">
+                                {{ request.user.get_full_name|default:request.user.username }}
+                            </div>
+                            <div class="account-email">
+                                {{ request.user.email }}
+                            </div>
+                        </div>
+
                 </div>
 
                 <div class="menu-divider"></div>
@@ -906,12 +943,9 @@
                 <!-- TRELLO -->
                 <div class="menu-section">
                     <div class="menu-title">LIST</div>
-
-                    <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Chuyển đổi tài
-                        khoản</a>
-                    <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Quản lý tài khoản</a>
-                    <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Hồ sơ và hiển thị</a>
-                    <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Cài đặt</a>
+                    <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Chuyển đổi tài khoản</a>
+                    <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Hồ sơ và hiển thị</a>
+                    <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Cài đặt</a>
                 </div>
 
                 <div class="menu-divider"></div>
@@ -1117,8 +1151,8 @@
             <div class="form-row">
                 <input type="text" name="email" placeholder="Địa chỉ email hoặc tên" required/>
                 <select name="role">
-                    <option value="member">Thành viên</option>
-                    <option value="admin">Quản trị viên</option>
+                    <option value="Thành viên">Thành viên</option>
+                    <option value="Quản trị viên">Quản trị viên</option>
                 </select>
                 <button type="submit" class="share-btn">Chia sẻ</button>
             </div>
@@ -1197,10 +1231,15 @@
 </form>
 
 <div class="floating-footer">
-    <span style="cursor: pointer;">📅 Bảng thông tin</span>
-    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <a href="{% url 'board_detail' board.id %}"
+       class="footer-item {% if active_tab == 'board' %}active{% endif %}">
+        📅 Bảng thông tin
+    </a>
 
-    <span id="switchViewBtn" style="cursor: pointer;">
+    <span class="footer-divider">|</span>
+
+    <span id="switchViewBtn"
+          class="footer-item {% if active_tab == 'switch' %}active{% endif %}">
         🔄 Chuyển đổi các bảng
     </span>
 </div>

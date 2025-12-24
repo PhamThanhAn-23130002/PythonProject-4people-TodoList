@@ -10,7 +10,7 @@ from tasks.models import Task
 import json
 from django.db.models import Q #phép tuyển
 from .models import Board, List, Card
-
+from tasks.models import Task
 
 def create_board(request):
     return render(request, "boards/BangCVcuaToi.html")
@@ -209,8 +209,6 @@ def join_via_link(request, token):
     # Chuyển hướng vào trang chi tiết bảng
     return redirect('board_detail', board_id=board.id)
 
-
-#-----------------------------------------------------------thêm----------------------------------------
 def createdealine(request):
  if request.method == "POST":
     d1 = request.POST.get("title")
@@ -226,7 +224,6 @@ def createdealine(request):
         status = d4,
         difficulty =d5,
         deadline =d6)
-
 
 
 

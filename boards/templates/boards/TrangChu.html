@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>Trang chủ – List</title>
+    <title>Trang chủ – List</title>+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -668,7 +668,7 @@
 <header class="topbar">
     <div class="brand">
         <div class="logo">L</div>
-        <span>List</span>
+        <span >List</span>
     </div>
 
     <div class="search">
@@ -684,11 +684,16 @@
                 <div class="noti-header">
                     <h3>Thông báo</h3>
                 </div>
+                <div class="menu-divider"></div>
 
+
+                <!-- TRELLO -->
+                <div class="menu-section">
                 <div class="noti-content">
                     <img src="https://trello.com/assets/ee2660df9335718b1a80.svg" alt="Sleepy dog" class="noti-img">
                     <div class="noti-empty-text">Không có thông báo</div>
                     <div style="margin-top: 10px; color: #ff6b6b; font-size: 12px; display: none;">Click to view details</div>
+
                 </div>
             </div>
         </div>
@@ -753,6 +758,7 @@
     </div>
 </div>
     </div>
+    </div>
 </header>
 
 <div class="shell">
@@ -778,7 +784,7 @@
             <p>Đặt tất cả mọi thứ ở một nơi và bắt đầu di chuyển mọi thứ về phía trước với
                 bảng List đầu tiên của bạn!</p>
             <div class="cta">
-                <button class="primary" id="createBoardHeroBtn">Tạo một bảng Không gian làm việc</button>
+                {% comment %} <button class="primary" id="createBoardHeroBtn">Tạo một bảng Không gian làm việc</button> {% endcomment %}
                 <a href="{% url 'dismiss_intro' %}" style="cursor: pointer;">Đã hiểu! Bỏ qua điều này.</a>
             </div>
         </section>
