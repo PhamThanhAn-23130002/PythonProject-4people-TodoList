@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 from .models import Board, BoardMember, User
 from django.contrib import messages # Để thông báo lỗi/thành công
 from django.http import HttpResponse, request, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.db.models import Q #phép tuyển
+from .models import Board, List, Card
 
 
 
@@ -16,6 +19,12 @@ def create_board(request):
 def card_detail(request):
     return render(request, "boards/CardDetail.html")
 
+def card_detail_id(request, card_id):
+    card = get_object_or_404(Card, id=card_id)
+
+    return render(request, "boards/CardDetail.html", {
+        "card": card
+    })
 
 def home_page(request):
     return render(request, "boards/TrangChu.html")
@@ -28,13 +37,30 @@ def home_page2(request):
 def home_page_Table(request):
     return render(request, "boards/TrangChu-Bang.html")
 
+
+def about_me(request):
+    return render(request, "accounts/SitePersonal.html")
+
+
+def dismiss_intro(request):
+    # Lưu vào session là đã tắt intro rồi
+    request.session['intro_dismissed'] = True
+    return redirect('home_page')
+
+
 # 1. Hiển thị trang chủ và danh sách Board
 @login_required(login_url='/login/')
 def home_page(request):
-    boards = Board.objects.filter(owner=request.user).order_by('-created_at')
+    boards = Board.objects.filter(
+        Q(owner=request.user) | Q(boardmember__user=request.user)
+    ).distinct().order_by('-created_at')  # .distinct() giúp loại bỏ trùng lặp nếu lỡ bạn vừa là chủ vừa là thành viên
     
+    # Kiểm tra xem người dùng đã tắt intro chưa (mặc định là False - tức là chưa tắt)
+    # Nếu trong session có 'intro_dismissed' = True thì show_intro sẽ là False
+    show_intro = not request.session.get('intro_dismissed', False)
     context = {
-        'boards': boards
+        'boards': boards,
+        'show_intro': show_intro,
     }
     return render(request, "boards/TrangChu.html", context)
 
@@ -65,18 +91,37 @@ def create_board(request):
     return redirect('home_page')
 
 
+# def board_detail(request, board_id):
+#     board = get_object_or_404(Board, id=board_id)
+#     members = BoardMember.objects.filter(project=board)
+#
+#     all_boards = Board.objects.filter(
+#         Q(owner=request.user) | Q(boardmember__user=request.user)
+#     ).distinct().order_by('-created_at')
+#
+#     session_key = f"board_{board_id}_lists"
+#     lists = request.session.get(session_key, [])
+#     context = {
+#         'board': board,
+#         'members': members,
+#         'lists': lists,
+#         'all_boards': all_boards,
+#     }
+#     return render(request, "boards/BangCVcuaToi.html", context)
 def board_detail(request, board_id):
     board = get_object_or_404(Board, id=board_id)
     members = BoardMember.objects.filter(project=board)
 
-    session_key = f"board_{board_id}_lists"
-    lists = request.session.get(session_key, [])
+    lists = List.objects.filter(board=board).prefetch_related("cards").order_by("position")
+
     context = {
-        'board': board,
-        'members': members,
-        'lists': lists,
+        "board": board,
+        "members": members,
+        "lists": lists,
+        "all_boards": Board.objects.filter(owner=request.user)
     }
-    return render(request, "boards/BangCVcuaToi.html", context) 
+    return render(request, "boards/BangCVcuaToi.html", context)
+
 
 # 2. Hàm xử lý thêm thành viên bằng Email
 def add_member(request, board_id):
@@ -115,19 +160,54 @@ def delete_board(request, board_id):
 
 
 
-@csrf_exempt
-def save_board_session(request, board_id):
-    #Lưu danh sách + thẻ tạm thời vào session (chưa DB)
-    if request.method == "POST":
-        data = json.loads(request.body)
+def save_board_db(request, board_id):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid method"}, status=405)
 
-        # key session theo từng board
-        session_key = f"board_{board_id}_lists"
+    data = json.loads(request.body)
+    lists_data = data.get("lists", [])
 
-        request.session[session_key] = data.get("lists", [])
-        request.session.modified = True
+    board = Board.objects.get(id=board_id)
 
-        return JsonResponse({"status": "ok"})
+    #  XÓA dữ liệu cũ (để sync lại theo frontend)
+    List.objects.filter(board=board).delete()
+
+    for list_index, l in enumerate(lists_data):
+        list_obj = List.objects.create(
+            board=board,
+            title=l["title"],
+            position=list_index
+        )
+
+        for card_index, card_title in enumerate(l["cards"]):
+            Card.objects.create(
+                list=list_obj,
+                title=card_title,
+                position=card_index
+            )
+
+    return JsonResponse({"status": "saved"})
+    
+
+def join_via_link(request, token):
+    # Tìm bảng dựa trên token (chứ không phải ID)
+    board = get_object_or_404(Board, share_token=token)
+    
+    # Nếu user chưa đăng nhập thì bắt đăng nhập trước
+    if not request.user.is_authenticated:
+        # (Chỗ này bạn có thể redirect sang trang login)
+        return redirect('/login/') 
+        
+    # Kiểm tra xem đã là thành viên chưa
+    if not BoardMember.objects.filter(project=board, user=request.user).exists():
+        # Chưa thì thêm vào làm thành viên
+        BoardMember.objects.create(project=board, user=request.user, role='member')
+        messages.success(request, f"Bạn đã tham gia vào bảng {board.name} thành công!")
+    else:
+        messages.info(request, "Bạn đã là thành viên của bảng này rồi.")
+        
+    # Chuyển hướng vào trang chi tiết bảng
+    return redirect('board_detail', board_id=board.id)
 
 
 

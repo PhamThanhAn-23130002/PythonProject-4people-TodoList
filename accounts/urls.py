@@ -18,4 +18,6 @@ urlpatterns = [
     path("boadsPersonal/",views.boardspersonal,name="boards"),
     path("members/",views.members,name="members"),
     path('api/send-otp/', views.send_otp_api, name='send_otp_api'),
+    path('switch-account/', views.switch_account, name='switch_account'),
+    path('switch-account/exec/', views.switch_to_other_account, name='switch_to_other_account'),
 ]
