@@ -15,9 +15,16 @@
     <link rel="icon" href="image/Screenshot%20From%202025-11-26%2010-49-26.png" type="image/x-icon">
     <title>carddetail</title>
         <style>
-            body{
-                background-color: #242528;
-            }
+            .overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.06); /* mờ nhưng vẫn thấy trang sau */
+    backdrop-filter: blur(4px);   /* làm mờ trang sau (rất đẹp) */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    z-index: 999;
+}
             .div_toal{
                 width: 1080px;
                 margin: auto;
@@ -26,6 +33,7 @@
                 padding: 20px; 
                 box-shadow: 0 8px 20px rgba(0,0,0,0.5);
                 position:relatives;
+                background-color: #1f2024;
             }
             .headerchild{
                 display:flex;
@@ -80,21 +88,46 @@
                 background-color: #18191a;
                 color:#bbbdc0; 
             }
-            .buttons{
-                display:flex;
-                justify-content: space-around;
-                padding-top:10px;
-                padding-bottom:10px;
-            }
-            .buttons button{
-                border-radius: 5px;
-                background-color: #242528;
-                color: white;
-                width:100px;
-                height:30px;
-                border-color:#bbbdc0 solid;
-                border: solid;
-            }
+.buttons{
+    display:flex;
+    justify-content: space-around;
+    gap:10px;                /* đều và gọn hơn */
+    padding:10px 0;
+}
+
+.buttons button{
+    width:100px;
+    height:30px;
+    border-radius:6px;
+    background-color:#242528;   /* giữ nguyên */
+    color:#e6e6e6;
+    border:1px solid #3d3d3d;   /* border tinh tế hơn */
+    font-size:13px;
+    cursor:pointer;
+    transition:all 0.2s ease;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+}
+
+/* hover */
+.buttons button:hover{
+    border-color:#4da3ff;
+    color:#4da3ff;
+    box-shadow:0 0 0 1px rgba(77,163,255,0.3);
+}
+
+/* click */
+.buttons button:active{
+    transform:scale(0.96);
+}
+
+/* focus (accessibility) */
+.buttons button:focus{
+    outline:none;
+    border-color:#4da3ff;
+}
             .decriptionh6{
                 color:#bbbdc0;
 
@@ -207,45 +240,149 @@
 .optionchecklist{
     display:none;
     position:absolute;
-    background-color: #2a2b2f;
-    border: 1px solid #3d3d3d;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    background:#1f2024;
+    padding:20px;
+    border-radius:12px;
+    border:1px solid #3a3a3a;
+    box-shadow:0 12px 30px rgba(0,0,0,0.7);
+    min-width:260px;
+    text-align:center;
 }
+
+/* input date & time */
 .chooseday{
-    border:solid 2px;
-    border-color:#767676;
-    border-radius:7px;
-    background-color:#2c2d31;
-    color:#767676;
-
+    width:100%;
+    margin-bottom:12px;
+    padding:8px 10px;
+    border:1px solid #555;
+    border-radius:8px;
+    background:#2c2d31;
+    color:#e0e0e0;
+    font-size:14px;
 }
+
+.chooseday:focus{
+    outline:none;
+    border-color:#4da3ff;
+}
+
+/* nút choose */
 .bchooseday{
-    border:solid 2px;
-    border-color:#767676;
-    border-radius:7px;
-    background-color:#2c2d31;
-    color:#767676;
+    padding:8px 16px;
+    border-radius:8px;
+    border:none;
+    background:#4da3ff;
+    color:white;
+    font-size:14px;
+    cursor:pointer;
+    margin-right:8px;
+    transition:0.2s;
 }
+
+.bchooseday:hover{
+    background:#348cff;
+}
+
+/* nút X */
 .x{
-    border:solid 2px;
-    border-color:#767676;
-    background-color:#2c2d31;
-    color:#767676;
+    padding:8px 12px;
+    border-radius:8px;
+    border:none;
+    background:#3a3a3a;
+    color:#ff5c5c;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.2s;
 }
-.deadline{
+
+.x:hover{
+    background:#ff5c5c;
+    color:white;
+}
+
+.check-circle{
+    display:inline-flex;
+    align-items:center;
+    cursor:pointer;
+}
+
+/* Ẩn checkbox gốc */
+.check-circle input{
+    display:none;
+}
+
+/* Vòng tròn */
+.check-circle span{
+    width:25px;
+    height:25px;
+    border:2px solid #767676;
+    border-radius:50%;
+    display:inline-block;
+    position:relative;
+    transition:0.2s;
+}
+
+/* Khi được check */
+.check-circle input:checked + span{
+    background-color:#82b536;
+    border-color:#82b536;
+}
+
+/* Dấu ✓ */
+.check-circle span::after{
+    content:"";
+    position:absolute;
+    left:5px;
+    top:2px;
+    width:10px;
+    height:10px;
+    border:solid white;
+    border-width:0 2px 2px 0;
+    transform:rotate(45deg);
+    opacity:0;
+    transition:0.2s;
+}
+
+/* Hiện ✓ khi check */
+.check-circle input:checked + span::after{
+    opacity:1;
+}
+.check-circle span:hover{
+    border-color:#82b536;
+}.deadline{
+    background:linear-gradient(135deg,#2c2d31,#1f2024);
+    border:none;         /* pill */
     display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    color:#7eb6ff;
+    font-size:13px;
+    font-weight:500;
+    cursor:default;               /* không giống nút */
+    box-shadow:inset 0 0 0 1px #3d3d3d;
 }
-.deadline p{
-    gap:0px;
+
+/* dấu - nhẹ */
+.deadline .dash{
+    color:#666;
+}
+
+/* icon nếu có */
+.deadline i{
+    font-size:12px;
+    margin-right:4px;
+    color:#7eb6ff;
+}
 
 
-}
         </style>
     </head>
     <body>
+        <div class="overlay">
         <div class="div_toal">
         <header class="headerchild">
             <button id="choosetime">
@@ -258,23 +395,35 @@
         </header>
         <div class="bodycard">
             <div class="col-xl-6 editcard">
-                <input class="complete" type="checkbox" >
+                <label class="check-circle">
+    <input class="complete" type="checkbox">
+    <span></span>
+</label>
                 <textarea class="subject" name="tile"></textarea>
             <div>
                 <div class="buttons">
-                    <button>thêm</button>
-                    <button onclick="date(this)">ngày</button>
-                    <button>cần làm</button>
-                    <button onclick="addmember(this)">thành viên</button>
+                    <button>THÊM</button>
+                    <button onclick="date(this)">NGÀY</button>
+                    <button>CẦN LÀM</button>
+                    <button onclick="addmember(this)">THÀNH VIÊN</button>
                 </div>
-                <div class="buttons"><button class="deadline"><p>02</p>-<p>01</p>-<p>2018</p></button></div>
+                
+                     
+    <div class="deadline">
+       <span>NGÀY ĐẾN HẠN: </span>
+        <span>02</span>
+        <span class="dash">-</span>
+        <span>01</span>
+        <span class="dash">-</span>
+        <span>2018</span>
+    </div>
             </div>
                 <h6 class="decriptionh6" >mô tả</h6>
                 <textarea class="description" rows="4" cols="50" name ="description"></textarea>
                 <h6 class="decriptionh6"> trường tùy chỉnh</h6>
                 <div class="dtuychinh">
                     <div class="detailtuychinh">
-                    <p>ưu tiên</p>
+                    <p>Ưu Tiên</p>
                    <select class="priority" name="priority">
                     <option  value="">--</option>
                    <option  value="">ưu tiên cao nhất</option>
@@ -286,7 +435,7 @@
                    </select>
                    </div>
                 <div class="detailtuychinh">
-                    <p>trang thái</p>
+                    <p>Trang Thái</p>
                    <select class="priority" name="process">
                     <option  value="">--</option>
                     <option value="">việc cần làm</option>
@@ -297,7 +446,7 @@
                    </select>
                    </div>
                 <div class="detailtuychinh">
-                    <p>phức tạp</p>
+                    <p>Phức Tạp</p>
                    <select class="priority" name="complexity">
                     <option value="">--</option>
                     <option value="">ưu tiên cao nhất</option>
@@ -308,50 +457,51 @@
                    </select>
                    </div>
                 <div class="detailtuychinh">
-                    <p>effort</p>
-                    <input class="inputeffort" type="text">
+                    
                    </div>
                 </div>
             </div>
             <div class="col-xl-6 commentcard">
-                <h4>nhận xét hoạt động</h4>
-    <input class="activity-input" type="text" placeholder="Viết bình luận...">
-    <div class="activity-item">
+                <h4>NHẬN XÉT HOẠT ĐỘNG</h4>
+     <input class="activity-input" type="text" placeholder="Viết bình luận...">
+     <div class="activity-item">
         <div class="avatar">NA</div>
         <div class="activity-content">
             <p><span class="name">Nguyễn Văn A</span> đã đánh dấu thẻ này là chưa hoàn tất</p>
             <span class="time">vừa xong</span>
         </div>
-    </div>
+     </div>
 
-    <div class="activity-item">
+     <div class="activity-item">
         <div class="avatar">NA</div>
         <div class="activity-content">
             <p><span class="name">Nguyễn Văn A</span> đã đánh dấu thẻ này là hoàn tất</p>
             <span class="time">vừa xong</span>
         </div>
-    </div>
+     </div>
 
-    <div class="activity-item">
+     <div class="activity-item">
         <div class="avatar">NA</div>
         <div class="activity-content">
             <p><span class="name">Nguyễn Văn A</span> đã thêm thẻ này vào danh sách Hôm nay</p>
             <span class="time">vừa xong</span>
         </div>
-    </div>
-
+     </div>
+    
             </div>
         </div>
         </div>
         <div class="optionchecklist" id="choosedate">
             <input class="chooseday" type="date" name ="inputdate">
+            <input class="chooseday" type="time" name="inputtime"><br>
             <button type="submit" id="bdate" onclick="date(this)" class="bchooseday">choose</button>
             <button class="x" id=xdate onclick="date(this)">&#10005</button>
         </div>
         <div class="optionchecklist" id="member">
-            <input type="text"><br>
+            <input class="chooseday" type="text"><br>
             <button class="x" id=xxdate onclick="addmember(this)">&#10005</button>
-        </div>
+    </div>
+    </div>
     <Script>
         function date(e){
         if(e.id=="xdate"||e.id=="bdate"){
