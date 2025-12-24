@@ -15,4 +15,5 @@ urlpatterns = [
     path("log_out", av.logout_view, name="log_out"),
     path("about_me", views.about_me, name="about_me"),
     path('join/<uuid:token>/', views.join_via_link, name='join_via_link'),
+    path('dismiss-intro/', views.dismiss_intro, name='dismiss_intro'),
 ]
