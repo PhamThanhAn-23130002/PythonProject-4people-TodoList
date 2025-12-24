@@ -899,6 +899,64 @@
             color: #555;
             margin: 0 6px;
         }
+        .noti-wrap {
+    position: relative;
+}
+
+.noti-menu {
+    position: absolute;
+    top: 44px;
+    right: -120px;
+    width: 400px;
+    background: #282e33;
+    border: 1px solid #38414a;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    display: none;
+    z-index: 1000;
+    color: #b6c2cf;
+}
+
+.noti-menu.show {
+    display: block;
+}
+
+/* Header bây giờ đơn giản hơn */
+.noti-header {
+    padding: 12px 20px;
+    border-bottom: 1px solid #38414a;
+    /* Căn giữa tiêu đề hoặc để mặc định bên trái */
+    text-align: center;
+}
+
+.noti-header h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #e7ecf0;
+    font-weight: 600;
+    text-align: left;
+}
+
+/* Nội dung bên trong */
+.noti-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.noti-img {
+    width: 150px;
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+.noti-empty-text {
+    font-size: 16px;
+    color: #e7ecf0;
+}
     </style>
 
 
@@ -908,16 +966,32 @@
 <!-- TOPBAR -->
 <header class="topbar">
     <div class="brand">
-        <a class="logo" onclick="window.location.href='{% url 'home_page' %}''">L</a>
+        <a class="logo" onclick="window.location.href='{% url 'home_page' %}">L</a>
         <span>List</span>
     </div>
     <div class="search"><input placeholder="Tìm kiếm" aria-label="Tìm kiếm"></div>
     <div class="top-actions">
-        <button class="icon-btn" title="Thông báo">🔔</button>
+<div class="noti-wrap">
+    <button class="icon-btn" id="notiBtn" title="Thông báo">🔔</button>
+
+    <div class="noti-menu" id="notiMenu">
+    <div class="noti-header">
+        <h3>Notifications</h3>
+    </div>
+
+    <div class="noti-content">
+        <img src="https://trello.com/assets/ee2660df9335718b1a80.svg" alt="Sleepy dog" class="noti-img">
+        <div class="noti-empty-text">No unread notifications</div>
+        <div style="margin-top: 10px; color: #ff6b6b; font-size: 12px; display: none;">Click to view details</div>
+    </div>
+</div>
+</div>
         <button class="icon-btn" title="Trợ giúp">?</button>
 
         <div class="account-wrap">
-            <div class="avatar" id="accountBtn">TT</div>
+            <div class="avatar" id="accountBtn">
+                {{ request.user.username|first|upper }}
+            </div>
 
             <div class="account-menu" id="accountMenu">
                 <!-- TÀI KHOẢN -->
@@ -925,11 +999,11 @@
                     <div class="menu-title">TÀI KHOẢN</div>
                     <div class="account-info">
                         <div class="account-avatar">
-                            {{ request.user.username|slice:":2"|upper }}
+                            {{ request.user.username|first|upper }}
                         </div>
                         <div>
                             <div class="account-name">
-                                {{ request.user.get_full_name|default:request.user.username }}
+                                {{ request.user.get_full_name }}
                             </div>
                             <div class="account-email">
                                 {{ request.user.email }}
@@ -955,7 +1029,7 @@
                 margin-left: 20px">Đăng xuất</a>
             </div>
         </div>
-
+    </div>
 
     </div>
 </header>
@@ -1645,6 +1719,37 @@
                 }, 2000);
             };
         }
+    });
+</script>
+<script>
+    // --- XỬ LÝ NOTIFICATION POPUP ---
+    const notiBtn = document.getElementById('notiBtn');
+    const notiMenu = document.getElementById('notiMenu');
+
+    if (notiBtn && notiMenu) {
+        notiBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Ngăn sự kiện lan ra ngoài
+            notiMenu.classList.toggle('show'); // Bật/Tắt class show
+
+            // Nếu đang mở menu account thì đóng lại cho đỡ rối
+            const accMenu = document.getElementById('accountMenu');
+            if (accMenu && accMenu.classList.contains('show')) {
+                accMenu.classList.remove('show');
+            }
+        });
+
+        // Click bên trong menu thông báo thì không đóng
+        notiMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
+
+    // Đóng popup khi click bất kỳ đâu bên ngoài (Sửa lại đoạn lắng nghe click body cũ của bạn)
+    document.addEventListener('click', () => {
+        const accMenu = document.getElementById('accountMenu');
+        if (accMenu) accMenu.classList.remove('show');
+
+        if (notiMenu) notiMenu.classList.remove('show');
     });
 </script>
 </html>
