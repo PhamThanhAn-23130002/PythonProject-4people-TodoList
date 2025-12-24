@@ -19,6 +19,12 @@ def create_board(request):
 def card_detail(request):
     return render(request, "boards/CardDetail.html")
 
+def card_detail_id(request, card_id):
+    card = get_object_or_404(Card, id=card_id)
+
+    return render(request, "boards/CardDetail.html", {
+        "card": card
+    })
 
 def home_page(request):
     return render(request, "boards/TrangChu.html")

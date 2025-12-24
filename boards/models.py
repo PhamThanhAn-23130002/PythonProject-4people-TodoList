@@ -53,4 +53,3 @@ class Card(models.Model):
 
     def __str__(self):
         return self.title
->>>>>>> fd0597a1eb41914cba256cfe6248f0c5c171facd

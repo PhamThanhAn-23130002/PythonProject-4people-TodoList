@@ -1,0 +1,18 @@
+# --- CÁC FILE CỦA PYTHON (Bắt buộc) ---
+__pycache__/
+*.pyc
+
+# --- CÁC FILE DATABASE (Bắt buộc) ---
+db.sqlite3
+db.sqlite3-journal
+
+# --- CÁC FILE CỦA PYCHARM (Bắt buộc - gây conflict workspace) ---
+.idea/
+
+# --- FILE MÔI TRƯỜNG ẢO (Nếu có) ---
+.venv/
+venv/
+env/
+
+# --- CÁC FILE CỦA MAC OS ( Macbook) ---
+.DS_Store
