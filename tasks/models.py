@@ -21,8 +21,8 @@ class Task(models.Model):
     difficulty = models.CharField(max_length=10)
     assignee_id =models.CharField(max_length=10)
     reporter_id =models.CharField(max_length=10)
-    deadline = models.TimeField(auto_now=True)
-    start_date = models.TimeField(auto_now=True)
+    deadline = models.DateTimeField(auto_now=True)
+    start_date = models.DateTimeField(auto_now=True)
     createed_at =models.DateTimeField(auto_now_add=True)
     update_at =models.DateTimeField(auto_now_add=True)
     
@@ -35,7 +35,7 @@ class Checklist(models.Model):
     id = models.CharField(max_length=10, primary_key=True)
     task_id = models.OneToOneField(Task, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
-    
+   
 class ChecklistItem(models.Model):
     id = models.CharField(max_length=10, primary_key=True)
     checklist_id = models.ForeignKey(Checklist, on_delete=models.CASCADE)
