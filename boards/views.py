@@ -6,6 +6,7 @@ from django.http import HttpResponse, request, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 import json
+from .models import Board, List, Card
 
 
 
@@ -65,18 +66,36 @@ def create_board(request):
     return redirect('home_page')
 
 
+# def board_detail(request, board_id):
+#     board = get_object_or_404(Board, id=board_id)
+#     members = BoardMember.objects.filter(project=board)
+#
+#     session_key = f"board_{board_id}_lists"
+#     lists = request.session.get(session_key, [])
+#     context = {
+#         'board': board,
+#         'members': members,
+#         'lists': lists,
+#     }
+#     return render(request, "boards/BangCVcuaToi.html", context)
+
 def board_detail(request, board_id):
     board = get_object_or_404(Board, id=board_id)
     members = BoardMember.objects.filter(project=board)
 
-    session_key = f"board_{board_id}_lists"
-    lists = request.session.get(session_key, [])
+    lists = (
+        List.objects
+        .filter(board=board)
+        .order_by("position")
+        .prefetch_related("cards")
+    )
+
     context = {
-        'board': board,
-        'members': members,
-        'lists': lists,
+        "board": board,
+        "members": members,
+        "lists": lists,
     }
-    return render(request, "boards/BangCVcuaToi.html", context) 
+    return render(request, "boards/BangCVcuaToi.html", context)
 
 # 2. Hàm xử lý thêm thành viên bằng Email
 def add_member(request, board_id):
@@ -115,20 +134,46 @@ def delete_board(request, board_id):
 
 
 
-@csrf_exempt
-def save_board_session(request, board_id):
-    #Lưu danh sách + thẻ tạm thời vào session (chưa DB)
-    if request.method == "POST":
-        data = json.loads(request.body)
+# @csrf_exempt
+# def save_board_session(request, board_id):
+#     #Lưu danh sách + thẻ tạm thời vào session (chưa DB)
+#     if request.method == "POST":
+#         data = json.loads(request.body)
+#
+#         # key session theo từng board
+#         session_key = f"board_{board_id}_lists"
+#
+#         request.session[session_key] = data.get("lists", [])
+#         request.session.modified = True
+#
+#         return JsonResponse({"status": "ok"})
+def save_board_db(request, board_id):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid method"}, status=405)
 
-        # key session theo từng board
-        session_key = f"board_{board_id}_lists"
+    data = json.loads(request.body)
+    lists_data = data.get("lists", [])
 
-        request.session[session_key] = data.get("lists", [])
-        request.session.modified = True
+    board = Board.objects.get(id=board_id)
 
-        return JsonResponse({"status": "ok"})
+    #  XÓA dữ liệu cũ (để sync lại theo frontend)
+    List.objects.filter(board=board).delete()
 
+    for list_index, l in enumerate(lists_data):
+        list_obj = List.objects.create(
+            board=board,
+            title=l["title"],
+            position=list_index
+        )
+
+        for card_index, card_title in enumerate(l["cards"]):
+            Card.objects.create(
+                list=list_obj,
+                title=card_title,
+                position=card_index
+            )
+
+    return JsonResponse({"status": "saved"})
 
 
 

@@ -946,7 +946,7 @@
                         </div>
 
                         <div class="list-menu-body">
-                            <div class="list-menu-item">Thêm thẻ</div>
+
                             <div class="list-menu-item">Sao chép danh sách</div>
                             <div class="list-menu-item">Di chuyển danh sách</div>
                             <div class="list-menu-item">Theo dõi</div>
@@ -960,8 +960,10 @@
 
                 <!-- CARDS -->
                 <div class="cards">
-                    {% for c in l.cards %}
-                        <div class="card">{{ c }}</div>
+                    {% for c in l.cards.all %}
+                        <div class="card">{{ c.title }}</div>
+                        {% empty %}
+                        <!-- chưa có thẻ -->
                     {% endfor %}
                 </div>
 
@@ -1336,31 +1338,31 @@
 
 <script>
     function saveToSession() {
-    const lists = [];
+        const lists = [];
 
-    document.querySelectorAll(".list").forEach(list => {
-        const titleEl = list.querySelector(".list-title");
-        const title = titleEl ? titleEl.innerText.trim() : "";
+        document.querySelectorAll(".list").forEach(list => {
+            const titleEl = list.querySelector(".list-title");
+            const title = titleEl ? titleEl.innerText.trim() : "";
 
-        if (!title) return; // ⛔ bỏ qua list lỗi
+            if (!title) return; // ⛔ bỏ qua list lỗi
 
-        const cards = [];
-        list.querySelectorAll(".card").forEach(card => {
-            cards.push(card.innerText);
+            const cards = [];
+            list.querySelectorAll(".card").forEach(card => {
+                cards.push(card.innerText);
+            });
+
+            lists.push({title, cards});
         });
 
-        lists.push({ title, cards });
-    });
-
-    fetch("{% url 'save_board_session' board.id %}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": "{{ csrf_token }}"
-        },
-        body: JSON.stringify({ lists })
-    });
-}
+        fetch("{% url 'save_board_db' board.id %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({lists})
+        });
+    }
 </script>
 
 <script>

@@ -10,6 +10,7 @@ urlpatterns = [
     path("board/<int:board_id>/", views.board_detail, name="board_detail"),
     path("board/<int:board_id>/add_member/", views.add_member, name="add_member"),
     path("board/<int:board_id>/delete/", views.delete_board, name="delete_board"),
+    path("boards/<int:board_id>/save/",views.save_board_db,name="save_board_db"),
 
-    path("boards/<int:board_id>/save-session/",views.save_board_session,name="save_board_session"),
+    # path("boards/<int:board_id>/save-session/",views.save_board_session,name="save_board_session"),
 ]
