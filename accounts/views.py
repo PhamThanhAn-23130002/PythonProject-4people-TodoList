@@ -1,6 +1,7 @@
+import json
 import random
-
-from django.contrib.auth import authenticate, login, logout
+from django.core import signing
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.core.mail import send_mail
@@ -145,6 +146,7 @@ def sign_in(request):
     if request.user.is_authenticated:
         return redirect('home_page')
 
+    initial_email = request.GET.get('email', '')
     error_message = None
 
     if request.method == 'POST':
@@ -166,18 +168,144 @@ def sign_in(request):
 
                 # Kiểm tra xem có tick vào ô "Nhớ mật khẩu" không
                 remember = request.POST.get('remember_me')
+                is_remembered = True if remember else False
                 if not remember:
                     # Nếu không tick, session sẽ hết hạn khi đóng trình duyệt
                     request.session.set_expiry(0)
 
-                    # Chuyển hướng về trang chủ
-                return redirect('home_page')
+                response = redirect('home_page')  # Chuyển hướng về trang chủ
+                set_login_history_cookie(request, response, user, is_remembered)
+                return response
             else:
                 # Đăng nhập thất bại
                 error_message = "Tài khoản hoặc mật khẩu không chính xác."
-
-    return render(request, 'accounts/login.html', {'error': error_message})
+    context = {
+        'error': error_message,
+        'initial_email': initial_email
+    }
+    return render(request, 'accounts/login.html', context)
 
 def logout_view(request):
     logout(request)
     return redirect('sign_in')
+
+def switch_account(request):
+    # Nếu chưa đăng nhập -> về login
+    if not request.user.is_authenticated:
+        return redirect('sign_in')
+
+    # Lấy lịch sử từ Cookie
+    history_str = request.COOKIES.get('login_history', '[]')
+    try:
+        history_list = json.loads(history_str)
+    except json.JSONDecodeError:
+        history_list = []
+
+    # Loại bỏ tài khoản hiện tại ra khỏi danh sách lịch sử
+    previous_accounts = [
+        acc for acc in history_list
+        if acc['email'] != request.user.email
+    ]
+
+    context = {
+        'previous_accounts': previous_accounts,
+    }
+    return render(request, 'accounts/switchAccount.html', context)
+
+
+# --- Lưu lịch sử đăng nhập ---
+# Hàm này được gọi sau khi người dùng đăng nhập
+def set_login_history_cookie(request, response, user, is_remembered=False):
+    # 1. Đọc lịch sử cũ
+    history_str = request.COOKIES.get('login_history', '[]')
+    try:
+        history_list = json.loads(history_str)
+    except Exception:
+        history_list = []
+
+    # 2. Tạo Token bí mật nếu người dùng chọn "Nhớ mật khẩu"
+    # Token này sẽ hoạt động như một vé thông hành để vào thẳng trang chủ
+    secret_token = None
+    if is_remembered:
+        # Tạo chữ ký chứa ID người dùng (an toàn, không thể giả mạo)
+        secret_token = signing.dumps({'user_id': user.id})
+
+    # 3. Tạo object thông tin user
+    user_info = {
+        'username': user.username,
+        'email': user.email,
+        'avatar_char': user.username[0].upper() if user.username else "?",
+        'token': secret_token  # <--- Lưu token vào đây
+    }
+
+    # 4. Xóa user này nếu đã có trong lịch sử (để update cái mới nhất lên đầu)
+    history_list = [acc for acc in history_list if acc['email'] != user.email]
+
+    # 5. Thêm vào đầu danh sách
+    history_list.insert(0, user_info)
+    history_list = history_list[:5]  # Giới hạn 5 tài khoản
+
+    # 6. Lưu cookie (lưu ý: max_age 1 năm)
+    response.set_cookie('login_history', json.dumps(history_list), max_age=365 * 24 * 60 * 60)
+
+    return response
+
+
+def switch_to_other_account(request):
+    """
+    Hàm này xử lý khi người dùng bấm vào một tài khoản cũ trong lịch sử:
+    1. Lấy email cần chuyển tới.
+    2. Đăng xuất tài khoản hiện tại.
+    3. Chuyển hướng về trang Login và điền sẵn email kia.
+    """
+    # Lấy email từ URL (do bấm link gửi lên)
+    target_email = request.GET.get('email', '')
+
+    # Đăng xuất tài khoản hiện tại (Quan trọng!)
+    logout(request)
+
+    # Tìm kiếm trong Cookie xem tài khoản này có Token "Nhớ mật khẩu" không
+    history_str = request.COOKIES.get('login_history', '[]')
+    found_token = None
+
+    try:
+        history_list = json.loads(history_str)
+        # Tìm user có email khớp
+        for acc in history_list:
+            if acc.get('email') == target_email:
+                found_token = acc.get('token')
+                break
+    except Exception:
+        pass
+
+        # Nếu tìm thấy Token, thử giải mã và đăng nhập luôn
+    if found_token:
+        try:
+            # Giải mã token (max_age=2 tuần - ví dụ token chỉ sống 2 tuần)
+            data = signing.loads(found_token, max_age=14 * 24 * 60 * 60)
+            user_id = data.get('user_id')
+
+            # Tìm user trong database
+            User = get_user_model()
+            user = User.objects.get(pk=user_id)
+
+            # --- QUAN TRỌNG: Đăng nhập không cần mật khẩu ---
+            # Cần chỉ định backend vì ta không dùng authenticate()
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+            # Chuyển thẳng về trang chủ
+            return redirect('home_page')
+
+        except (signing.BadSignature, User.DoesNotExist):
+            # Nếu token sai, hết hạn, hoặc user bị xóa -> Bỏ qua, xuống dưới login thường
+            pass
+
+    # Tạo đường dẫn về trang Login
+    login_url = reverse('sign_in')
+
+    # Nếu có email thì nối thêm tham số ?email=... vào đuôi
+    if target_email:
+        return redirect(f'{login_url}?email={target_email}')
+
+    # Nếu không có email thì về trang login bình thường
+    return redirect('accounts/sign_in')
