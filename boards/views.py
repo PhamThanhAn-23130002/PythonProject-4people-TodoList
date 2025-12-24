@@ -5,6 +5,7 @@ from django.contrib import messages # Để thông báo lỗi/thành công
 from django.http import HttpResponse, request, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from tasks.models import Task
 import json
 
 
@@ -133,6 +134,24 @@ def save_board_session(request, board_id):
         request.session.modified = True
 
         return JsonResponse({"status": "ok"})
+
+
+#-----------------------------------------------------------thêm----------------------------------------
+def createdealine(request):
+ if request.method == "POST":
+    d1 = request.POST.get("title")
+    d2 = request.POST.get("description")
+    d3 = request.POST.get("priority")
+    d4 = request.POST.get("process")
+    d5 = request.POST.get("complexity")
+    d6 = request.POST.get("inputdate")
+    Task.objects.create(
+        title = d1,
+        description = d2,
+        priority = d3, 
+        status = d4,
+        difficulty =d5,
+        deadline =d6)
 
 
 

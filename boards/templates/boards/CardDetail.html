@@ -214,6 +214,35 @@
     left: 50%;
     transform: translate(-50%, -50%);
 }
+.chooseday{
+    border:solid 2px;
+    border-color:#767676;
+    border-radius:7px;
+    background-color:#2c2d31;
+    color:#767676;
+    
+}
+.bchooseday{
+    border:solid 2px;
+    border-color:#767676;
+    border-radius:7px;
+    background-color:#2c2d31;
+    color:#767676;
+}
+.x{
+    border:solid 2px;
+    border-color:#767676;
+    background-color:#2c2d31;
+    color:#767676;
+}
+.deadline{
+    display:flex;
+}
+.deadline p{
+    gap:0px;
+   
+    
+}
         </style>
     </head>
     <body>
@@ -229,35 +258,37 @@
         </header>
         <div class="bodycard">
             <div class="col-xl-6 editcard">
-                <input class="complete" type="checkbox">
-                <textarea class="subject"></textarea>
+                <input class="complete" type="checkbox" >
+                <textarea class="subject" name="tile"></textarea>
+            <div>
                 <div class="buttons">
                     <button>thêm</button>
                     <button onclick="date(this)">ngày</button>
                     <button>cần làm</button>
                     <button onclick="addmember(this)">thành viên</button>
                 </div>
-
+                <div class="buttons"><button class="deadline"><p>02</p>-<p>01</p>-<p>2018</p></button></div>
+            </div>
                 <h6 class="decriptionh6" >mô tả</h6>
-                <textarea class="description" rows="4" cols="50"></textarea>
+                <textarea class="description" rows="4" cols="50" name ="description"></textarea>
                 <h6 class="decriptionh6"> trường tùy chỉnh</h6>
                 <div class="dtuychinh">
                     <div class="detailtuychinh">
                     <p>ưu tiên</p>
-                   <select class="priority">
-                    <option value="">--</option>
-                    <option value="">ưu tiên cao nhất</option>
-                   <option value="">ưu tiên cao</option>
-                   <option value="">trung bình</option>
-                   <option value="">thấp</option>
-                   <option value="">thấp nhất</option>
-                   <option value="">không chắc</option>
+                   <select class="priority" name="priority">
+                    <option  value="">--</option>
+                   <option  value="">ưu tiên cao nhất</option>
+                   <option  value="">ưu tiên cao</option>
+                   <option  value="">trung bình</option>
+                   <option  value="">thấp</option>
+                   <option  value="">thấp nhất</option>
+                   <option  value="">không chắc</option>
                    </select>
                    </div>
                 <div class="detailtuychinh">
                     <p>trang thái</p>
-                   <select class="priority">
-                    <option value="">--</option>
+                   <select class="priority" name="process">
+                    <option  value="">--</option>
                     <option value="">việc cần làm</option>
                     <option value="">đang làm</option>
                     <option value="">đã làm</option>
@@ -267,7 +298,7 @@
                    </div>
                 <div class="detailtuychinh">
                     <p>phức tạp</p>
-                   <select class="priority">
+                   <select class="priority" name="complexity">
                     <option value="">--</option>
                     <option value="">ưu tiên cao nhất</option>
                    <option value="">ưu tiên cao</option>
@@ -313,30 +344,30 @@
         </div>
         </div>
         <div class="optionchecklist" id="choosedate">
-            <input type="date" >
-            <button>choose</button>
-            <button id=xdate onclick="date(this)">&#10005</button>
+            <input class="chooseday" type="date" name ="inputdate">
+            <button type="submit" id="bdate" onclick="date(this)" class="bchooseday">choose</button>
+            <button class="x" id=xdate onclick="date(this)">&#10005</button>
         </div>
         <div class="optionchecklist" id="member">
             <input type="text"><br>
-            <button id=xdate onclick="addmember(this)">&#10005</button>
+            <button class="x" id=xxdate onclick="addmember(this)">&#10005</button>
         </div>
     <Script>
         function date(e){
-        if(e.id=="xdate"){
+        if(e.id=="xdate"||e.id=="bdate"){
             document.getElementById("choosedate").style.display = 'none';
-        }else{document.getElementById("choosedate").style.display = 'block';
+            document.getElementById("member").style.display = 'none';
+        }else{
+        document.getElementById("choosedate").style.display = 'block';
         document.getElementById("member").style.display = 'none';
-        document.getElementById("member").style.display = 'none';}
+    }
         }
         function addmember(e){
-        if(e.id=="xdate"){
+        if(e.id=="xxdate"){
             document.getElementById("member").style.display = 'none';
         }else {document.getElementById("member").style.display = 'block';
         document.getElementById("choosedate").style.display = 'none';
-        document.getElementById("choosedate").style.display = 'none';
     }
-        
     }
     </Script>
     </body>
