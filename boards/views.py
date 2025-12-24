@@ -184,7 +184,7 @@ def save_board_db(request, board_id):
                 title=card_title,
                 position=card_index
             )
-
+            
     return JsonResponse({"status": "saved"})
     
 
