@@ -868,6 +868,37 @@
         .card:hover {
             background: #2d2d2d;
         }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 16px;
+            cursor: pointer;
+            color: #a8b0b8;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+
+        /* hover */
+        .footer-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #e7ecf0;
+        }
+
+        /* ACTIVE (đang ở trang đó) */
+        .footer-item.active {
+            background: rgba(110, 166, 255, 0.15);
+            color: #6ea6ff;
+            font-weight: 700;
+        }
+
+        /* gạch phân cách */
+        .footer-divider {
+            color: #555;
+            margin: 0 6px;
+        }
     </style>
 
 
@@ -1197,10 +1228,15 @@
 </form>
 
 <div class="floating-footer">
-    <span style="cursor: pointer;">📅 Bảng thông tin</span>
-    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <a href="{% url 'board_detail' board.id %}"
+       class="footer-item {% if active_tab == 'board' %}active{% endif %}">
+        📅 Bảng thông tin
+    </a>
 
-    <span id="switchViewBtn" style="cursor: pointer;">
+    <span class="footer-divider">|</span>
+
+    <span id="switchViewBtn"
+          class="footer-item {% if active_tab == 'switch' %}active{% endif %}">
         🔄 Chuyển đổi các bảng
     </span>
 </div>
