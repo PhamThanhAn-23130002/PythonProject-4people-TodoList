@@ -22,9 +22,10 @@
                 width: 1080px;
                 margin: auto;
                 margin-top: 100px;
-                border-radius: 12px;
-                padding: 20px;
+                border-radius: 12px;      
+                padding: 20px; 
                 box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+                position:relatives;
             }
             .headerchild{
                 display:flex;
@@ -36,7 +37,7 @@
                 border-bottom:1px solid gray;
                 align-items: center;
                 background-color: #242528;
-
+                
             }
             .editcard{
             background-color: #242528;
@@ -77,7 +78,7 @@
             }
             .commentcard{
                 background-color: #18191a;
-                color:#bbbdc0;
+                color:#bbbdc0; 
             }
             .buttons{
                 display:flex;
@@ -98,7 +99,7 @@
                 color:#bbbdc0;
 
             }
-            .description {
+            .description {    
             width: 90%;
             background-color: #2c2d31;
             border: 1px solid #3d3d3d;
@@ -108,7 +109,7 @@
             margin:auto;
         }
             .dtuychinh{
-               color:#bbbdc0;
+               color:#bbbdc0; 
             }
             .priority{
                 background-color:#242528;
@@ -146,63 +147,102 @@
                 color: white;
             }
 
-            .activity-input {
-                width: 90%;
-                padding: 10px 14px;
-                background-color: #2a2b2f;
-                border: 1px solid #3d3d3d;
-                border-radius: 10px;
-                margin-bottom: 20px;
-                color: white;
-                padding-left:10px;
-            }
-            .activity-input::placeholder {
-                color: #808080;
-            }
+.activity-input {
+    width: 90%;
+    padding: 10px 14px;
+    background-color: #2a2b2f;
+    border: 1px solid #3d3d3d;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    color: white;
+    padding-left:10px;
+}
+.activity-input::placeholder {
+    color: #808080;
+}
 
-            .activity-item {
-                display: flex;
-                gap: 12px;
-                margin-bottom: 20px;
-                padding-left:10px;
-            }
+.activity-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-left:10px;
+}
 
 
-            .avatar {
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                background-color: #0d6efd;
-                color: white;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-weight: 600;
-                font-size: 14px;
-            }
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #0d6efd;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    font-size: 14px;
+}
 
-            .activity-content p {
-                margin: 0;
-                font-size: 15px;
-                color: #e2e2e2;
-            }
+.activity-content p {
+    margin: 0;
+    font-size: 15px;
+    color: #e2e2e2;
+}
 
-            .name {
-                font-weight: bold;
-                color: white;
-            }
+.name {
+    font-weight: bold;
+    color: white;
+}
 
-            .time {
-                color: #7eb6ff;
-                font-size: 13px;
-            }
-            .commentcard h4{
-                padding-top:10px;
-                padding-left:10px;
-            }
-            .activity-input{
-                margin-left: 10px;
-            }
+.time {
+    color: #7eb6ff;
+    font-size: 13px;
+}
+.commentcard h4{
+    padding-top:10px;
+    padding-left:10px;
+}
+.activity-input{
+    margin-left: 10px;
+}
+.optionchecklist{
+    display:none;
+    position:absolute;
+    background-color: #2a2b2f;
+    border: 1px solid #3d3d3d;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.chooseday{
+    border:solid 2px;
+    border-color:#767676;
+    border-radius:7px;
+    background-color:#2c2d31;
+    color:#767676;
+
+}
+.bchooseday{
+    border:solid 2px;
+    border-color:#767676;
+    border-radius:7px;
+    background-color:#2c2d31;
+    color:#767676;
+}
+.x{
+    border:solid 2px;
+    border-color:#767676;
+    background-color:#2c2d31;
+    color:#767676;
+}
+.deadline{
+    display:flex;
+}
+.deadline p{
+    gap:0px;
+
+
+}
         </style>
     </head>
     <body>
@@ -218,34 +258,37 @@
         </header>
         <div class="bodycard">
             <div class="col-xl-6 editcard">
-                <input class="complete" type="checkbox">
-                <textarea class="subject"></textarea>
+                <input class="complete" type="checkbox" >
+                <textarea class="subject" name="tile"></textarea>
+            <div>
                 <div class="buttons">
-                    <button>add</button>
-                    <button>ngày</button>
+                    <button>thêm</button>
+                    <button onclick="date(this)">ngày</button>
                     <button>cần làm</button>
-                    <button>thành viên</button>
+                    <button onclick="addmember(this)">thành viên</button>
                 </div>
+                <div class="buttons"><button class="deadline"><p>02</p>-<p>01</p>-<p>2018</p></button></div>
+            </div>
                 <h6 class="decriptionh6" >mô tả</h6>
-                <textarea class="description" rows="4" cols="50"></textarea>
+                <textarea class="description" rows="4" cols="50" name ="description"></textarea>
                 <h6 class="decriptionh6"> trường tùy chỉnh</h6>
                 <div class="dtuychinh">
                     <div class="detailtuychinh">
-                    <p>priority</p>
-                   <select class="priority">
-                    <option value="">--</option>
-                    <option value="">ưu tiên cao nhất</option>
-                   <option value="">ưu tiên cao</option>
-                   <option value="">trung bình</option>
-                   <option value="">thấp</option>
-                   <option value="">thấp nhất</option>
-                   <option value="">không chắc</option>
+                    <p>ưu tiên</p>
+                   <select class="priority" name="priority">
+                    <option  value="">--</option>
+                   <option  value="">ưu tiên cao nhất</option>
+                   <option  value="">ưu tiên cao</option>
+                   <option  value="">trung bình</option>
+                   <option  value="">thấp</option>
+                   <option  value="">thấp nhất</option>
+                   <option  value="">không chắc</option>
                    </select>
                    </div>
                 <div class="detailtuychinh">
-                    <p>priority</p>
-                   <select class="priority">
-                    <option value="">--</option>
+                    <p>trang thái</p>
+                   <select class="priority" name="process">
+                    <option  value="">--</option>
                     <option value="">việc cần làm</option>
                     <option value="">đang làm</option>
                     <option value="">đã làm</option>
@@ -254,8 +297,8 @@
                    </select>
                    </div>
                 <div class="detailtuychinh">
-                    <p>risk</p>
-                   <select class="priority">
+                    <p>phức tạp</p>
+                   <select class="priority" name="complexity">
                     <option value="">--</option>
                     <option value="">ưu tiên cao nhất</option>
                    <option value="">ưu tiên cao</option>
@@ -296,8 +339,36 @@
             <span class="time">vừa xong</span>
         </div>
     </div>
+
             </div>
         </div>
         </div>
+        <div class="optionchecklist" id="choosedate">
+            <input class="chooseday" type="date" name ="inputdate">
+            <button type="submit" id="bdate" onclick="date(this)" class="bchooseday">choose</button>
+            <button class="x" id=xdate onclick="date(this)">&#10005</button>
+        </div>
+        <div class="optionchecklist" id="member">
+            <input type="text"><br>
+            <button class="x" id=xxdate onclick="addmember(this)">&#10005</button>
+        </div>
+    <Script>
+        function date(e){
+        if(e.id=="xdate"||e.id=="bdate"){
+            document.getElementById("choosedate").style.display = 'none';
+            document.getElementById("member").style.display = 'none';
+        }else{
+        document.getElementById("choosedate").style.display = 'block';
+        document.getElementById("member").style.display = 'none';
+    }
+        }
+        function addmember(e){
+        if(e.id=="xxdate"){
+            document.getElementById("member").style.display = 'none';
+        }else {document.getElementById("member").style.display = 'block';
+        document.getElementById("choosedate").style.display = 'none';
+    }
+    }
+    </Script>
     </body>
 </html>
