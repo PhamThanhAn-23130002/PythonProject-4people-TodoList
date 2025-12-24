@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from accounts import views as av
 
 urlpatterns = [
     path("create_board/", views.create_board, name="create_board"),
@@ -11,6 +12,7 @@ urlpatterns = [
     path("board/<int:board_id>/add_member/", views.add_member, name="add_member"),
     path("board/<int:board_id>/delete/", views.delete_board, name="delete_board"),
     path("boards/<int:board_id>/save-session/",views.save_board_session,name="save_board_session"),
-    path("log_out", views.log_out, name="log_out"),
+    path("log_out", av.logout_view, name="log_out"),
     path("about_me", views.about_me, name="about_me"),
+    path('join/<uuid:token>/', views.join_via_link, name='join_via_link'),
 ]
