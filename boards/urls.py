@@ -11,8 +11,9 @@ urlpatterns = [
     path("board/<int:board_id>/", views.board_detail, name="board_detail"),
     path("board/<int:board_id>/add_member/", views.add_member, name="add_member"),
     path("board/<int:board_id>/delete/", views.delete_board, name="delete_board"),
-    path("boards/<int:board_id>/save-session/",views.save_board_session,name="save_board_session"),
+    path("boards/<int:board_id>/save/",views.save_board_db,name="save_board_db"),
     path("log_out", av.logout_view, name="log_out"),
     path("about_me", views.about_me, name="about_me"),
     path('join/<uuid:token>/', views.join_via_link, name='join_via_link'),
+    path('dismiss-intro/', views.dismiss_intro, name='dismiss_intro'),
 ]
