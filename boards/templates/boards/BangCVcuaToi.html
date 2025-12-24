@@ -299,21 +299,30 @@
         }
 
 
-        .menu-item {
-            padding: 10px 16px;
-            cursor: pointer;
-            color: #e7ecf0;
-            font-size: 14px;
-        }
+.menu-item {
+    display: block; 
+    width: 100%;   
+    padding: 10px 16px;
+    cursor: pointer;
+    color: #e7ecf0;
+    font-size: 14px;
+    text-decoration: none; 
+    box-sizing: border-box; 
+    transition: background 0.2s; 
+}
 
-        .menu-item:hover {
-            background: #3a3f47;
-        }
+.menu-item:hover {
+    background: #3a3f47;
+}
 
-        .menu-item.logout {
-            color: #ff8b8b;
-            font-weight: 600;
-        }
+
+.menu-item.logout {
+    color: #ff8b8b;
+    font-weight: 600;
+    margin-left: 0 !important; 
+    border-top: 1px solid #3a3f47; 
+    margin-top: 4px;
+}
 
         /* ===== BOARD MORE MENU ===== */
         .board-more-wrap {
@@ -662,7 +671,7 @@
         .avatar {
             width: 36px;
             height: 36px;
-            background: #1f70ff;
+            background: #ffb03a;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -762,6 +771,80 @@
             font-weight: 600;
         }
 
+.switch-menu {
+    display: none; 
+    position: fixed;
+    bottom: 70px; 
+    left: 50%;
+    transform: translateX(-50%); 
+    width: 320px;
+    background: #2b2f36;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    border: 1px solid #454d59;
+    z-index: 1500;
+    overflow: hidden;
+    animation: slideUp 0.2s ease-out;
+}
+
+/* Hiệu ứng trượt lên nhẹ */
+@keyframes slideUp {
+    from { opacity: 0; transform: translate(-50%, 10px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.switch-header {
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #9aa3ad;
+    border-bottom: 1px solid #3a3f47;
+    background: #23272e;
+}
+
+.switch-list {
+    max-height: 300px; /* Nếu nhiều bảng quá thì cuộn */
+    overflow-y: auto;
+    padding: 8px 0;
+}
+
+.switch-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    text-decoration: none;
+    color: #e7ecf0;
+    transition: background 0.1s;
+}
+
+.switch-item:hover {
+    background: #3a3f47;
+}
+
+/* Style đặc biệt cho bảng đang mở */
+.switch-item.active {
+    background: rgba(110, 166, 255, 0.1);
+    border-left: 3px solid #6ea6ff;
+}
+
+.switch-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #a06adf, #f285c8); /* Màu giống Trello */
+}
+
+.switch-info .name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.current-indicator {
+    font-size: 11px;
+    color: #6ea6ff;
+}
+
 
     </style>
 
@@ -777,7 +860,6 @@
     </div>
     <div class="search"><input placeholder="Tìm kiếm" aria-label="Tìm kiếm"></div>
     <div class="top-actions">
-        <button class="btn">Tạo mới</button>
         <button class="icon-btn" title="Thông báo">🔔</button>
         <button class="icon-btn" title="Trợ giúp">?</button>
 
@@ -803,11 +885,10 @@
                 <div class="menu-section">
                     <div class="menu-title">LIST</div>
 
-                    <div class="menu-item">Chuyển đổi tài khoản</div>
-                    <div class="menu-item">Quản lý tài khoản</div>
-
+                   <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Chuyển đổi tài khoản</a>
+                   <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Quản lý tài khoản</a>
                     <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Hồ sơ và hiển thị</a>
-                    <div class="menu-item">Cài đặt</div>
+                    <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Cài đặt</a>
                 </div>
 
                 <div class="menu-divider"></div>
@@ -834,7 +915,7 @@
 
                 <div class="menu-share-users">
                     <div class="menu-share-btn">
-                        <svg class="share-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        {% comment %} <svg class="share-icon" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M16 11c1.66 0 3-1.34 3-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
                         </svg>
                         Chia sẻ
@@ -845,7 +926,7 @@
                         <div class="user-avatar u-cyan">TA</div>
                         <div class="user-avatar u-blue">
                             <span class="user-icon">👤</span>
-                        </div>
+                        </div> {% endcomment %}
                     </div>
                 </div>
 
@@ -997,11 +1078,6 @@
     </div>
 </main>
 
-<!-- Footer nổi -->
-<div class="floating-footer">
-    📅 Bảng thông tin &nbsp;&nbsp;|&nbsp;&nbsp; Chuyển đổi các trang
-</div>
-
 <form method="POST" action="{% url 'add_member' board.id %}">
     {% csrf_token %}
     <div id="modalOverlay">
@@ -1009,18 +1085,16 @@
             <div class="close" id="closeBtn">×</div>
             <h2>Chia sẻ bảng</h2>
 
-
             <div class="form-row">
-                <input type="text" name="email" placeholder="Địa chỉ email hoặc tên"/>
-                <select>
-                    <option>Thành viên</option>
-                    <option>Quản trị viên</option>
+                <input type="text" name="email" placeholder="Địa chỉ email hoặc tên" required />
+                <select name="role">
+                    <option value="member">Thành viên</option>
+                    <option value="admin">Quản trị viên</option>
                 </select>
-                <!--<button class="share-btn">Chia sẻ</button>-->
                 <button type="submit" class="share-btn">Chia sẻ</button>
             </div>
-            <div class="board-actions">
 
+            <div class="board-actions" style="margin-bottom: 15px;">
                 <div style="display: flex; margin-right: 8px;">
                     {% for member in members %}
                         <div title="{{ member.user.email }}"
@@ -1034,43 +1108,87 @@
             <div>
                 <strong>Chia sẻ bảng này bằng liên kết</strong>
             </div>
-            <a href="#" style="color:#579dff; font-size:14px; text-decoration:none;">Tạo liên kết</a>
+            
+            <div id="linkSection" style="margin-top: 8px;">
+                <a href="javascript:void(0)" id="createLinkBtn" style="color:#579dff; font-size:14px; text-decoration:none;">
+                    Tạo liên kết
+                </a>
+
+                <div id="linkDisplay" style="display: none; align-items: center; gap: 5px;">
+                    <input type="text" id="shareUrlInput" 
+                           value="{{ request.scheme }}://{{ request.get_host }}{% url 'join_via_link' board.share_token %}" 
+                           readonly 
+                           style="font-size: 13px; color: #aaa; background: #222; border: 1px solid #444; width: 100%; padding: 8px;">
+                    
+                    <button type="button" id="copyLinkBtn" title="Sao chép" 
+                            style="background: #3a3f47; border: none; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer;">
+                        📋
+                    </button>
+                </div>
+                
+                <div id="copySuccess" style="display:none; color: #4bce97; font-size: 12px; margin-top: 5px;">
+                    ✅ Đã sao chép vào bộ nhớ tạm!
+                </div>
+            </div>
 
             <div class="divider"></div>
 
             <h3 style="margin-bottom: 10px;">Thành viên của bảng</h3>
 
-            <div style="max-height: 200px; overflow-y: auto;"> {% for member in members %}
-                <div class="member-row"
-                     style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-                    <div class="member-info" style="display: flex; align-items: center; gap: 10px;">
-                        <div class="avatar"
-                             style="width: 32px; height: 32px; background: #ffb03a; color: #141414; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
-                            {{ member.user.username|slice:":2"|upper }}
+            <div style="max-height: 200px; overflow-y: auto;"> 
+                {% for member in members %}
+                    <div class="member-row" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <div class="member-info" style="display: flex; align-items: center; gap: 10px;">
+                            <div class="avatar" style="width: 32px; height: 32px; background: #ffb03a; color: #141414; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                {{ member.user.username|slice:":2"|upper }}
+                            </div>
+
+                            <div>
+                                <div style="font-weight: 600;">
+                                    {{ member.user.username }}
+                                    {% if member.user == request.user %}(bạn){% endif %}
+                                </div>
+                                <div style="font-size:12px; color:#aaa;">{{ member.user.email }}</div>
+                            </div>
                         </div>
 
-                        <div>
-                            <div style="font-weight: 600;">{{ member.user.username }}
-                                {% if member.user == request.user %}(bạn){% endif %}</div>
-                            <div style="font-size:12px; color:#aaa;">{{ member.user.email }}</div>
-                        </div>
+                        <span style="color: #a8b0b8; font-size: 13px;">{{ member.role }}</span>
                     </div>
-
-                    <span style="color: #a8b0b8; font-size: 13px;">{{ member.role }}</span>
-                </div>
                 {% empty %}
-                <p>Chưa có thành viên nào.</p>
-            {% endfor %}
+                    <p style="color: #aaa; font-style: italic;">Chưa có thành viên nào.</p>
+                {% endfor %}
             </div>
-            <select>
-                <option selected>Quản trị viên</option>
-                <option>Thành viên</option>
-            </select>
-        </div>
-
+            
+            </div>
     </div>
-
 </form>
+
+<div class="floating-footer">
+    <span style="cursor: pointer;">📅 Bảng thông tin</span> 
+    &nbsp;&nbsp;|&nbsp;&nbsp; 
+    
+    <span id="switchViewBtn" style="cursor: pointer;">
+        🔄 Chuyển đổi các bảng
+    </span>
+</div>
+
+<div id="switchBoardMenu" class="switch-menu">
+    <div class="switch-header">Các bảng của bạn</div>
+    <div class="switch-list">
+        {% for b in all_boards %}
+            <a href="{% url 'board_detail' b.id %}" class="switch-item {% if b.id == board.id %}active{% endif %}">
+                <div class="switch-thumb"></div> 
+                
+                <div class="switch-info">
+                    <div class="name">{{ b.name }}</div>
+                    {% if b.id == board.id %}
+                        <div class="current-indicator">Đang xem</div>
+                    {% endif %}
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</div>
 
 </body>
 
@@ -1396,6 +1514,66 @@
     // click ra ngoài → đóng hết menu
     document.addEventListener("click", () => {
         document.querySelectorAll(".list-menu").forEach(m => m.classList.remove("show"));
+    });
+
+    // --- Xử lý nút Chuyển đổi bảng ---
+    const switchBtn = document.getElementById('switchViewBtn');
+    const switchMenu = document.getElementById('switchBoardMenu');
+
+    if (switchBtn && switchMenu) {
+        // Bấm nút thì bật tắt menu
+        switchBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Ngăn sự kiện nổi bọt
+            
+            if (switchMenu.style.display === 'block') {
+                switchMenu.style.display = 'none';
+            } else {
+                switchMenu.style.display = 'block';
+            }
+        });
+
+        // Bấm ra ngoài thì đóng menu
+        document.addEventListener('click', (e) => {
+            if (!switchMenu.contains(e.target) && e.target !== switchBtn) {
+                switchMenu.style.display = 'none';
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // --- Xử lý Logic Link Chia sẻ ---
+        const createLinkBtn = document.getElementById("createLinkBtn");
+        const linkDisplay = document.getElementById("linkDisplay");
+        const copyLinkBtn = document.getElementById("copyLinkBtn");
+        const shareUrlInput = document.getElementById("shareUrlInput");
+        const copySuccess = document.getElementById("copySuccess");
+
+        // 1. Khi bấm "Tạo liên kết"
+        if(createLinkBtn) {
+            createLinkBtn.onclick = function() {
+                createLinkBtn.style.display = "none"; // Ẩn chữ Tạo liên kết
+                linkDisplay.style.display = "flex";   // Hiện ô input link
+                shareUrlInput.select();               // Bôi đen sẵn link
+            };
+        }
+
+        // 2. Khi bấm nút Copy
+        if(copyLinkBtn) {
+            copyLinkBtn.onclick = function() {
+                // Copy nội dung
+                shareUrlInput.select();
+                shareUrlInput.setSelectionRange(0, 99999); // Cho điện thoại
+                navigator.clipboard.writeText(shareUrlInput.value);
+
+                // Hiện thông báo thành công
+                copySuccess.style.display = "block";
+                
+                // Tắt thông báo sau 2 giây
+                setTimeout(() => {
+                    copySuccess.style.display = "none";
+                }, 2000);
+            };
+        }
     });
 </script>
 </html>
