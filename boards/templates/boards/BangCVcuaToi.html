@@ -1178,7 +1178,6 @@
         {% for b in all_boards %}
             <a href="{% url 'board_detail' b.id %}" class="switch-item {% if b.id == board.id %}active{% endif %}">
                 <div class="switch-thumb"></div> 
-                
                 <div class="switch-info">
                     <div class="name">{{ b.name }}</div>
                     {% if b.id == board.id %}
