@@ -851,7 +851,23 @@
             color: #6ea6ff;
         }
 
+        .card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
 
+        .card {
+            background: #222;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            background: #2d2d2d;
+        }
     </style>
 
 
@@ -1050,7 +1066,11 @@
                 <!-- CARDS -->
                 <div class="cards">
                     {% for c in l.cards.all %}
-                        <div class="card">{{ c.title }}</div>
+                        <a href="{% url 'card_detail_id' c.id %}" class="card-link">
+                            <div class="card">
+                                {{ c.title }}
+                            </div>
+                        </a>
                         {% empty %}
                         <!-- chưa có thẻ -->
                     {% endfor %}
