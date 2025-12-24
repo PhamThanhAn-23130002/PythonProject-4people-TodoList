@@ -924,12 +924,18 @@
                 <div class="menu-section">
                     <div class="menu-title">TÀI KHOẢN</div>
                     <div class="account-info">
-                        <div class="account-avatar">TT</div>
-                        <div>
-                            <div class="account-name">Tran Anh Tuan</div>
-                            <div class="account-email">23130372@st.hcmuaf.edu.vn</div>
+                        <div class="account-avatar">
+                            {{ request.user.username|slice:":2"|upper }}
                         </div>
-                    </div>
+                        <div>
+                            <div class="account-name">
+                                {{ request.user.get_full_name|default:request.user.username }}
+                            </div>
+                            <div class="account-email">
+                                {{ request.user.email }}
+                            </div>
+                        </div>
+
                 </div>
 
                 <div class="menu-divider"></div>
