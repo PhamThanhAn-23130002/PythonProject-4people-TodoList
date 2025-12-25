@@ -11,7 +11,8 @@ import json
 from django.db.models import Q #phép tuyển
 from .models import Board, List, Card,Checklist, ChecklistItem
 from tasks.models import Task
-
+from datetime import datetime
+from django.utils import timezone
 def create_board(request):
     return render(request, "boards/BangCVcuaToi.html")
 
@@ -227,13 +228,33 @@ def createdealine(request):
     d4 = request.POST.get("process")
     d5 = request.POST.get("complexity")
     d6 = request.POST.get("inputdate")
+    d7 = request.POST.get("inputtime")
+    dt = datetime.strptime(
+            f"{d6} {d7}",
+            "%Y-%m-%d %H:%M"
+        )
     Task.objects.create(
         title = d1,
         description = d2,
         priority = d3, 
         status = d4,
         difficulty =d5,
-        deadline =d6)
+        deadline = dt)
+    return redirect("boards/BangCVcuaToi.html")
+def loaddealine(request,id):
+    list=Task.objects.get(id==id)
+    dealine = list.deadline
+    if timezone.is_aware(dealine):
+        dealine = timezone.localtime(dealine)
+    context={
+        "deadline_date": dealine.date(),
+        "deadline_time": dealine.time().strftime("%H:%M"),
+        
+    }
+    return render(request, "CardDetail.html", context)
+def detail_task(request, id):
+    task = Task.objects.get(id=id)
+    return render(request, "detail.html", {"task": task})
 
 
 
