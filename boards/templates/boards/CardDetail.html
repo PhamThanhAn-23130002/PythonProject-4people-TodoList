@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link rel="shortcut icon" href="images/favicon.ico">
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
     <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
@@ -14,376 +14,596 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
     <link rel="icon" href="image/Screenshot%20From%202025-11-26%2010-49-26.png" type="image/x-icon">
     <title>carddetail</title>
-        <style>
-            .overlay{
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.06); /* mờ nhưng vẫn thấy trang sau */
-    backdrop-filter: blur(4px);   /* làm mờ trang sau (rất đẹp) */
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    z-index: 999;
-}
-            .div_toal{
-                width: 1080px;
-                margin: auto;
-                margin-top: 100px;
-                border-radius: 12px;      
-                padding: 20px; 
-                box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-                position:relatives;
-                background-color: #1f2024;
-            }
-            .headerchild{
-                display:flex;
-                justify-content: space-between;
-                align-items: center;
-                margin:auto;
-                width:100%;
-                height:57px;
-                border-bottom:1px solid gray;
-                align-items: center;
-                background-color: #242528;
-                
-            }
-            .editcard{
+    <style>
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.06); /* mờ nhưng vẫn thấy trang sau */
+            backdrop-filter: blur(4px); /* làm mờ trang sau  */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .div_toal {
+            width: 1080px;
+            margin-top: 60px;
+            border-radius: 12px;
+            padding: 20px;
+            background-color: #1f2024;
+
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+
+
+        }
+
+        .headerchild {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: auto;
+            width: 100%;
+            height: 57px;
+            border-bottom: 1px solid gray;
+            align-items: center;
             background-color: #242528;
-            }
-            .headerchild button{
-                border:none;
-                width:85px;
-                height:24px;
-                background-color: #242528;
-                color:white;
-            }
-            #choosetime{
-                border: none;
-                border-radius: 5px;
-                background-color: #533f04;
-                color: white;
 
-            }
-            .complete{
-                width:16px;
-                height:16px;
-                margin-top:2    0px;
-                border-radius: 50%;
-                background-color: #242528;
-                border-radius: 50%;        /* hình tròn */
-            }
-            .subject{
-                width:90%;
-                height:30px;
-                border:none;
-                text-decoration:none;
-                background-color: #242528;
-                color:#bbbdc0;
-                margin-top:10px;
-            }
-            .bodycard{
-                display:flex;
-            }
-            .commentcard{
-                background-color: #18191a;
-                color:#bbbdc0; 
-            }
-.buttons{
-    display:flex;
-    justify-content: space-around;
-    gap:10px;                /* đều và gọn hơn */
-    padding:10px 0;
-}
+        }
 
-.buttons button{
-    width:100px;
-    height:30px;
-    border-radius:6px;
-    background-color:#242528;   /* giữ nguyên */
-    color:#e6e6e6;
-    border:1px solid #3d3d3d;   /* border tinh tế hơn */
-    font-size:13px;
-    cursor:pointer;
-    transition:all 0.2s ease;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-}
+        .editcard {
+            background-color: #242528;
+        }
 
-/* hover */
-.buttons button:hover{
-    border-color:#4da3ff;
-    color:#4da3ff;
-    box-shadow:0 0 0 1px rgba(77,163,255,0.3);
-}
+        .headerchild button {
+            border: none;
+            width: 85px;
+            height: 24px;
+            background-color: #242528;
+            color: white;
+        }
 
-/* click */
-.buttons button:active{
-    transform:scale(0.96);
-}
+        #choosetime {
+            border: none;
+            border-radius: 5px;
+            background-color: #533f04;
+            color: white;
 
-/* focus (accessibility) */
-.buttons button:focus{
-    outline:none;
-    border-color:#4da3ff;
-}
-            .decriptionh6{
-                color:#bbbdc0;
+        }
 
-            }
-            .description {    
+        .complete {
+            width: 16px;
+            height: 16px;
+            margin-top: 2 0px;
+            border-radius: 50%;
+            background-color: #242528;
+            border-radius: 50%; /* hình tròn */
+        }
+
+        .subject {
+            width: 90%;
+            height: 30px;
+            border: none;
+            text-decoration: none;
+            background-color: #242528;
+            color: #bbbdc0;
+            margin-top: 10px;
+        }
+
+        .bodycard {
+            display: flex;
+        }
+
+        .commentcard {
+            background-color: #18191a;
+            color: #bbbdc0;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px; /* đều và gọn hơn */
+            padding: 10px 0;
+        }
+
+        .buttons button {
+            width: 100px;
+            height: 30px;
+            border-radius: 6px;
+            background-color: #242528; /* giữ nguyên */
+            color: #e6e6e6;
+            border: 1px solid #3d3d3d; /* border tinh tế hơn */
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* hover */
+        .buttons button:hover {
+            border-color: #4da3ff;
+            color: #4da3ff;
+            box-shadow: 0 0 0 1px rgba(77, 163, 255, 0.3);
+        }
+
+        /* click */
+        .buttons button:active {
+            transform: scale(0.96);
+        }
+
+        /* focus (accessibility) */
+        .buttons button:focus {
+            outline: none;
+            border-color: #4da3ff;
+        }
+
+        .decriptionh6 {
+            color: #bbbdc0;
+
+        }
+
+        .description {
             width: 90%;
             background-color: #2c2d31;
             border: 1px solid #3d3d3d;
             border-radius: 8px;
             padding: 10px;
             color: #bbbdc0;
-            margin:auto;
+            margin: auto;
         }
-            .dtuychinh{
-               color:#bbbdc0; 
-            }
-            .priority{
-                background-color:#242528;
-                color:#bbbdc0;
-            }
-            .dtuychinh{
-                display:grid;
-                grid-template-columns: auto auto auto;
-            }
-            .inputeffort{
-                background-color:#242528;
-                color:#bbbdc0;
-                border-color: #bbbdc0;
-               outline:none;
-               width:140px;
-            }
-            .editcard{
-                margin:auto;
-            }
-            .priority{
-                border-radius: 5px;
-            }
-            .activity-container {
-                background-color: #18191a;
-                padding: 20px;
-                border-radius: 12px;
-                color: #bbbdc0;
-            }
-            .activity-title {
-                font-size: 18px;
-                margin-bottom: 15px;
-                display: flex;
-                gap: 10px;
-                align-items: center;
-                color: white;
-            }
 
-.activity-input {
-    width: 90%;
-    padding: 10px 14px;
-    background-color: #2a2b2f;
-    border: 1px solid #3d3d3d;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    color: white;
-    padding-left:10px;
-}
-.activity-input::placeholder {
-    color: #808080;
-}
+        .dtuychinh {
+            color: #bbbdc0;
+        }
 
-.activity-item {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
-    padding-left:10px;
-}
+        .priority {
+            background-color: #242528;
+            color: #bbbdc0;
+        }
 
+        .dtuychinh {
+            display: grid;
+            grid-template-columns: auto auto auto;
+        }
 
-.avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: #0d6efd;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 600;
-    font-size: 14px;
-}
+        .inputeffort {
+            background-color: #242528;
+            color: #bbbdc0;
+            border-color: #bbbdc0;
+            outline: none;
+            width: 140px;
+        }
 
-.activity-content p {
-    margin: 0;
-    font-size: 15px;
-    color: #e2e2e2;
-}
+        .editcard {
+            margin: auto;
+        }
 
-.name {
-    font-weight: bold;
-    color: white;
-}
+        .priority {
+            border-radius: 5px;
+        }
 
-.time {
-    color: #7eb6ff;
-    font-size: 13px;
-}
-.commentcard h4{
-    padding-top:10px;
-    padding-left:10px;
-}
-.activity-input{
-    margin-left: 10px;
-}
-.optionchecklist{
-    display:none;
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%, -50%);
-    background:#1f2024;
-    padding:20px;
-    border-radius:12px;
-    border:1px solid #3a3a3a;
-    box-shadow:0 12px 30px rgba(0,0,0,0.7);
-    min-width:260px;
-    text-align:center;
-}
+        .activity-container {
+            background-color: #18191a;
+            padding: 20px;
+            border-radius: 12px;
+            color: #bbbdc0;
+        }
 
-/* input date & time */
-.chooseday{
-    width:100%;
-    margin-bottom:12px;
-    padding:8px 10px;
-    border:1px solid #555;
-    border-radius:8px;
-    background:#2c2d31;
-    color:#e0e0e0;
-    font-size:14px;
-}
+        .activity-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            color: white;
+        }
 
-.chooseday:focus{
-    outline:none;
-    border-color:#4da3ff;
-}
+        .activity-input {
+            width: 90%;
+            padding: 10px 14px;
+            background-color: #2a2b2f;
+            border: 1px solid #3d3d3d;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: white;
+            padding-left: 10px;
+        }
 
-/* nút choose */
-.bchooseday{
-    padding:8px 16px;
-    border-radius:8px;
-    border:none;
-    background:#4da3ff;
-    color:white;
-    font-size:14px;
-    cursor:pointer;
-    margin-right:8px;
-    transition:0.2s;
-}
+        .activity-input::placeholder {
+            color: #808080;
+        }
 
-.bchooseday:hover{
-    background:#348cff;
-}
-
-/* nút X */
-.x{
-    padding:8px 12px;
-    border-radius:8px;
-    border:none;
-    background:#3a3a3a;
-    color:#ff5c5c;
-    font-size:16px;
-    cursor:pointer;
-    transition:0.2s;
-}
-
-.x:hover{
-    background:#ff5c5c;
-    color:white;
-}
-
-.check-circle{
-    display:inline-flex;
-    align-items:center;
-    cursor:pointer;
-}
-
-/* Ẩn checkbox gốc */
-.check-circle input{
-    display:none;
-}
-
-/* Vòng tròn */
-.check-circle span{
-    width:25px;
-    height:25px;
-    border:2px solid #767676;
-    border-radius:50%;
-    display:inline-block;
-    position:relative;
-    transition:0.2s;
-}
-
-/* Khi được check */
-.check-circle input:checked + span{
-    background-color:#82b536;
-    border-color:#82b536;
-}
-
-/* Dấu ✓ */
-.check-circle span::after{
-    content:"";
-    position:absolute;
-    left:5px;
-    top:2px;
-    width:10px;
-    height:10px;
-    border:solid white;
-    border-width:0 2px 2px 0;
-    transform:rotate(45deg);
-    opacity:0;
-    transition:0.2s;
-}
-
-/* Hiện ✓ khi check */
-.check-circle input:checked + span::after{
-    opacity:1;
-}
-.check-circle span:hover{
-    border-color:#82b536;
-}.deadline{
-    background:linear-gradient(135deg,#2c2d31,#1f2024);
-    border:none;         /* pill */
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:3px;
-    color:#7eb6ff;
-    font-size:13px;
-    font-weight:500;
-    cursor:default;               /* không giống nút */
-    box-shadow:inset 0 0 0 1px #3d3d3d;
-}
-
-/* dấu - nhẹ */
-.deadline .dash{
-    color:#666;
-}
-
-/* icon nếu có */
-.deadline i{
-    font-size:12px;
-    margin-right:4px;
-    color:#7eb6ff;
-}
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-left: 10px;
+        }
 
 
-        </style>
-    </head>
-    <body>
-        <div class="overlay">
-        <div class="div_toal">
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #0d6efd;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .activity-content p {
+            margin: 0;
+            font-size: 15px;
+            color: #e2e2e2;
+        }
+
+        .name {
+            font-weight: bold;
+            color: white;
+        }
+
+        .time {
+            color: #7eb6ff;
+            font-size: 13px;
+        }
+
+        .commentcard h4 {
+            padding-top: 10px;
+            padding-left: 10px;
+        }
+
+        .activity-input {
+            margin-left: 10px;
+        }
+
+        .optionchecklist {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1f2024;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #3a3a3a;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+            min-width: 260px;
+            text-align: center;
+        }
+
+        /* input date & time */
+        .chooseday {
+            width: 100%;
+            margin-bottom: 12px;
+            padding: 8px 10px;
+            border: 1px solid #555;
+            border-radius: 8px;
+            background: #2c2d31;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+
+        .chooseday:focus {
+            outline: none;
+            border-color: #4da3ff;
+        }
+
+        /* nút choose */
+        .bchooseday {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            background: #4da3ff;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            margin-right: 8px;
+            transition: 0.2s;
+        }
+
+        .bchooseday:hover {
+            background: #348cff;
+        }
+
+        /* nút X */
+        .x {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            background: #3a3a3a;
+            color: #ff5c5c;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .x:hover {
+            background: #ff5c5c;
+            color: white;
+        }
+
+        .check-circle {
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        /* Ẩn checkbox gốc */
+        .check-circle input {
+            display: none;
+        }
+
+        /* Vòng tròn */
+        .check-circle span {
+            width: 25px;
+            height: 25px;
+            border: 2px solid #767676;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+            transition: 0.2s;
+        }
+
+        /* Khi được check */
+        .check-circle input:checked + span {
+            background-color: #82b536;
+            border-color: #82b536;
+        }
+
+        /* Dấu ✓ */
+        .check-circle span::after {
+            content: "";
+            position: absolute;
+            left: 5px;
+            top: 2px;
+            width: 10px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            opacity: 0;
+            transition: 0.2s;
+        }
+
+        /* Hiện ✓ khi check */
+        .check-circle input:checked + span::after {
+            opacity: 1;
+        }
+
+        .check-circle span:hover {
+            border-color: #82b536;
+        }
+
+        .deadline {
+            background: linear-gradient(135deg, #2c2d31, #1f2024);
+            border: none; /* pill */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            color: #7eb6ff;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: default; /* không giống nút */
+            box-shadow: inset 0 0 0 1px #3d3d3d;
+        }
+
+        /* dấu - nhẹ */
+        .deadline .dash {
+            color: #666;
+        }
+
+        /* icon nếu có */
+        .deadline i {
+            font-size: 12px;
+            margin-right: 4px;
+            color: #7eb6ff;
+        }
+
+        .checklist-popover {
+            position: absolute;
+            width: 360px;
+            background: #2b2d31;
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+            color: #e6e6e6;
+            display: none;
+            z-index: 1000;
+        }
+
+        .checklist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .checklist-header button {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .checklist-body label {
+            font-size: 13px;
+            color: #bdbdbd;
+            margin-top: 10px;
+            display: block;
+        }
+
+        .checklist-body input,
+        .checklist-body select {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 6px;
+            border-radius: 6px;
+            border: 1px solid #3d3d3d;
+            background: #1f2024;
+            color: white;
+        }
+
+        .btn-add {
+            margin-top: 14px;
+            background: #4da3ff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px;
+            width: 80px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* ===== CHECKLIST BLOCK ===== */
+        .checklist-wrapper {
+            width: 100%;
+            margin-top: 16px;
+        }
+
+        .checklist {
+            width: 95%;
+            background: #1f2024;
+            border: 1px solid #3a3a3a;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+
+        /* header */
+        .checklist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .checklist-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #e6e6e6;
+            font-weight: 600;
+        }
+
+        .checklist-remove {
+            background: #2c2d31;
+            border: none;
+            color: #ff6b6b;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* progress */
+        .checklist-progress {
+            width: 100%;
+            height: 6px;
+            background: #2c2d31;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .checklist-progress span {
+            display: block;
+            height: 100%;
+            width: 0%;
+            background: #4da3ff;
+            transition: 0.3s;
+        }
+
+        /* add item */
+        .add-check-item {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .add-check-item input {
+            flex: 1;
+            min-width: 0;
+            background: #2c2d31;
+            border: 1px solid #3d3d3d;
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #e6e6e6;
+            font-size: 14px;
+        }
+
+        .add-check-item button {
+            white-space: nowrap;
+            background: #2c2d31;
+            border: 1px solid #3d3d3d;
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: #e6e6e6;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .add-check-item button:hover {
+            border-color: #4da3ff;
+            color: #4da3ff;
+        }
+
+        /* checklist item */
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 6px 4px;
+            color: #e6e6e6;
+            font-size: 14px;
+        }
+
+        .check-item input {
+            width: 16px;
+            height: 16px;
+        }
+
+        .checklist-wrapper {
+            grid-column: 1 / -1;
+        }
+
+        .checklist-percent {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #7eb6ff;
+            text-align: right;
+        }
+
+        .checklist-remove {
+            background: #2c2d31;
+            border: none;
+            color: #ff6b6b;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .checklist-remove:hover {
+            background: #3a3a3a;
+        }
+
+    </style>
+</head>
+<body>
+<div class="overlay">
+    <div class="div_toal">
         <header class="headerchild">
             <button id="choosetime">
                 Hôm nay
@@ -396,129 +616,427 @@
         <div class="bodycard">
             <div class="col-xl-6 editcard">
                 <label class="check-circle">
-    <input class="complete" type="checkbox">
-    <span></span>
-</label>
+                    <input class="complete" type="checkbox">
+                    <span></span>
+                </label>
                 <textarea class="subject" name="tile"></textarea>
-            <div>
-                <div class="buttons">
-                    <button>THÊM</button>
-                    <button onclick="date(this)">NGÀY</button>
-                    <button>CẦN LÀM</button>
-                    <button onclick="addmember(this)">THÀNH VIÊN</button>
+                <div>
+                    <div class="buttons">
+                        <button>THÊM</button>
+                        <button onclick="date(this)">NGÀY</button>
+                        <button onclick="openChecklistPopover(this)">CẦN LÀM</button>
+
+                        <button onclick="addmember(this)">THÀNH VIÊN</button>
+                    </div>
+
+
+                    <div class="deadline">
+                        <span>NGÀY ĐẾN HẠN: </span>
+                        <span>02</span>
+                        <span class="dash">-</span>
+                        <span>01</span>
+                        <span class="dash">-</span>
+                        <span>2018</span>
+                    </div>
                 </div>
-                
-                     
-    <div class="deadline">
-       <span>NGÀY ĐẾN HẠN: </span>
-        <span>02</span>
-        <span class="dash">-</span>
-        <span>01</span>
-        <span class="dash">-</span>
-        <span>2018</span>
-    </div>
-            </div>
-                <h6 class="decriptionh6" >mô tả</h6>
-                <textarea class="description" rows="4" cols="50" name ="description"></textarea>
+                <h6 class="decriptionh6">mô tả</h6>
+                <textarea class="description" rows="4" cols="50" name="description"></textarea>
                 <h6 class="decriptionh6"> trường tùy chỉnh</h6>
+
                 <div class="dtuychinh">
                     <div class="detailtuychinh">
-                    <p>Ưu Tiên</p>
-                   <select class="priority" name="priority">
-                    <option  value="">--</option>
-                   <option  value="">ưu tiên cao nhất</option>
-                   <option  value="">ưu tiên cao</option>
-                   <option  value="">trung bình</option>
-                   <option  value="">thấp</option>
-                   <option  value="">thấp nhất</option>
-                   <option  value="">không chắc</option>
-                   </select>
-                   </div>
-                <div class="detailtuychinh">
-                    <p>Trang Thái</p>
-                   <select class="priority" name="process">
-                    <option  value="">--</option>
-                    <option value="">việc cần làm</option>
-                    <option value="">đang làm</option>
-                    <option value="">đã làm</option>
-                   <option value="">xem lại</option>
-                   <option value="">cải thiện</option>
-                   </select>
-                   </div>
-                <div class="detailtuychinh">
-                    <p>Phức Tạp</p>
-                   <select class="priority" name="complexity">
-                    <option value="">--</option>
-                    <option value="">ưu tiên cao nhất</option>
-                   <option value="">ưu tiên cao</option>
-                   <option value="">trung bình</option>
-                   <option value="">thấp</option>
-                   <option value="">thấp nhất</option>
-                   </select>
-                   </div>
-                <div class="detailtuychinh">
-                    
-                   </div>
+                        <p>Ưu Tiên</p>
+                        <select class="priority" name="priority">
+                            <option value="">--</option>
+                            <option value="">ưu tiên cao nhất</option>
+                            <option value="">ưu tiên cao</option>
+                            <option value="">trung bình</option>
+                            <option value="">thấp</option>
+                            <option value="">thấp nhất</option>
+                            <option value="">không chắc</option>
+                        </select>
+                    </div>
+                    <div class="detailtuychinh">
+                        <p>Trang Thái</p>
+                        <select class="priority" name="process">
+                            <option value="">--</option>
+                            <option value="">việc cần làm</option>
+                            <option value="">đang làm</option>
+                            <option value="">đã làm</option>
+                            <option value="">xem lại</option>
+                            <option value="">cải thiện</option>
+                        </select>
+                    </div>
+                    <div class="detailtuychinh">
+                        <p>Phức Tạp</p>
+                        <select class="priority" name="complexity">
+                            <option value="">--</option>
+                            <option value="">ưu tiên cao nhất</option>
+                            <option value="">ưu tiên cao</option>
+                            <option value="">trung bình</option>
+                            <option value="">thấp</option>
+                            <option value="">thấp nhất</option>
+                        </select>
+                    </div>
+                    <div class="detailtuychinh">
+
+                    </div>
+                    <!-- CHECKLIST CONTAINER -->
+                    <div class="checklist-wrapper">
+                        <div id="checklistContainer">
+                            {% for checklist in checklists %}
+                                <div class="checklist" data-id="{{ checklist.id }}">
+                                    <div class="checklist-header">
+                                        <div class="checklist-title">
+                                            <i class="fa-regular fa-square-check"></i>
+                                            <span>{{ checklist.title }}</span>
+                                        </div>
+
+                                        <button type="button" class="checklist-remove"
+                                                onclick="deleteChecklist({{ checklist.id }}, this)">
+                                            Xóa
+                                        </button>
+                                    </div>
+
+                                    <div class="checklist-progress">
+                                        <span class="progress-bar"></span>
+                                    </div>
+                                    <div class="checklist-percent">0%</div>
+
+                                    <div class="check-items">
+                                        {% for item in checklist.items.all %}
+                                            <div class="check-item">
+                                                <input type="checkbox"
+                                                       {% if item.is_done %}checked{% endif %}
+                                                       onchange="toggleItem({{ item.id }})">
+                                                <span>{{ item.title }}</span>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="add-check-item">
+                                        <input type="text" placeholder="Nhập tên công việc...">
+                                        <button onclick="addChecklistItem(this, {{ checklist.id }})">
+                                            Thêm một mục
+                                        </button>
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <div class="col-xl-6 commentcard">
                 <h4>NHẬN XÉT HOẠT ĐỘNG</h4>
-     <input class="activity-input" type="text" placeholder="Viết bình luận...">
-     <div class="activity-item">
-        <div class="avatar">NA</div>
-        <div class="activity-content">
-            <p><span class="name">Nguyễn Văn A</span> đã đánh dấu thẻ này là chưa hoàn tất</p>
-            <span class="time">vừa xong</span>
-        </div>
-     </div>
+                <input class="activity-input" type="text" placeholder="Viết bình luận...">
+                <div class="activity-item">
+                    <div class="avatar">NA</div>
+                    <div class="activity-content">
+                        <p><span class="name">Nguyễn Văn A</span> đã đánh dấu thẻ này là chưa hoàn tất</p>
+                        <span class="time">vừa xong</span>
+                    </div>
+                </div>
 
-     <div class="activity-item">
-        <div class="avatar">NA</div>
-        <div class="activity-content">
-            <p><span class="name">Nguyễn Văn A</span> đã đánh dấu thẻ này là hoàn tất</p>
-            <span class="time">vừa xong</span>
-        </div>
-     </div>
+                <div class="activity-item">
+                    <div class="avatar">NA</div>
+                    <div class="activity-content">
+                        <p><span class="name">Nguyễn Văn A</span> đã đánh dấu thẻ này là hoàn tất</p>
+                        <span class="time">vừa xong</span>
+                    </div>
+                </div>
 
-     <div class="activity-item">
-        <div class="avatar">NA</div>
-        <div class="activity-content">
-            <p><span class="name">Nguyễn Văn A</span> đã thêm thẻ này vào danh sách Hôm nay</p>
-            <span class="time">vừa xong</span>
-        </div>
-     </div>
-    
+                <div class="activity-item">
+                    <div class="avatar">NA</div>
+                    <div class="activity-content">
+                        <p><span class="name">Nguyễn Văn A</span> đã thêm thẻ này vào danh sách Hôm nay</p>
+                        <span class="time">vừa xong</span>
+                    </div>
+                </div>
+
             </div>
         </div>
-        </div>
-        <div class="optionchecklist" id="choosedate">
-            <input class="chooseday" type="date" name ="inputdate">
-            <input class="chooseday" type="time" name="inputtime"><br>
-            <button type="submit" id="bdate" onclick="date(this)" class="bchooseday">choose</button>
-            <button class="x" id=xdate onclick="date(this)">&#10005</button>
-        </div>
-        <div class="optionchecklist" id="member">
-            <input class="chooseday" type="text"><br>
-            <button class="x" id=xxdate onclick="addmember(this)">&#10005</button>
     </div>
+
+    <div class="optionchecklist" id="choosedate">
+        <input class="chooseday" type="date" name="inputdate">
+        <input class="chooseday" type="time" name="inputtime"><br>
+        <button type="submit" id="bdate" onclick="date(this)" class="bchooseday">choose</button>
+        <button class="x" id=xdate onclick="date(this)">&#10005</button>
     </div>
-    <Script>
-        function date(e){
-        if(e.id=="xdate"||e.id=="bdate"){
+
+    <div class="optionchecklist" id="member">
+        <input class="chooseday" type="text"><br>
+        <button class="x" id=xxdate onclick="addmember(this)">&#10005</button>
+    </div>
+
+    <!-- POPOVER CHECKLIST -->
+    <div class="checklist-popover" id="checklistPopover">
+        <div class="checklist-header">
+            <span>Thêm danh sách công việc</span>
+            <button type="button" onclick="closeChecklistPopover()">✕</button>
+        </div>
+
+        <div class="checklist-body">
+            <label>Tiêu đề</label>
+            <input id="checklistTitleInput" type="text" value="Việc cần làm">
+
+            <button type="button" class="btn-add" onclick="createChecklist()">
+                Thêm
+            </button>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    //
+    const CARD_ID = {{ card.id }};
+
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const csrftoken = getCookie('csrftoken');
+
+    //
+    function date(e) {
+        if (e.id == "xdate" || e.id == "bdate") {
             document.getElementById("choosedate").style.display = 'none';
             document.getElementById("member").style.display = 'none';
-        }else{
-        document.getElementById("choosedate").style.display = 'block';
-        document.getElementById("member").style.display = 'none';
-    }
-        }
-        function addmember(e){
-        if(e.id=="xxdate"){
+        } else {
+            document.getElementById("choosedate").style.display = 'block';
             document.getElementById("member").style.display = 'none';
-        }else {document.getElementById("member").style.display = 'block';
-        document.getElementById("choosedate").style.display = 'none';
+        }
     }
+
+    function addmember(e) {
+        if (e.id == "xxdate") {
+            document.getElementById("member").style.display = 'none';
+        } else {
+            document.getElementById("member").style.display = 'block';
+            document.getElementById("choosedate").style.display = 'none';
+        }
     }
-    </Script>
-    </body>
+
+    //
+    function openChecklistPopover(btn) {
+        const popover = document.getElementById("checklistPopover");
+        const rect = btn.getBoundingClientRect();
+
+        popover.style.top = rect.bottom + window.scrollY + 8 + "px";
+        popover.style.left = rect.left + window.scrollX + "px";
+        popover.style.display = "block";
+    }
+
+    function closeChecklistPopover() {
+        document.getElementById("checklistPopover").style.display = "none";
+    }
+
+    //
+    function createChecklist() {
+        const title = document.getElementById("checklistTitleInput").value;
+        const cardId = "{{ card.id }}";
+
+        fetch("/boards/api/checklist/create/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({
+                card_id: cardId,
+                title: title
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "ok") {
+                renderChecklist(data.checklist_id, data.title);
+                closeChecklistPopover();
+            }
+        })
+        .catch(err => {
+            console.error("Error creating checklist:", err);
+            alert("Có lỗi khi tạo checklist");
+        });
+    }
+
+    function renderChecklist(id, title) {
+        const container = document.getElementById("checklistContainer");
+
+        container.insertAdjacentHTML("beforeend", `
+            <div class="checklist" data-id="${id}">
+                <div class="checklist-header">
+                    <div class="checklist-title">
+                        <i class="fa-regular fa-square-check"></i>
+                        <span>${title}</span>
+                    </div>
+                    <button type="button" class="checklist-remove"
+                            onclick="deleteChecklist(${id}, this)">
+                        Xóa
+                    </button>
+                </div>
+
+                <div class="checklist-progress">
+                    <span class="progress-bar"></span>
+                </div>
+                <div class="checklist-percent">0%</div>
+
+                <div class="check-items"></div>
+
+                <div class="add-check-item">
+                    <input type="text" placeholder="Nhập tên công việc...">
+                    <button onclick="addChecklistItem(this, ${id})">
+                        Thêm một mục
+                    </button>
+                </div>
+            </div>
+        `);
+    }
+
+    //
+    function deleteChecklist(checklistId, btn) {
+        console.log("Deleting checklist ID:", checklistId);
+
+        if (!confirm("Bạn có chắc muốn xóa danh sách này?")) return;
+
+        fetch("/boards/api/checklist/delete/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({
+                checklist_id: checklistId
+            })
+        })
+        .then(res => {
+            console.log("Response status:", res.status);
+            return res.json();
+        })
+        .then(data => {
+            console.log("Response data:", data);
+            if (data.status === "ok") {
+                btn.closest(".checklist").remove();
+                alert("Đã xóa thành công!");
+            } else {
+                alert("Xóa thất bại: " + (data.error || ""));
+            }
+        })
+        .catch(err => {
+            console.error("Error:", err);
+            alert("Có lỗi xảy ra: " + err.message);
+        });
+    }
+
+    //
+    function addChecklistItem(btn, checklistId) {
+        const input = btn.previousElementSibling;
+        if (!input.value.trim()) return;
+
+        fetch("/boards/api/checklist/item/add/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({
+                checklist_id: checklistId,
+                title: input.value
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            const list = btn.closest(".checklist").querySelector(".check-items");
+
+            list.insertAdjacentHTML("beforeend", `
+                <div class="check-item">
+                    <input type="checkbox" onchange="toggleItem(${data.id})">
+                    <span>${data.title}</span>
+                </div>
+            `);
+
+            input.value = "";
+            updateProgress(btn.closest(".checklist"));
+        })
+        .catch(err => {
+            console.error("Error adding item:", err);
+            alert("Có lỗi khi thêm mục");
+        });
+    }
+
+    //
+    function toggleItem(itemId) {
+        fetch("/boards/api/checklist/item/toggle/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({
+                item_id: itemId
+            })
+        })
+        .catch(err => {
+            console.error("Error toggling item:", err);
+        });
+    }
+
+    //
+    function updateProgress(checklist) {
+        const items = checklist.querySelectorAll(".check-item input");
+        const checked = checklist.querySelectorAll(".check-item input:checked");
+
+        const percent = items.length === 0
+            ? 0
+            : Math.round((checked.length / items.length) * 100);
+
+        checklist.querySelector(".progress-bar").style.width = percent + "%";
+        checklist.querySelector(".checklist-percent").innerText = percent + "%";
+    }
+
+    //
+    // Close popover when clicking outside
+    document.addEventListener("click", function (e) {
+        const popover = document.getElementById("checklistPopover");
+        if (!popover.contains(e.target) && !e.target.innerText.includes("CẦN LÀM")) {
+            popover.style.display = "none";
+        }
+    });
+
+    //
+    document.addEventListener("change", function (e) {
+        if (e.target.matches(".check-item input")) {
+            const checklist = e.target.closest(".checklist");
+            updateProgress(checklist);
+        }
+    });
+
+    //
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".checklist").forEach(checklist => {
+            updateProgress(checklist);
+        });
+    });
+
+</script>
+
+
+</body>
 </html>
