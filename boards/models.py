@@ -43,10 +43,7 @@ class List(models.Model):
 
 
 class Card(models.Model):
-    list = models.ForeignKey(List,
-                             related_name="cards",
-                             on_delete=models.CASCADE
-                             )
+    list = models.ForeignKey(List,related_name="cards",on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     position = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)

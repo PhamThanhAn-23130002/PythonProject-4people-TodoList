@@ -411,11 +411,8 @@
                      
     <div class="deadline">
        <span>NGÀY ĐẾN HẠN: </span>
-        <span>02</span>
-        <span class="dash">-</span>
-        <span>01</span>
-        <span class="dash">-</span>
-        <span>2018</span>
+       <span>{{ task.deadline|time:"h:i A" }}</span>
+       <span>{{ task.deadline|date:"d-m-Y" }}</span>
     </div>
             </div>
                 <h6 class="decriptionh6" >mô tả</h6>
