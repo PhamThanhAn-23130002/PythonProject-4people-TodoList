@@ -1242,6 +1242,197 @@
         .bchooseday { padding: 8px 16px; border-radius: 8px; border: none; background: #4da3ff; color: white; cursor: pointer; }
         .x { padding: 8px 12px; border-radius: 8px; border: none; background: #3a3a3a; color: #ff5c5c; cursor: pointer; margin-left: 5px;}
 
+
+           .checklist-popover {
+            position: absolute;
+            width: 360px;
+            background: #2b2d31;
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+            color: #e6e6e6;
+            display: none;
+            z-index: 1000;
+        }
+
+        .checklist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .checklist-header button {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .checklist-body label {
+            font-size: 13px;
+            color: #bdbdbd;
+            margin-top: 10px;
+            display: block;
+        }
+
+        .checklist-body input,
+        .checklist-body select {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 6px;
+            border-radius: 6px;
+            border: 1px solid #3d3d3d;
+            background: #1f2024;
+            color: white;
+        }
+
+        .btn-add {
+            margin-top: 14px;
+            background: #4da3ff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px;
+            width: 80px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* ===== CHECKLIST BLOCK ===== */
+        .checklist-wrapper {
+            width: 100%;
+            margin-top: 16px;
+        }
+
+        .checklist {
+            width: 95%;
+            background: #1f2024;
+            border: 1px solid #3a3a3a;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+
+        /* header */
+        .checklist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .checklist-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #e6e6e6;
+            font-weight: 600;
+        }
+
+        .checklist-remove {
+            background: #2c2d31;
+            border: none;
+            color: #ff6b6b;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* progress */
+        .checklist-progress {
+            width: 100%;
+            height: 6px;
+            background: #2c2d31;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .checklist-progress span {
+            display: block;
+            height: 100%;
+            width: 0%;
+            background: #4da3ff;
+            transition: 0.3s;
+        }
+
+        /* add item */
+        .add-check-item {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .add-check-item input {
+            flex: 1;
+            min-width: 0;
+            background: #2c2d31;
+            border: 1px solid #3d3d3d;
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #e6e6e6;
+            font-size: 14px;
+        }
+
+        .add-check-item button {
+            white-space: nowrap;
+            background: #2c2d31;
+            border: 1px solid #3d3d3d;
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: #e6e6e6;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .add-check-item button:hover {
+            border-color: #4da3ff;
+            color: #4da3ff;
+        }
+
+        /* checklist item */
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 6px 4px;
+            color: #e6e6e6;
+            font-size: 14px;
+        }
+
+        .check-item input {
+            width: 16px;
+            height: 16px;
+        }
+
+        .checklist-wrapper {
+            grid-column: 1 / -1;
+        }
+
+        .checklist-percent {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #7eb6ff;
+            text-align: right;
+        }
+
+        .checklist-remove {
+            background: #2c2d31;
+            border: none;
+            color: #ff6b6b;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .checklist-remove:hover {
+            background: #3a3a3a;
+        }
     </style>
 
 
@@ -1697,15 +1888,16 @@
                     <div class="buttons">
                         <button>THÊM</button>
                         <button onclick="date(this)">NGÀY</button>
-                        <button>CẦN LÀM</button>
+                        <button onclick="openChecklistPopover(this)">CẦN LÀM</button>
                         <button onclick="addmember(this)">THÀNH VIÊN</button>
                     </div>
                     
                     <div class="deadline">
-       <span>NGÀY ĐẾN HẠN: </span>
-       <span>{{ task.deadline|time:"h:i A" }}</span>
-       <span>{{ task.deadline|date:"d-m-Y" }}</span>
-    </div>
+                        <span>NGÀY ĐẾN HẠN: </span>
+                        <span>02</span> <span class="dash">-</span>
+                        <span>01</span> <span class="dash">-</span>
+                        <span>2025</span>
+                    </div>
                 </div>
 
                 <h6 class="decriptionh6">mô tả</h6>
@@ -1776,6 +1968,22 @@
             <button class="bchooseday">Add</button>
             <button class="x" id="xxdate" onclick="addmember(this)">&#10005;</button>
         </div>
+         <!-- POPOVER CHECKLIST -->
+    <div class="checklist-popover" id="checklistPopover">
+        <div class="checklist-header">
+            <span>Thêm danh sách công việc</span>
+            <button type="button" onclick="closeChecklistPopover()">✕</button>
+        </div>
+
+        <div class="checklist-body">
+            <label>Tiêu đề</label>
+            <input id="checklistTitleInput" type="text" value="Việc cần làm">
+
+            <button type="button" class="btn-add" onclick="createChecklist()">
+                Thêm
+            </button>
+        </div>
+    </div>
     </div>
 </div>
 
@@ -2253,5 +2461,207 @@
             document.getElementById("choosedate").style.display = 'none';
         }
     }
+
+
+     //
+    function openChecklistPopover(btn) {
+        const popover = document.getElementById("checklistPopover");
+        const rect = btn.getBoundingClientRect();
+
+        popover.style.top = rect.bottom + window.scrollY + 8 + "px";
+        popover.style.left = rect.left + window.scrollX + "px";
+        popover.style.display = "block";
+    }
+
+    function closeChecklistPopover() {
+        document.getElementById("checklistPopover").style.display = "none";
+    }
+
+    //
+    function createChecklist() {
+        const title = document.getElementById("checklistTitleInput").value;
+        const cardId = "{{ card.id }}";
+
+        fetch("/boards/api/checklist/create/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({
+                card_id: cardId,
+                title: title
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "ok") {
+                renderChecklist(data.checklist_id, data.title);
+                closeChecklistPopover();
+            }
+        })
+        .catch(err => {
+            console.error("Error creating checklist:", err);
+            alert("Có lỗi khi tạo checklist");
+        });
+    }
+
+    function renderChecklist(id, title) {
+        const container = document.getElementById("checklistContainer");
+
+        container.insertAdjacentHTML("beforeend", `
+            <div class="checklist" data-id="${id}">
+                <div class="checklist-header">
+                    <div class="checklist-title">
+                        <i class="fa-regular fa-square-check"></i>
+                        <span>${title}</span>
+                    </div>
+                    <button type="button" class="checklist-remove"
+                            onclick="deleteChecklist(${id}, this)">
+                        Xóa
+                    </button>
+                </div>
+
+                <div class="checklist-progress">
+                    <span class="progress-bar"></span>
+                </div>
+                <div class="checklist-percent">0%</div>
+
+                <div class="check-items"></div>
+
+                <div class="add-check-item">
+                    <input type="text" placeholder="Nhập tên công việc...">
+                    <button onclick="addChecklistItem(this, ${id})">
+                        Thêm một mục
+                    </button>
+                </div>
+            </div>
+        `);
+    }
+
+    //
+    function deleteChecklist(checklistId, btn) {
+        console.log("Deleting checklist ID:", checklistId);
+
+        if (!confirm("Bạn có chắc muốn xóa danh sách này?")) return;
+
+        fetch("/boards/api/checklist/delete/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({
+                checklist_id: checklistId
+            })
+        })
+        .then(res => {
+            console.log("Response status:", res.status);
+            return res.json();
+        })
+        .then(data => {
+            console.log("Response data:", data);
+            if (data.status === "ok") {
+                btn.closest(".checklist").remove();
+                alert("Đã xóa thành công!");
+            } else {
+                alert("Xóa thất bại: " + (data.error || ""));
+            }
+        })
+        .catch(err => {
+            console.error("Error:", err);
+            alert("Có lỗi xảy ra: " + err.message);
+        });
+    }
+
+    //
+    function addChecklistItem(btn, checklistId) {
+        const input = btn.previousElementSibling;
+        if (!input.value.trim()) return;
+
+        fetch("/boards/api/checklist/item/add/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({
+                checklist_id: checklistId,
+                title: input.value
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            const list = btn.closest(".checklist").querySelector(".check-items");
+
+            list.insertAdjacentHTML("beforeend", `
+                <div class="check-item">
+                    <input type="checkbox" onchange="toggleItem(${data.id})">
+                    <span>${data.title}</span>
+                </div>
+            `);
+
+            input.value = "";
+            updateProgress(btn.closest(".checklist"));
+        })
+        .catch(err => {
+            console.error("Error adding item:", err);
+            alert("Có lỗi khi thêm mục");
+        });
+    }
+
+    //
+    function toggleItem(itemId) {
+        fetch("/boards/api/checklist/item/toggle/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({
+                item_id: itemId
+            })
+        })
+        .catch(err => {
+            console.error("Error toggling item:", err);
+        });
+    }
+
+    //
+    function updateProgress(checklist) {
+        const items = checklist.querySelectorAll(".check-item input");
+        const checked = checklist.querySelectorAll(".check-item input:checked");
+
+        const percent = items.length === 0
+            ? 0
+            : Math.round((checked.length / items.length) * 100);
+
+        checklist.querySelector(".progress-bar").style.width = percent + "%";
+        checklist.querySelector(".checklist-percent").innerText = percent + "%";
+    }
+
+    //
+    // Close popover when clicking outside
+    document.addEventListener("click", function (e) {
+        const popover = document.getElementById("checklistPopover");
+        if (!popover.contains(e.target) && !e.target.innerText.includes("CẦN LÀM")) {
+            popover.style.display = "none";
+        }
+    });
+
+    //
+    document.addEventListener("change", function (e) {
+        if (e.target.matches(".check-item input")) {
+            const checklist = e.target.closest(".checklist");
+            updateProgress(checklist);
+        }
+    });
+
+    //
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".checklist").forEach(checklist => {
+            updateProgress(checklist);
+        });
+    });
 </script>
 </html>
