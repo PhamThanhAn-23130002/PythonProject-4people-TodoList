@@ -1772,16 +1772,33 @@
 
         // C. NOTIFICATION
         const notiBtn = document.getElementById('notiBtn');
-        const notiMenu = document.getElementById('notiMenu');
-        if (notiBtn) {
-            notiBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                notiMenu.classList.toggle('show');
-                if (menu) menu.classList.remove('show'); // Đóng menu account nếu mở
-            });
-            notiMenu.addEventListener('click', (e) => { e.stopPropagation(); });
-            document.addEventListener('click', () => { notiMenu.classList.remove('show'); });
-        }
+    const notiMenu = document.getElementById('notiMenu');
+
+    if (notiBtn && notiMenu) {
+        notiBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Ngăn sự kiện lan ra ngoài
+            notiMenu.classList.toggle('show'); // Bật/Tắt class show
+
+            // Nếu đang mở menu account thì đóng lại cho đỡ rối
+            const accMenu = document.getElementById('accountMenu');
+            if (accMenu && accMenu.classList.contains('show')) {
+                accMenu.classList.remove('show');
+            }
+        });
+
+        // Click bên trong menu thông báo thì không đóng
+        notiMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
+
+    // Đóng popup khi click bất kỳ đâu bên ngoài (Sửa lại đoạn lắng nghe click body cũ của bạn)
+    document.addEventListener('click', () => {
+        const accMenu = document.getElementById('accountMenu');
+        if (accMenu) accMenu.classList.remove('show');
+
+        if (notiMenu) notiMenu.classList.remove('show');
+    });
 
         // D. SWITCH BOARD MENU
         const switchBtn = document.getElementById('switchViewBtn');
@@ -2178,37 +2195,6 @@
                 }, 2000);
             };
         }
-    });
-</script>
-<script>
-    // --- XỬ LÝ NOTIFICATION POPUP ---
-    const notiBtn = document.getElementById('notiBtn');
-    const notiMenu = document.getElementById('notiMenu');
-
-    if (notiBtn && notiMenu) {
-        notiBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Ngăn sự kiện lan ra ngoài
-            notiMenu.classList.toggle('show'); // Bật/Tắt class show
-
-            // Nếu đang mở menu account thì đóng lại cho đỡ rối
-            const accMenu = document.getElementById('accountMenu');
-            if (accMenu && accMenu.classList.contains('show')) {
-                accMenu.classList.remove('show');
-            }
-        });
-
-        // Click bên trong menu thông báo thì không đóng
-        notiMenu.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-    }
-
-    // Đóng popup khi click bất kỳ đâu bên ngoài (Sửa lại đoạn lắng nghe click body cũ của bạn)
-    document.addEventListener('click', () => {
-        const accMenu = document.getElementById('accountMenu');
-        if (accMenu) accMenu.classList.remove('show');
-
-        if (notiMenu) notiMenu.classList.remove('show');
     });
 </script>
 
