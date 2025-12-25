@@ -1439,38 +1439,33 @@
 </head>
 <body>
 
-<!-- TOPBAR -->
 <header class="topbar">
     <div class="brand">
-        <a class="logo" onclick="window.location.href='{% url 'home_page' %}">L</a>
+        <a class="logo" onclick="window.location.href='{% url 'home_page' %}'">L</a>
         <span>List</span>
     </div>
     <div class="search"><input placeholder="Tìm kiếm" aria-label="Tìm kiếm"></div>
     <div class="top-actions">
-<div class="noti-wrap">
-    <button class="icon-btn" id="notiBtn" title="Thông báo">🔔</button>
-
-    <div class="noti-menu" id="notiMenu">
-    <div class="noti-header">
-        <h3>Notifications</h3>
-    </div>
-
-    <div class="noti-content">
-        <img src="https://trello.com/assets/ee2660df9335718b1a80.svg" alt="Sleepy dog" class="noti-img">
-        <div class="noti-empty-text">No unread notifications</div>
-        <div style="margin-top: 10px; color: #ff6b6b; font-size: 12px; display: none;">Click to view details</div>
-    </div>
-</div>
-</div>
+        <div class="noti-wrap">
+            <button class="icon-btn" id="notiBtn" title="Thông báo">🔔</button>
+            <div class="noti-menu" id="notiMenu">
+                <div class="noti-header">
+                    <h3>Notifications</h3>
+                </div>
+                <div class="noti-content">
+                    <img src="https://trello.com/assets/ee2660df9335718b1a80.svg" alt="Sleepy dog" class="noti-img">
+                    <div class="noti-empty-text">No unread notifications</div>
+                    <div style="margin-top: 10px; color: #ff6b6b; font-size: 12px; display: none;">Click to view details</div>
+                </div>
+            </div>
+        </div>
         <button class="icon-btn" title="Trợ giúp">?</button>
 
         <div class="account-wrap">
             <div class="avatar" id="accountBtn">
                 {{ request.user.username|first|upper }}
             </div>
-
             <div class="account-menu" id="accountMenu">
-                <!-- TÀI KHOẢN -->
                 <div class="menu-section">
                     <div class="menu-title">TÀI KHOẢN</div>
                     <div class="account-info">
@@ -1485,200 +1480,88 @@
                                 {{ request.user.email }}
                             </div>
                         </div>
-
+                    </div>
                 </div>
-
                 <div class="menu-divider"></div>
-
-                <!-- TRELLO -->
                 <div class="menu-section">
                     <div class="menu-title">LIST</div>
-                    <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Chuyển đổi tài khoản</a>
-                    <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Hồ sơ và hiển thị</a>
-                    <a class="menu-item" href = "{% url 'about_me' %}" style = "text-decoration:none">Cài đặt</a>
+                    <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Chuyển đổi tài khoản</a>
+                    <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Hồ sơ và hiển thị</a>
+                    <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Cài đặt</a>
                 </div>
-
                 <div class="menu-divider"></div>
-
-                <!-- ĐĂNG XUẤT -->
-                <a class="menu-item logout" href="{% url 'log_out' %}" style="text-decoration:none;
-                margin-left: 20px">Đăng xuất</a>
+                <a class="menu-item logout" href="{% url 'log_out' %}" style="text-decoration:none; margin-left: 20px">Đăng xuất</a>
             </div>
         </div>
     </div>
-
-    </div>
 </header>
 
-<!-- Dải tiêu đề của Board -->
 <div class="board-bar">
     <div class="board-title">Bảng List của tôi</div>
     <div class="board-actions">
         <button class="share-btn" id="openModalBtn">👥 Chia sẻ</button>
         <div class="board-more-wrap">
             <button class="more-btn" id="boardMoreBtn">⋯</button>
-
             <div class="board-more-menu" id="boardMoreMenu">
-
-                <div class="menu-share-users">
-                    <div class="menu-share-btn">
-                        {% comment %}
-                            <svg class="share-icon" viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M16 11c1.66 0 3-1.34 3-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-                            </svg>
-                            Chia sẻ
-                            </div>
-
-                            <div class="menu-users">
-                            <div class="user-avatar u-orange">TT</div>
-                            <div class="user-avatar u-cyan">TA</div>
-                            <div class="user-avatar u-blue">
-                                <span class="user-icon">👤</span>
-                            </div> {% endcomment %}
-                        </div>
-                </div>
-
-
                 <div class="more-title">Menu</div>
-
-                <div class="more-item">
-                    ℹ️ Về bảng này
-                </div>
-
-                <div class="more-item">
-                    👥 Khả năng hiển thị: <span class="muted">Không gian làm việc</span>
-                </div>
-
-                <div class="more-item">
-                    🔗 In, xuất và chia sẻ
-                </div>
-
-                <div class="more-item">
-                    ⭐ Gắn sao
-                </div>
-
+                <div class="more-item">ℹ️ Về bảng này</div>
+                <div class="more-item">👥 Khả năng hiển thị: <span class="muted">Không gian làm việc</span></div>
                 <div class="menu-divider"></div>
-
-                <div class="more-item">
-                    ⚙️ Cài đặt
-                </div>
-
-                <div class="more-item">
-                    🎨 Thay đổi hình nền
-                </div>
-
-                <div class="menu-divider"></div>
-
-                <div class="more-item">
-                    ⚡ Tự động hóa
-                </div>
-
-                <div class="more-item">
-                    🧩 Tiện ích bổ sung
-                </div>
-
-                <div class="more-item">
-                    🏷️ Nhãn
-                </div>
-
-                <div class="more-item">
-                    🏷️ Các nhãn dán
-                </div>
-
-                <div class="more-item">
-                    📝 Hoạt động
-                </div>
-
-                <div class="more-item">
-                    🗄️ Mục đã lưu trữ
-                </div>
-
-                <div class="menu-divider"></div>
-
-                <div class="more-item">
-                    👁️ Theo dõi
-                </div>
-
-                <div class="menu-divider"></div>
-
-                <form method="POST" action="{% url 'delete_board' board.id %}"
-                      onsubmit="return confirm('CẢNH BÁO: Bạn có chắc chắn muốn xóa bảng này không? Hành động này không thể hoàn tác!');">
+                <form method="POST" action="{% url 'delete_board' board.id %}" onsubmit="return confirm('CẢNH BÁO: Xóa bảng?');">
                     {% csrf_token %}
-                    <button type="submit" class="more-item"
-                            style="width: 100%; text-align: left; background: none; border: none; color: #ff6b6b; font-weight: bold;">
+                    <button type="submit" class="more-item" style="width: 100%; text-align: left; background: none; border: none; color: #ff6b6b; font-weight: bold;">
                         🗑️ Xóa bảng này
                     </button>
                 </form>
             </div>
-
         </div>
-
     </div>
 </div>
 
-<!-- Nội dung board (cuộn trong khung này) -->
 <main class="board-wrap" role="main">
     <div class="lists" role="list" id="listsContainer">
 
         {% for l in lists %}
             <div class="list">
-
-                <!-- HEADER -->
                 <div class="list-header">
                     <div class="list-title">{{ l.title }}</div>
                     <button class="list-more-btn" title="Thao tác">⋯</button>
-
-                    <!-- MENU THAO TÁC -->
                     <div class="list-menu">
                         <div class="list-menu-header">
                             <span>Thao tác</span>
                             <button class="close-list-menu">✕</button>
                         </div>
-
                         <div class="list-menu-body">
-                            <div class="list-menu-item">Sao chép danh sách</div>
-                            <div class="list-menu-item">Di chuyển danh sách</div>
-                            <div class="list-menu-item">Theo dõi</div>
-
+                            <div class="list-menu-item">Thêm thẻ</div>
                             <div class="list-menu-divider"></div>
-
                             <div class="list-menu-item delete-list">🗑️ Xóa danh sách</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- CARDS -->
                 <div class="cards">
                     {% for c in l.cards.all %}
-                        <a  class="card-link">
-                            <div class="card">
-                                {{ c.title }}
-                            </div>
-                        </a>
-                        {% empty %}
-                        <!-- chưa có thẻ -->
+                        <div class="card"
+                             data-title="{{ c.title }}"
+                             data-deadline="{{ c.deadline|date:'d-m-Y H:i' }}"
+                             data-desc="{{ c.description|default:'' }}">
+                            {{ c.title }}
+                        </div>
                     {% endfor %}
                 </div>
 
-                <!-- ADD CARD -->
                 <div class="add-card">+ Thêm thẻ</div>
-
                 <div class="add-card-form" style="display:none;">
-                    <input type="text" class="card-input"
-                           placeholder="Nhập tiêu đề hoặc dán liên kết"/>
+                    <input type="text" class="card-input" placeholder="Nhập tiêu đề..."/>
                     <div class="add-card-actions">
                         <button class="confirm-add-card">Thêm thẻ</button>
                         <button class="cancel-add-card">✕</button>
                     </div>
                 </div>
-
             </div>
         {% endfor %}
 
-        <!-- FORM ADD LIST -->
         <div class="add-list" id="addListBtn">+ Thêm danh sách khác</div>
-
-        <!-- FORM  -->
         <div class="add-list-form" id="addListForm">
             <input type="text" id="listTitleInput" name="name" placeholder="Nhập tên danh sách..."/>
             <div class="add-list-actions">
@@ -1686,8 +1569,6 @@
                 <button id="cancelAddList">✕</button>
             </div>
         </div>
-
-    </div>
     </div>
 </main>
 
@@ -1697,7 +1578,6 @@
         <div class="modal">
             <div class="close" id="closeBtn">×</div>
             <h2>Chia sẻ bảng</h2>
-
             <div class="form-row">
                 <input type="text" name="email" placeholder="Địa chỉ email hoặc tên" required/>
                 <select name="role">
@@ -1707,91 +1587,41 @@
                 <button type="submit" class="share-btn">Chia sẻ</button>
             </div>
 
-            <div class="board-actions" style="margin-bottom: 15px;">
-                <div style="display: flex; margin-right: 8px;">
-                    {% for member in members %}
-                        <div title="{{ member.user.email }}"
-                             style="width: 32px; height: 32px; background: #ffb03a; color: #141414; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border: 2px solid white; margin-left: -8px;">
-                            {{ member.user.username|slice:":2"|upper }}
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <div>
-                <strong>Chia sẻ bảng này bằng liên kết</strong>
-            </div>
-
             <div id="linkSection" style="margin-top: 8px;">
-                <a href="javascript:void(0)" id="createLinkBtn"
-                   style="color:#579dff; font-size:14px; text-decoration:none;">
-                    Tạo liên kết
-                </a>
-
+                <a href="javascript:void(0)" id="createLinkBtn" style="color:#579dff; font-size:14px; text-decoration:none;">Tạo liên kết</a>
                 <div id="linkDisplay" style="display: none; align-items: center; gap: 5px;">
-                    <input type="text" id="shareUrlInput"
-                           value="{{ request.scheme }}://
-                                   {{ request.get_host }}{% url 'join_via_link' board.share_token %}"
-                           readonly
-                           style="font-size: 13px; color: #aaa; background: #222; border: 1px solid #444; width: 100%; padding: 8px;">
-
-                    <button type="button" id="copyLinkBtn" title="Sao chép"
-                            style="background: #3a3f47; border: none; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer;">
-                        📋
-                    </button>
+                    <input type="text" id="shareUrlInput" value="{{ request.scheme }}://{{ request.get_host }}{% url 'join_via_link' board.share_token %}" readonly style="font-size: 13px; color: #aaa; background: #222; border: 1px solid #444; width: 100%; padding: 8px;">
+                    <button type="button" id="copyLinkBtn" title="Sao chép" style="background: #3a3f47; border: none; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer;">📋</button>
                 </div>
-
-                <div id="copySuccess" style="display:none; color: #4bce97; font-size: 12px; margin-top: 5px;">
-                    ✅ Đã sao chép vào bộ nhớ tạm!
-                </div>
+                <div id="copySuccess" style="display:none; color: #4bce97; font-size: 12px; margin-top: 5px;">✅ Đã sao chép!</div>
             </div>
 
             <div class="divider"></div>
-
-            <h3 style="margin-bottom: 10px;">Thành viên của bảng</h3>
-
+            <h3 style="margin-bottom: 10px;">Thành viên</h3>
             <div style="max-height: 200px; overflow-y: auto;">
                 {% for member in members %}
-                    <div class="member-row"
-                         style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <div class="member-row" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
                         <div class="member-info" style="display: flex; align-items: center; gap: 10px;">
-                            <div class="avatar"
-                                 style="width: 32px; height: 32px; background: #ffb03a; color: #141414; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
-                                {{ member.user.username|slice:":2"|upper }}
-                            </div>
-
+                            <div class="avatar" style="width: 32px; height: 32px; background: #ffb03a; color: #141414; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">{{ member.user.username|slice:":2"|upper }}</div>
                             <div>
-                                <div style="font-weight: 600;">
-                                    {{ member.user.username }}
-                                    {% if member.user == request.user %}(bạn){% endif %}
-                                </div>
+                                <div style="font-weight: 600;">{{ member.user.username }}</div>
                                 <div style="font-size:12px; color:#aaa;">{{ member.user.email }}</div>
                             </div>
                         </div>
-
                         <span style="color: #a8b0b8; font-size: 13px;">{{ member.role }}</span>
                     </div>
-                    {% empty %}
+                {% empty %}
                     <p style="color: #aaa; font-style: italic;">Chưa có thành viên nào.</p>
                 {% endfor %}
             </div>
-
         </div>
     </div>
 </form>
 
 <div class="floating-footer">
-    <a href="{% url 'board_detail' board.id %}"
-       class="footer-item {% if active_tab == 'board' %}active{% endif %}">
-        📅 Bảng thông tin
-    </a>
-
+    <a href="{% url 'board_detail' board.id %}" class="footer-item {% if active_tab == 'board' %}active{% endif %}">📅 Bảng thông tin</a>
     <span class="footer-divider">|</span>
-
-    <span id="switchViewBtn"
-          class="footer-item {% if active_tab == 'switch' %}active{% endif %}">
-        🔄 Chuyển đổi các bảng
-    </span>
+    <span id="switchViewBtn" class="footer-item {% if active_tab == 'switch' %}active{% endif %}">🔄 Chuyển đổi các bảng</span>
 </div>
 
 <div id="switchBoardMenu" class="switch-menu">
@@ -1802,107 +1632,52 @@
                 <div class="switch-thumb"></div>
                 <div class="switch-info">
                     <div class="name">{{ b.name }}</div>
-                    {% if b.id == board.id %}
-                        <div class="current-indicator">Đang xem</div>
-                    {% endif %}
+                    {% if b.id == board.id %}<div class="current-indicator">Đang xem</div>{% endif %}
                 </div>
             </a>
         {% endfor %}
     </div>
 </div>
 
-<header class="topbar">
-    <div class="brand">
-        <div class="logo">L</div>
-        <span>List</span>
-    </div>
-    <div class="search"><input placeholder="Tìm kiếm" aria-label="Tìm kiếm"></div>
-    <div class="top-actions">
-        <button class="icon-btn" title="Thông báo">🔔</button>
-        <button class="icon-btn" title="Trợ giúp">?</button>
-        <div class="avatar">TT</div>
-    </div>
-</header>
-
-<div class="board-bar">
-    <div class="board-title">Bảng List của tôi</div>
-    <div class="board-actions">
-        <div style="display: flex; margin-right: 8px;">
-            {% for member in members %}
-                <div title="{{ member.user.email }}" style="width: 32px; height: 32px; background: #ffb03a; color: #141414; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border: 2px solid white; margin-left: -8px;">
-                    {{ member.user.username|slice:":2"|upper }}
-                </div>
-            {% endfor %}
-        </div>
-        <button class="share-btn">👥 Chia sẻ</button>
-        <button class="more-btn">⋯</button>
-    </div>
-</div>
-
-<main class="board-wrap" role="main">
-    <div class="lists" role="list" id="listsContainer">
-        
-        {% for l in lists %}
-            <div class="list">
-                <div class="list-header">
-                    <div class="list-title">{{ l.title }}</div>
-                    <button class="list-more-btn">⋯</button>
-                </div>
-
-                <div class="cards">
-                    {% for c in l.cards.all %}
-                        <div class="card">
-                            {{ c.title }}
-                        </div>
-                    {% endfor %}
-                </div>
-
-                <div class="add-card">+ Thêm thẻ</div>
-            </div>
-        {% endfor %}
-
-        <div class="add-list">+ Thêm danh sách khác</div>
-    </div>
-</main>
-
-
 <div id="cardDetailOverlay">
     <div class="div_toal">
         <header class="headerchild">
             <button id="choosetime">Hôm nay</button>
             <div>
-                <button><i class="fa-solid fa-ellipsis"></i></button>
+                <button>...</button>
                 <button onclick="closeCardModal()" style="font-size: 20px;">&#10005;</button>
             </div>
         </header>
-        
+
         <div class="bodycard">
             <div class="col-xl-6 editcard">
                 <label class="check-circle">
                     <input class="complete" type="checkbox">
                     <span></span>
                 </label>
-                <textarea class="subject" name="tile" rows="1">Thiết kế giao diện</textarea>
-                
+                <textarea class="subject" id="modalSubject" name="tile" rows="1"></textarea>
+
                 <div>
                     <div class="buttons">
-                        <button>THÊM</button>
+                        <button>NHÃN</button>
                         <button onclick="date(this)">NGÀY</button>
                         <button onclick="openChecklistPopover(this)">CẦN LÀM</button>
                         <button onclick="addmember(this)">THÀNH VIÊN</button>
                     </div>
+
                     
-                    <div class="deadline">
+                    <div class="deadline" id="modalDeadlineDisplay" style="display: none;">
                         <span>NGÀY ĐẾN HẠN: </span>
                         <span>02</span> <span class="dash">-</span>
                         <span>01</span> <span class="dash">-</span>
                         <span>2025</span>
                     </div>
+
                 </div>
 
                 <h6 class="decriptionh6">mô tả</h6>
                 <textarea class="description" rows="4" cols="50" name="description"></textarea>
-                
+
                 <h6 class="decriptionh6">trường tùy chỉnh</h6>
                 <div class="dtuychinh">
                     <div class="detailtuychinh">
@@ -1910,9 +1685,7 @@
                         <select class="priority" name="priority">
                             <option value="">--</option>
                             <option value="">ưu tiên cao nhất</option>
-                            <option value="">ưu tiên cao</option>
                             <option value="">trung bình</option>
-                            <option value="">thấp</option>
                         </select>
                     </div>
                     <div class="detailtuychinh">
@@ -1923,34 +1696,16 @@
                             <option value="">đã làm</option>
                         </select>
                     </div>
-                    <div class="detailtuychinh">
-                        <p>Phức Tạp</p>
-                        <select class="priority" name="complexity">
-                            <option value="">--</option>
-                            <option value="">ưu tiên cao nhất</option>
-                            <option value="">trung bình</option>
-                        </select>
-                    </div>
                 </div>
             </div>
 
             <div class="col-xl-6 commentcard">
                 <h4>NHẬN XÉT HOẠT ĐỘNG</h4>
                 <input class="activity-input" type="text" placeholder="Viết bình luận...">
-                
                 <div class="activity-item">
                     <div class="avatar">NA</div>
                     <div class="activity-content">
-                        <p><span class="name">Nguyễn Văn A</span> đã đánh dấu thẻ này là chưa hoàn tất</p>
-                        <span class="time">vừa xong</span>
-                    </div>
-                </div>
-                
-                <div class="activity-item">
-                    <div class="avatar">TT</div>
-                    <div class="activity-content">
-                        <p><span class="name">Trần Tuấn</span> đã tham gia</p>
-                        <span class="time">15 phút trước</span>
+                        <p><span class="name">User A</span> activity...</p>
                     </div>
                 </div>
             </div>
@@ -1989,131 +1744,152 @@
 
 </body>
 
-
 <script>
-    const btn = document.getElementById('accountBtn');
-    const menu = document.getElementById('accountMenu');
+    // --- 1. GLOBAL VARIABLES ---
+    let currentActiveCard = null; // Biến quan trọng: Lưu thẻ đang được chỉnh sửa
+    const cardOverlay = document.getElementById('cardDetailOverlay');
+    const listsContainer = document.getElementById("listsContainer");
 
-    btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        menu.classList.toggle('show');
+    // --- 2. DOMContentLoaded: SETUP CÁC NÚT BẤM KHI TRANG TẢI XONG ---
+    document.addEventListener("DOMContentLoaded", function() {
+
+        // A. ACCOUNT MENU
+        const btn = document.getElementById('accountBtn');
+        const menu = document.getElementById('accountMenu');
+        if (btn) {
+            btn.addEventListener('click', (e) => { e.stopPropagation(); menu.classList.toggle('show'); });
+            document.addEventListener('click', () => { menu.classList.remove('show'); });
+        }
+
+        // B. BOARD MORE MENU
+        const moreBtn = document.getElementById('boardMoreBtn');
+        const moreMenu = document.getElementById('boardMoreMenu');
+        if (moreBtn) {
+            moreBtn.addEventListener('click', (e) => { e.stopPropagation(); moreMenu.classList.toggle('show'); });
+            document.addEventListener('click', () => { moreMenu.classList.remove('show'); });
+        }
+
+        // C. NOTIFICATION
+        const notiBtn = document.getElementById('notiBtn');
+        const notiMenu = document.getElementById('notiMenu');
+        if (notiBtn) {
+            notiBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notiMenu.classList.toggle('show');
+                if (menu) menu.classList.remove('show'); // Đóng menu account nếu mở
+            });
+            notiMenu.addEventListener('click', (e) => { e.stopPropagation(); });
+            document.addEventListener('click', () => { notiMenu.classList.remove('show'); });
+        }
+
+        // D. SWITCH BOARD MENU
+        const switchBtn = document.getElementById('switchViewBtn');
+        const switchMenu = document.getElementById('switchBoardMenu');
+        if (switchBtn) {
+            switchBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                switchMenu.style.display = (switchMenu.style.display === 'block') ? 'none' : 'block';
+            });
+            document.addEventListener('click', (e) => {
+                if (!switchMenu.contains(e.target) && e.target !== switchBtn) switchMenu.style.display = 'none';
+            });
+        }
+
+        // E. SHARE MODAL LOGIC
+        const modalOverlay = document.getElementById("modalOverlay");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeBtn = document.getElementById("closeBtn");
+        if (openModalBtn) openModalBtn.onclick = () => { modalOverlay.style.display = "flex"; };
+        if (closeBtn) closeBtn.onclick = () => { modalOverlay.style.display = "none"; };
+        if (modalOverlay) modalOverlay.onclick = (e) => { if(e.target === modalOverlay) modalOverlay.style.display = "none"; };
+
+        // F. COPY LINK LOGIC
+        const createLinkBtn = document.getElementById("createLinkBtn");
+        const linkDisplay = document.getElementById("linkDisplay");
+        const copyLinkBtn = document.getElementById("copyLinkBtn");
+        const shareUrlInput = document.getElementById("shareUrlInput");
+        const copySuccess = document.getElementById("copySuccess");
+        if (createLinkBtn) {
+            createLinkBtn.onclick = () => { createLinkBtn.style.display = "none"; linkDisplay.style.display = "flex"; shareUrlInput.select(); };
+        }
+        if (copyLinkBtn) {
+            copyLinkBtn.onclick = () => {
+                shareUrlInput.select();
+                navigator.clipboard.writeText(shareUrlInput.value);
+                copySuccess.style.display = "block";
+                setTimeout(() => { copySuccess.style.display = "none"; }, 2000);
+            };
+        }
+
+        // G. ADD LIST FORM LOGIC
+        const addListBtn = document.getElementById('addListBtn');
+        const addListForm = document.getElementById('addListForm');
+        const inputList = document.getElementById('listTitleInput');
+        const confirmAddList = document.getElementById('confirmAddList');
+        const cancelAddList = document.getElementById('cancelAddList');
+
+        if(addListBtn) {
+            addListBtn.onclick = () => { addListBtn.style.display = 'none'; addListForm.style.display = 'flex'; inputList.focus(); };
+            cancelAddList.onclick = () => { addListForm.style.display = 'none'; addListBtn.style.display = 'flex'; inputList.value = ''; };
+
+            confirmAddList.onclick = () => {
+                const title = inputList.value.trim();
+                if (!title) return;
+                // Tạo HTML cho list mới
+                const newList = document.createElement('div');
+                newList.className = 'list';
+                newList.innerHTML = `
+                    <div class="list-header">
+                        <div class="list-title">${title}</div>
+                        <button class="list-more-btn" title="Thao tác">⋯</button>
+                        <div class="list-menu">
+                            <div class="list-menu-header"><span>Thao tác</span><button class="close-list-menu">✕</button></div>
+                            <div class="list-menu-body">
+                                <div class="list-menu-item">Thêm thẻ</div>
+                                <div class="list-menu-divider"></div>
+                                <div class="list-menu-item delete-list">🗑️ Xóa danh sách</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cards"></div>
+                    <div class="add-card">+ Thêm thẻ</div>
+                    <div class="add-card-form" style="display:none;">
+                        <input type="text" class="card-input" placeholder="Nhập tiêu đề..."/>
+                        <div class="add-card-actions"><button class="confirm-add-card">Thêm thẻ</button><button class="cancel-add-card">✕</button></div>
+                    </div>`;
+
+                const addListWrapper = document.querySelector(".add-list");
+                listsContainer.insertBefore(newList, addListWrapper);
+                saveToSession();
+                inputList.value = '';
+                addListForm.style.display = 'none';
+                addListBtn.style.display = 'flex';
+            };
+        }
     });
 
-    document.addEventListener('click', () => {
-        menu.classList.remove('show');
-    });
-</script>
-<script>
-    const moreBtn = document.getElementById('boardMoreBtn');
-    const moreMenu = document.getElementById('boardMoreMenu');
+    // --- 3. EVENT DELEGATION FOR LISTS & CARDS (Xử lý sự kiện click động) ---
+    listsContainer.addEventListener("click", function (e) {
 
-    moreBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        moreMenu.classList.toggle('show');
-    });
+        // A. OPEN MODAL (Click vào thẻ Card)
+        if (e.target.classList.contains("card")) {
+            currentActiveCard = e.target; // Lưu thẻ hiện tại
+            openCardDetail();
+        }
 
-    document.addEventListener('click', () => {
-        moreMenu.classList.remove('show');
-    });
-</script>
-
-<script>
-    const addBtn = document.getElementById('addListBtn');
-    const form = document.getElementById('addListForm');
-    const input = document.getElementById('listTitleInput');
-    const confirmBtn = document.getElementById('confirmAddList');
-    const cancelBtn = document.getElementById('cancelAddList');
-    const container = document.getElementById('listsContainer');
-
-    // mở form
-    addBtn.onclick = () => {
-        addBtn.style.display = 'none';
-        form.style.display = 'block';
-        input.focus();
-    };
-
-    // hủy
-    cancelBtn.onclick = () => {
-        form.style.display = 'none';
-        addBtn.style.display = 'flex';
-        input.value = '';
-    };
-
-    // thêm danh sách
-    confirmBtn.onclick = () => {
-        const title = input.value.trim();
-        if (!title) return;
-
-        const list = document.createElement('div');
-        list.className = 'list';
-        list.innerHTML = `
-    <div class="list-header">
-            <div class="list-title">${title}</div>
-            <button class="list-more-btn" title="Thao tác">⋯</button>
-
-            <div class="list-menu">
-                <div class="list-menu-header">
-                    <span>Thao tác</span>
-                    <button class="close-list-menu">✕</button>
-                </div>
-
-                <div class="list-menu-body">
-                    <div class="list-menu-item">Thêm thẻ</div>
-                    <div class="list-menu-item">Sao chép danh sách</div>
-                    <div class="list-menu-item">Di chuyển danh sách</div>
-                    <div class="list-menu-item">Theo dõi</div>
-
-                    <div class="list-menu-divider"></div>
-
-                    <div class="list-menu-item delete-list">🗑️ Xóa danh sách</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="cards"></div>
-
-        <div class="add-card">+ Thêm thẻ</div>
-
-        <div class="add-card-form" style="display:none;">
-            <input type="text" class="card-input"
-                   placeholder="Nhập tiêu đề hoặc dán liên kết"/>
-            <div class="add-card-actions">
-                <button class="confirm-add-card">Thêm thẻ</button>
-                <button class="cancel-add-card">✕</button>
-            </div>
-        </div>
-`;
-
-        //container.insertBefore(list, addBtn);
-        const addListWrapper = document.querySelector(".add-list");
-        container.insertBefore(list, addListWrapper);
-        saveToSession();
-
-        input.value = '';
-        form.style.display = 'none';
-        addBtn.style.display = 'flex';
-    };
-
-    // Xử lý thêm thẻ (event delegation)
-    document.getElementById("listsContainer").addEventListener("click", function (e) {
-
-        // Mở form thêm thẻ
+        // B. ADD CARD LOGIC
         if (e.target.classList.contains("add-card")) {
             const list = e.target.closest(".list");
             e.target.style.display = "none";
             list.querySelector(".add-card-form").style.display = "block";
             list.querySelector(".card-input").focus();
         }
-
-        // Hủy thêm thẻ
         if (e.target.classList.contains("cancel-add-card")) {
             const list = e.target.closest(".list");
             list.querySelector(".add-card-form").style.display = "none";
             list.querySelector(".add-card").style.display = "block";
             list.querySelector(".card-input").value = "";
         }
-
-        // Xác nhận thêm thẻ
         if (e.target.classList.contains("confirm-add-card")) {
             const list = e.target.closest(".list");
             const input = list.querySelector(".card-input");
@@ -2123,151 +1899,181 @@
             const card = document.createElement("div");
             card.className = "card";
             card.textContent = title;
+            // Thêm data attributes trống cho thẻ mới
+            card.setAttribute('data-title', title);
+            card.setAttribute('data-deadline', '');
+            card.setAttribute('data-desc', '');
 
             list.querySelector(".cards").appendChild(card);
             saveToSession();
-
             input.value = "";
             list.querySelector(".add-card-form").style.display = "none";
             list.querySelector(".add-card").style.display = "block";
         }
+
+        // C. LIST MENU LOGIC
+        if (e.target.classList.contains("list-more-btn")) {
+            e.stopPropagation();
+            document.querySelectorAll(".list-menu").forEach(m => m.classList.remove("show"));
+            const menu = e.target.closest(".list").querySelector(".list-menu");
+            menu.classList.add("show");
+        }
+        if (e.target.classList.contains("close-list-menu")) {
+            e.target.closest(".list-menu").classList.remove("show");
+        }
+        if (e.target.classList.contains("delete-list")) {
+            if (confirm("Xóa danh sách này?")) {
+                e.target.closest(".list").remove();
+                saveToSession();
+            }
+        }
     });
 
+    // Đóng các menu list khi click ra ngoài
+    document.addEventListener("click", () => {
+        document.querySelectorAll(".list-menu").forEach(m => m.classList.remove("show"));
+    });
 
-    document.addEventListener("DOMContentLoaded", () => {
-        // ---- Modal (an toàn: chỉ thao tác khi phần tử tồn tại) ----
-        const modalOverlay = document.getElementById("modalOverlay");
-        const openModalBtn = document.getElementById("openModalBtn");
-        const closeBtn = document.getElementById("closeBtn");
+    // --- 4. MODAL LOGIC (ĐÃ SỬA LỖI LƯU NGÀY GIỜ) ---
 
-        if (openModalBtn && modalOverlay) {
-            openModalBtn.addEventListener("click", () => {
-                modalOverlay.style.display = "flex";
-                // không gọi boardTitle nếu không tồn tại
-                const boardTitle = document.getElementById("boardTitle");
-                if (boardTitle) boardTitle.focus();
-            });
-        }
+    function openCardDetail() {
+        if(currentActiveCard) {
+            // Lấy dữ liệu từ thẻ
+            const title = currentActiveCard.getAttribute('data-title');
+            const deadlineRaw = currentActiveCard.getAttribute('data-deadline');
+            const description = currentActiveCard.getAttribute('data-desc');
 
-        if (closeBtn && modalOverlay) {
-            closeBtn.addEventListener("click", () => {
-                modalOverlay.style.display = "none";
-                // các thao tác validate cũ - làm an toàn (kiểm tra trước khi truy cập)
-                const boardTitle = document.getElementById("boardTitle");
-                const titleError = document.getElementById("titleError");
-                const createBtn = document.getElementById("createBtn");
-                if (boardTitle) boardTitle.value = "";
-                if (titleError) titleError.style.display = "none";
-                if (createBtn) {
-                    createBtn.classList.remove("enabled");
-                    createBtn.disabled = true;
+            // Đổ vào Modal
+            const subjectInput = document.getElementById('modalSubject');
+            if(subjectInput) subjectInput.value = title;
+
+            const descInput = document.querySelector('.description');
+            if(descInput) descInput.value = description;
+
+            // Xử lý hiển thị ngày giờ
+            const deadlineDiv = document.getElementById('modalDeadlineDisplay');
+            if(deadlineDiv) {
+                deadlineDiv.innerHTML = '';
+                deadlineDiv.style.display = 'none';
+
+                if (deadlineRaw && deadlineRaw.trim() !== '') {
+                    // Format: "dd-mm-yyyy HH:mm AM/PM" -> Tách ra
+                    let parts = deadlineRaw.split(' ');
+                    // Giả sử chuỗi là "25-12-2025 02:30 PM"
+                    // parts[0] = date, parts[1] = time, parts[2] = ampm
+                    let datePart = parts[0];
+                    let timePart = parts.slice(1).join(' '); // Ghép phần giờ lại
+
+                    deadlineDiv.innerHTML = `
+                        <span>NGÀY ĐẾN HẠN: </span>
+                        <span>${timePart}</span>
+                        <span>${datePart}</span>
+                    `;
+                    deadlineDiv.style.display = 'inline-flex';
                 }
-            });
-
-            // đóng khi click ra ngoài
-            modalOverlay.addEventListener("click", (e) => {
-                if (e.target === modalOverlay) closeBtn.click();
-            });
-        }
-
-        // ---- Add-list form logic ----
-        const addListBtn = document.getElementById("addListBtn");
-        const addListForm = document.getElementById("addListForm");
-        const cancelAddList = document.getElementById("cancelAddList");
-        const confirmAddList = document.getElementById("confirmAddList");
-        const listTitleInput = document.getElementById("listTitleInput");
-        const listsContainer = document.querySelector(".lists");
-
-        if (addListBtn && addListForm && listTitleInput) {
-            addListBtn.addEventListener("click", () => {
-                // ẩn nút và hiện form (flex để sử dụng display:flex trong CSS)
-                addListBtn.style.display = "none";
-                addListForm.style.display = "flex";
-                listTitleInput.focus();
-            });
-        }
-
-        if (cancelAddList && addListForm && addListBtn && listTitleInput) {
-            cancelAddList.addEventListener("click", () => {
-                addListForm.style.display = "none";
-                addListBtn.style.display = "flex";
-                listTitleInput.value = "";
-            });
-        }
-
-        // Khi xác nhận thêm danh sách: tạo cột mới (nếu muốn)
-        {#if (confirmAddList && listsContainer && listTitleInput) {#}
-        {#    confirmAddList.addEventListener("click", () => {#}
-        {#        const title = listTitleInput.value.trim();#}
-        {#        if (!title) {#}
-        {#            listTitleInput.focus();#}
-        {#            return;#}
-        {#        }#}
-        {##}
-        {#        // Tạo phần tử list cơ bản#}
-        {#        const col = document.createElement("div");#}
-        {#        col.className = "list-column";#}
-        {#        col.style.width = "280px";#}
-        {#        col.style.minHeight = "80px";#}
-        {#        col.style.background = "rgba(255,255,255,0.06)";#}
-        {#        col.style.borderRadius = "10px";#}
-        {#        col.style.padding = "10px";#}
-        {#        col.style.color = "#fff";#}
-        {#        col.style.flexShrink = "0";#}
-        {#        col.style.boxSizing = "border-box";#}
-        {##}
-        {#        const h = document.createElement("div");#}
-        {#        h.style.fontWeight = "700";#}
-        {#        h.style.marginBottom = "8px";#}
-        {#        h.textContent = title;#}
-        {##}
-        {#        col.appendChild(h);#}
-        {##}
-        {#        // chèn trước nút addListBtn (tức là nút nằm cuối cùng)#}
-        {#        // tìm nút hiện tại trong listsContainer#}
-        {#        const addBtnNode = document.getElementById("addListBtn");#}
-        {#        if (addBtnNode) {#}
-        {#            listsContainer.insertBefore(col, addBtnNode);#}
-        {#        } else {#}
-        {#            listsContainer.appendChild(col);#}
-        {#        }#}
-        {##}
-        {##}
-        {#        // reset form và ẩn form#}
-        {#        listTitleInput.value = "";#}
-        {#        addListForm.style.display = "none";#}
-        {#        addListBtn.style.display = "flex";#}
-        {#    });#}
-        //}
-    });
-    window.onload = function () {
-        const params = new URLSearchParams(window.location.search);
-        const tenBang = params.get('name');
-
-        if (tenBang) {
-            document.getElementById('nameboard').innerText = tenBang;
+            }
+            cardOverlay.style.display = 'flex';
         }
     }
-</script>
 
-<script>
+    function closeCardModal() {
+        if(cardOverlay) {
+            cardOverlay.style.display = 'none';
+            // Đóng popup con
+            document.getElementById("choosedate").style.display = 'none';
+            document.getElementById("member").style.display = 'none';
+            // Reset biến
+            currentActiveCard = null;
+        }
+    }
+
+    // Đóng khi click vùng đen
+    window.onclick = function(event) {
+        if (event.target == cardOverlay) closeCardModal();
+    }
+
+    // --- 5. DATE & MEMBER POPUP LOGIC ---
+
+    function date(e) {
+        const datePopup = document.getElementById("choosedate");
+        const memberPopup = document.getElementById("member");
+
+        // Logic đóng hoặc lưu
+        if (e.id == "xdate" || e.id == "bdate") {
+
+            // NẾU BẤM CHOOSE (LƯU)
+            if (e.id == "bdate") {
+                const dateVal = document.querySelector('input[name="inputdate"]').value;
+                const timeVal = document.querySelector('input[name="inputtime"]').value;
+
+                if (dateVal && timeVal) {
+                    // Format Date
+                    const [year, month, day] = dateVal.split('-');
+                    const formattedDate = `${day}-${month}-${year}`;
+
+                    // Format Time
+                    let [hour, minute] = timeVal.split(':');
+                    hour = parseInt(hour);
+                    const ampm = hour >= 12 ? 'PM' : 'AM';
+                    hour = hour % 12;
+                    hour = hour ? hour : 12;
+                    const formattedTime = `${hour}:${minute} ${ampm}`;
+
+                    // Cập nhật giao diện Modal ngay lập tức
+                    const deadlineDiv = document.getElementById('modalDeadlineDisplay');
+                    deadlineDiv.innerHTML = `
+                        <span>NGÀY ĐẾN HẠN: </span>
+                        <span>${formattedTime}</span>
+                        <span>${formattedDate}</span>
+                    `;
+                    deadlineDiv.style.display = 'inline-flex';
+
+                    // QUAN TRỌNG: Lưu ngược lại vào thẻ Card
+                    if (currentActiveCard) {
+                        const dataToSave = `${formattedDate} ${formattedTime}`;
+                        currentActiveCard.setAttribute('data-deadline', dataToSave);
+
+                        // Gọi AJAX lưu DB nếu cần (ví dụ):
+                        // saveDeadlineToServer(currentActiveCard.id, dataToSave);
+                    }
+                } else {
+                    alert("Vui lòng chọn đầy đủ ngày và giờ!");
+                    return;
+                }
+            }
+            datePopup.style.display = 'none';
+            memberPopup.style.display = 'none';
+        } else {
+            // Mở popup
+            datePopup.style.display = 'block';
+            memberPopup.style.display = 'none';
+        }
+    }
+
+    function addmember(e){
+        if(e.id=="xxdate"){
+            document.getElementById("member").style.display = 'none';
+        }else {
+            document.getElementById("member").style.display = 'block';
+            document.getElementById("choosedate").style.display = 'none';
+        }
+    }
+
+    // --- 6. AJAX SAVE FUNCTION ---
     function saveToSession() {
         const lists = [];
-
         document.querySelectorAll(".list").forEach(list => {
             const titleEl = list.querySelector(".list-title");
             const title = titleEl ? titleEl.innerText.trim() : "";
-
-            if (!title) return; // ⛔ bỏ qua list lỗi
-
+            if (!title) return;
             const cards = [];
             list.querySelectorAll(".card").forEach(card => {
-                cards.push(card.innerText);
+                cards.push(card.innerText.trim());
             });
-
             lists.push({title, cards});
         });
 
+        // Gửi về server
         fetch("{% url 'save_board_db' board.id %}", {
             method: "POST",
             headers: {
