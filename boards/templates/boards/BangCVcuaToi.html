@@ -1620,60 +1620,6 @@
     </div>
 </div>
 
-<header class="topbar">
-    <div class="brand">
-        <div class="logo">L</div>
-        <span>List</span>
-    </div>
-    <div class="search"><input placeholder="Tìm kiếm" aria-label="Tìm kiếm"></div>
-    <div class="top-actions">
-        <button class="icon-btn" title="Thông báo">🔔</button>
-        <button class="icon-btn" title="Trợ giúp">?</button>
-        <div class="avatar">TT</div>
-    </div>
-</header>
-
-<div class="board-bar">
-    <div class="board-title">Bảng List của tôi</div>
-    <div class="board-actions">
-        <div style="display: flex; margin-right: 8px;">
-            {% for member in members %}
-                <div title="{{ member.user.email }}" style="width: 32px; height: 32px; background: #ffb03a; color: #141414; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border: 2px solid white; margin-left: -8px;">
-                    {{ member.user.username|slice:":2"|upper }}
-                </div>
-            {% endfor %}
-        </div>
-        <button class="share-btn">👥 Chia sẻ</button>
-        <button class="more-btn">⋯</button>
-    </div>
-</div>
-
-<main class="board-wrap" role="main">
-    <div class="lists" role="list" id="listsContainer">
-        
-        {% for l in lists %}
-            <div class="list">
-                <div class="list-header">
-                    <div class="list-title">{{ l.title }}</div>
-                    <button class="list-more-btn">⋯</button>
-                </div>
-
-                <div class="cards">
-                    {% for c in l.cards.all %}
-                        <div class="card">
-                            {{ c.title }}
-                        </div>
-                    {% endfor %}
-                </div>
-
-                <div class="add-card">+ Thêm thẻ</div>
-            </div>
-        {% endfor %}
-
-        <div class="add-list">+ Thêm danh sách khác</div>
-    </div>
-</main>
-
 
 <div id="cardDetailOverlay">
     <div class="div_toal">
