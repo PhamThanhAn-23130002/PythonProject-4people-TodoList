@@ -639,8 +639,16 @@
                         <span>2018</span>
                     </div>
                 </div>
-                <h6 class="decriptionh6">mô tả</h6>
-                <textarea class="description" rows="4" cols="50" name="description"></textarea>
+                
+                     
+    <div class="deadline">
+       <span>NGÀY ĐẾN HẠN: </span>
+       <span>{{ task.deadline|time:"h:i A" }}</span>
+       <span>{{ task.deadline|date:"d-m-Y" }}</span>
+    </div>
+            </div>
+                <h6 class="decriptionh6" >mô tả</h6>
+                <textarea class="description" rows="4" cols="50" name ="description"></textarea>
                 <h6 class="decriptionh6"> trường tùy chỉnh</h6>
 
                 <div class="dtuychinh">
