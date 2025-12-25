@@ -35,6 +35,7 @@ def card_detail_id(request, card_id):
         "checklists": checklists
     })
 
+
 def home_page(request):
     return render(request, "boards/TrangChu.html")
 
@@ -194,7 +195,7 @@ def save_board_db(request, board_id):
                 title=card_title,
                 position=card_index
             )
-
+            
     return JsonResponse({"status": "saved"})
     
 

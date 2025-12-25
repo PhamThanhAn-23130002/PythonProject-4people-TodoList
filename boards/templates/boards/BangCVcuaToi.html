@@ -957,6 +957,291 @@
     font-size: 16px;
     color: #e7ecf0;
 }
+
+  :root {
+            /* màu chung */
+            --bg-start: #6b2f86;
+            --bg-end: #a64f86;
+            --nav: #181c22;
+            --stroke: #2f343c;
+            --muted: #a8b0b8;
+            --text: #e7ecf0;
+
+            /* layout heights */
+            --topbar: 56px; 
+            --boardbar: 52px;
+            --footer: 48px;
+        }
+
+        * { box-sizing: border-box }
+        html, body { height: 100% }
+
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            color: var(--text);
+            background: linear-gradient(180deg, var(--bg-start), var(--bg-end));
+            overflow: hidden; 
+        }
+
+        /* ===== CÁC STYLE CŨ CỦA BẢNG (GIỮ NGUYÊN) ===== */
+        .topbar { position: fixed; inset: 0 0 auto 0; height: var(--topbar); background: var(--nav); display: flex; align-items: center; gap: 14px; padding: 8px 14px; z-index: 10; box-shadow: 0 1px 0 var(--stroke); }
+        .brand { display: flex; align-items: center; gap: 10px }
+        .brand .logo { width: 34px; height: 34px; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #111; }
+        .brand span { font-weight: 700; color: #cfd6dc }
+        .search { flex: 1; display: flex; align-items: center }
+        .search input { width: 100%; background: #232831; border: 1px solid #2e3440; border-radius: 8px; height: 36px; padding: 0 12px; color: #cfd6dc; outline: none; }
+        .top-actions { display: flex; align-items: center; gap: 12px }
+        .icon-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--stroke); background: transparent; color: #cfd6dc; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; }
+        .avatar { width: 32px; height: 32px; border-radius: 50%; background: #ffb03a; color: #141414; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+        
+        .board-bar { margin-top: var(--topbar); height: var(--boardbar); width: 100%; background: #483467; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; gap: 12px; box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15); }
+        .board-title { font-weight: 800; font-size: 18px; }
+        .board-actions { display: flex; align-items: center; gap: 8px; }
+        .share-btn { background: #d9d9e3; color: #000; font-weight: 700; border-radius: 6px; padding: 6px 12px; border: none; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .more-btn { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #c5c5d3; background: transparent; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+
+        .board-wrap { height: calc(100vh - var(--topbar) - var(--boardbar) - var(--footer)); overflow: auto; padding: 20px; }
+        .lists { display: flex; gap: 18px; align-items: flex-start; min-width: 100% }
+        .list { width: 280px; background: rgba(0, 0, 0, 0.55); border-radius: 14px; padding: 12px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; }
+        .list-header { display: flex; align-items: center; justify-content: space-between; }
+        .list-title { font-weight: 700; font-size: 15px; color: #e7ecf0; }
+        
+        .card { background: #222; border-radius: 8px; padding: 10px; font-size: 14px; cursor: pointer; margin-bottom: 8px; }
+        .card:hover { background: #2d2d2d; }
+        
+        .add-card { padding: 8px 10px; border-radius: 8px; color: #cfd6dc; cursor: pointer; }
+        .add-card:hover { background: rgba(255, 255, 255, 0.08); }
+        .add-list { width: 280px; padding: 12px; display: flex; align-items: center; background: rgba(255, 255, 255, 0.08); border-radius: 14px; color: #f5f6f7; flex-shrink: 0; border: 1px solid rgba(255, 255, 255, 0.12); cursor: pointer; }
+
+        /* Footer nổi */
+        .floating-footer { position: fixed; left: 50%; transform: translateX(-50%); bottom: 12px; height: var(--footer); background: rgba(0, 0, 0, 0.6); padding: 10px 18px; border-radius: 28px; font-weight: 600; color: #a8b0b8; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); display: flex; gap: 12px; align-items: center; z-index: 11; }
+
+        /* ===== CSS TỪ FILE CARDDETAIL.HTML CỦA BẠN (Đã chỉnh lại Overlay) ===== */
+        
+        /* Overlay bao trùm toàn màn hình (Modal Wrapper) */
+        #cardDetailOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7); /* Đen mờ đậm hơn chút */
+            backdrop-filter: blur(4px);
+            display: none; /* Mặc định ẩn */
+            justify-content: center;
+            align-items: flex-start; /* Để scroll được nếu dài */
+            z-index: 9999; /* Nổi lên trên cùng */
+            overflow-y: auto;
+            padding: 40px 0;
+        }
+
+        .div_toal {
+            width: 1080px;
+            max-width: 95%; /* Responsive */
+            margin: auto;
+            border-radius: 12px;      
+            padding: 20px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            position: relative;
+            background-color: #1f2024;
+            color: #bbbdc0; /* Màu chữ mặc định */
+        }
+
+        .headerchild {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            height: 57px;
+            border-bottom: 1px solid gray;
+            background-color: #242528;
+            padding: 0 10px;
+        }
+
+        .headerchild button {
+            border: none;
+            width: auto; /* Sửa width để icon không bị bóp */
+            min-width: 30px;
+            height: 30px;
+            background-color: #242528;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #choosetime {
+            border: none;
+            border-radius: 5px;
+            background-color: #533f04;
+            color: white;
+            padding: 5px 15px;
+        }
+
+        .bodycard {
+            display: flex;
+            flex-wrap: wrap;
+            padding-top: 20px;
+        }
+
+        .editcard {
+            background-color: #242528;
+            flex: 1;
+            min-width: 500px;
+            padding: 10px;
+        }
+
+        .commentcard {
+            background-color: #18191a;
+            color: #bbbdc0; 
+            flex: 1;
+            min-width: 400px;
+            padding: 10px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: flex-start; /* Căn trái */
+            gap: 10px;
+            padding: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .buttons button {
+            padding: 6px 12px;
+            height: 32px;
+            border-radius: 6px;
+            background-color: #242528;
+            color: #e6e6e6;
+            border: 1px solid #3d3d3d;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: auto; /* Tự động theo chữ */
+        }
+
+        .buttons button:hover {
+            border-color: #4da3ff;
+            color: #4da3ff;
+        }
+
+        .decriptionh6 { color: #bbbdc0; margin-top: 15px; margin-bottom: 5px; font-weight: bold;}
+        
+        .description {    
+            width: 100%;
+            background-color: #2c2d31;
+            border: 1px solid #3d3d3d;
+            border-radius: 8px;
+            padding: 10px;
+            color: #bbbdc0;
+            resize: vertical;
+        }
+
+        .subject {
+            width: 100%;
+            border: none;
+            background-color: #242528;
+            color: #e7ecf0;
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            resize: none;
+        }
+
+        .dtuychinh {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .priority {
+            background-color: #242528;
+            color: #bbbdc0;
+            border: 1px solid #3d3d3d;
+            padding: 5px;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .activity-input {
+            width: 100%;
+            padding: 10px 14px;
+            background-color: #2a2b2f;
+            border: 1px solid #3d3d3d;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        /* Avatar trong chi tiết thẻ */
+        .commentcard .avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background-color: #0d6efd;
+            color: white;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: 600; font-size: 14px;
+        }
+
+        .deadline {
+            background: linear-gradient(135deg,#2c2d31,#1f2024);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: #7eb6ff;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 4px;
+            box-shadow: inset 0 0 0 1px #3d3d3d;
+        }
+
+        /* Checkbox hoàn thành */
+        .check-circle { display: inline-flex; align-items: center; cursor: pointer; }
+        .check-circle input { display: none; }
+        .check-circle span {
+            width: 25px; height: 25px;
+            border: 2px solid #767676;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+        }
+        .check-circle input:checked + span { background-color: #82b536; border-color: #82b536; }
+        .check-circle span::after {
+            content: ""; position: absolute; left: 8px; top: 4px;
+            width: 6px; height: 12px;
+            border: solid white; border-width: 0 2px 2px 0;
+            transform: rotate(45deg); opacity: 0;
+        }
+        .check-circle input:checked + span::after { opacity: 1; }
+
+        /* Popup con trong modal */
+        .optionchecklist {
+            display: none;
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1f2024;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #3a3a3a;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.9);
+            min-width: 260px;
+            text-align: center;
+            z-index: 2100;
+        }
+        .chooseday {
+            width: 100%; margin-bottom: 12px; padding: 8px 10px;
+            border: 1px solid #555; border-radius: 8px;
+            background: #2c2d31; color: #e0e0e0;
+        }
+        .bchooseday { padding: 8px 16px; border-radius: 8px; border: none; background: #4da3ff; color: white; cursor: pointer; }
+        .x { padding: 8px 12px; border-radius: 8px; border: none; background: #3a3a3a; color: #ff5c5c; cursor: pointer; margin-left: 5px;}
+
     </style>
 
 
@@ -1174,7 +1459,7 @@
                 <!-- CARDS -->
                 <div class="cards">
                     {% for c in l.cards.all %}
-                        <a href="{% url 'card_detail_id' c.id %}" class="card-link">
+                        <a  class="card-link">
                             <div class="card">
                                 {{ c.title }}
                             </div>
@@ -1332,6 +1617,166 @@
                 </div>
             </a>
         {% endfor %}
+    </div>
+</div>
+
+<header class="topbar">
+    <div class="brand">
+        <div class="logo">L</div>
+        <span>List</span>
+    </div>
+    <div class="search"><input placeholder="Tìm kiếm" aria-label="Tìm kiếm"></div>
+    <div class="top-actions">
+        <button class="icon-btn" title="Thông báo">🔔</button>
+        <button class="icon-btn" title="Trợ giúp">?</button>
+        <div class="avatar">TT</div>
+    </div>
+</header>
+
+<div class="board-bar">
+    <div class="board-title">Bảng List của tôi</div>
+    <div class="board-actions">
+        <div style="display: flex; margin-right: 8px;">
+            {% for member in members %}
+                <div title="{{ member.user.email }}" style="width: 32px; height: 32px; background: #ffb03a; color: #141414; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border: 2px solid white; margin-left: -8px;">
+                    {{ member.user.username|slice:":2"|upper }}
+                </div>
+            {% endfor %}
+        </div>
+        <button class="share-btn">👥 Chia sẻ</button>
+        <button class="more-btn">⋯</button>
+    </div>
+</div>
+
+<main class="board-wrap" role="main">
+    <div class="lists" role="list" id="listsContainer">
+        
+        {% for l in lists %}
+            <div class="list">
+                <div class="list-header">
+                    <div class="list-title">{{ l.title }}</div>
+                    <button class="list-more-btn">⋯</button>
+                </div>
+
+                <div class="cards">
+                    {% for c in l.cards.all %}
+                        <div class="card">
+                            {{ c.title }}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="add-card">+ Thêm thẻ</div>
+            </div>
+        {% endfor %}
+
+        <div class="add-list">+ Thêm danh sách khác</div>
+    </div>
+</main>
+
+
+<div id="cardDetailOverlay">
+    <div class="div_toal">
+        <header class="headerchild">
+            <button id="choosetime">Hôm nay</button>
+            <div>
+                <button><i class="fa-solid fa-ellipsis"></i></button>
+                <button onclick="closeCardModal()" style="font-size: 20px;">&#10005;</button>
+            </div>
+        </header>
+        
+        <div class="bodycard">
+            <div class="col-xl-6 editcard">
+                <label class="check-circle">
+                    <input class="complete" type="checkbox">
+                    <span></span>
+                </label>
+                <textarea class="subject" name="tile" rows="1">Thiết kế giao diện</textarea>
+                
+                <div>
+                    <div class="buttons">
+                        <button>THÊM</button>
+                        <button onclick="date(this)">NGÀY</button>
+                        <button>CẦN LÀM</button>
+                        <button onclick="addmember(this)">THÀNH VIÊN</button>
+                    </div>
+                    
+                    <div class="deadline">
+                        <span>NGÀY ĐẾN HẠN: </span>
+                        <span>02</span> <span class="dash">-</span>
+                        <span>01</span> <span class="dash">-</span>
+                        <span>2025</span>
+                    </div>
+                </div>
+
+                <h6 class="decriptionh6">mô tả</h6>
+                <textarea class="description" rows="4" cols="50" name="description"></textarea>
+                
+                <h6 class="decriptionh6">trường tùy chỉnh</h6>
+                <div class="dtuychinh">
+                    <div class="detailtuychinh">
+                        <p>Ưu Tiên</p>
+                        <select class="priority" name="priority">
+                            <option value="">--</option>
+                            <option value="">ưu tiên cao nhất</option>
+                            <option value="">ưu tiên cao</option>
+                            <option value="">trung bình</option>
+                            <option value="">thấp</option>
+                        </select>
+                    </div>
+                    <div class="detailtuychinh">
+                        <p>Trạng Thái</p>
+                        <select class="priority" name="process">
+                            <option value="">--</option>
+                            <option value="">đang làm</option>
+                            <option value="">đã làm</option>
+                        </select>
+                    </div>
+                    <div class="detailtuychinh">
+                        <p>Phức Tạp</p>
+                        <select class="priority" name="complexity">
+                            <option value="">--</option>
+                            <option value="">ưu tiên cao nhất</option>
+                            <option value="">trung bình</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6 commentcard">
+                <h4>NHẬN XÉT HOẠT ĐỘNG</h4>
+                <input class="activity-input" type="text" placeholder="Viết bình luận...">
+                
+                <div class="activity-item">
+                    <div class="avatar">NA</div>
+                    <div class="activity-content">
+                        <p><span class="name">Nguyễn Văn A</span> đã đánh dấu thẻ này là chưa hoàn tất</p>
+                        <span class="time">vừa xong</span>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="avatar">TT</div>
+                    <div class="activity-content">
+                        <p><span class="name">Trần Tuấn</span> đã tham gia</p>
+                        <span class="time">15 phút trước</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="optionchecklist" id="choosedate">
+            <input class="chooseday" type="date" name="inputdate">
+            <input class="chooseday" type="time" name="inputtime"><br>
+            <button type="submit" id="bdate" onclick="date(this)" class="bchooseday">choose</button>
+            <button class="x" id="xdate" onclick="date(this)">&#10005;</button>
+        </div>
+
+        <div class="optionchecklist" id="member">
+            <input class="chooseday" type="text" placeholder="Nhập tên..."><br>
+            <button class="bchooseday">Add</button>
+            <button class="x" id="xxdate" onclick="addmember(this)">&#10005;</button>
+        </div>
     </div>
 </div>
 
@@ -1751,5 +2196,63 @@
 
         if (notiMenu) notiMenu.classList.remove('show');
     });
+</script>
+
+<script>
+    // --- JS XỬ LÝ MỞ/ĐÓNG MODAL CHI TIẾT THẺ ---
+    
+    const cardOverlay = document.getElementById('cardDetailOverlay');
+
+    // Hàm mở modal (gọi khi click vào card)
+    function openCardDetail() {
+        if(cardOverlay) {
+            cardOverlay.style.display = 'flex'; // Dùng flex để căn giữa
+        }
+    }
+
+    // Hàm đóng modal
+    function closeCardModal() {
+        if(cardOverlay) {
+            cardOverlay.style.display = 'none';
+            // Đóng luôn các popup con nếu đang mở
+            document.getElementById("choosedate").style.display = 'none';
+            document.getElementById("member").style.display = 'none';
+        }
+    }
+
+    // Click ra ngoài vùng đen để đóng
+    window.onclick = function(event) {
+        if (event.target == cardOverlay) {
+            closeCardModal();
+        }
+    }
+
+    // Sự kiện Click vào thẻ Card trong danh sách
+    document.getElementById("listsContainer").addEventListener("click", function(e) {
+        // Kiểm tra xem có click vào class .card không
+        if(e.target.classList.contains('card')) {
+            openCardDetail();
+        }
+    });
+
+    // --- JS GỐC CỦA BẠN (POPUP CON) ---
+    function date(e){
+        if(e.id=="xdate"||e.id=="bdate"){
+            document.getElementById("choosedate").style.display = 'none';
+            document.getElementById("member").style.display = 'none';
+        }else{
+            document.getElementById("choosedate").style.display = 'block';
+            document.getElementById("member").style.display = 'none';
+        }
+    }
+    
+    function addmember(e){
+        if(e.id=="xxdate"){
+            document.getElementById("member").style.display = 'none';
+        }else {
+            document.getElementById("member").style.display = 'block';
+            document.getElementById("choosedate").style.display = 'none';
+        }
+    }
 </script>
 </html>
