@@ -13,6 +13,7 @@ from .models import Board, List, Card,Checklist, ChecklistItem
 from tasks.models import Task
 from datetime import datetime
 from django.utils import timezone
+from .models import Card, BoardMember # Import model của bạn
 def create_board(request):
     return render(request, "boards/BangCVcuaToi.html")
 
@@ -347,6 +348,43 @@ def delete_checklist(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+    
+    
 
+def assign_member_to_card(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        card_id = data.get('card_id')
+        email_or_username = data.get('email')
+
+        try:
+            card = Card.objects.get(id=card_id)
+            
+            # Tìm user theo email hoặc username
+            user = User.objects.filter(email=email_or_username).first() or \
+                   User.objects.filter(username=email_or_username).first()
+            
+            if not user:
+                return JsonResponse({'status': 'error', 'error': 'Không tìm thấy người dùng này.'})
+
+            # Kiểm tra xem user có trong Board chưa (tùy chọn)
+            # if not BoardMember.objects.filter(project=card.list.board, user=user).exists():
+            #     return JsonResponse({'status': 'error', 'error': 'Người này chưa tham gia vào Bảng.'})
+
+            # Thêm user vào thẻ (Giả sử model Card có field many-to-many 'members')
+            card.members.add(user)
+            
+            return JsonResponse({
+                'status': 'ok', 
+                'username': user.username,
+                'avatar': user.username[:2].upper()
+            })
+            
+        except Card.DoesNotExist:
+            return JsonResponse({'status': 'error', 'error': 'Thẻ không tồn tại'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'error': str(e)})
+
+    return JsonResponse({'status': 'error', 'error': 'Invalid method'})
 
 
