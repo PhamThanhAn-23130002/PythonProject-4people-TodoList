@@ -21,6 +21,5 @@ urlpatterns = [
     path("api/checklist/item/add/", views.add_checklist_item, name="add_checklist_item"),
     path("api/checklist/item/toggle/", views.toggle_checklist_item, name="toggle_checklist_item"),
     path("api/checklist/delete/", views.delete_checklist, name="delete_checklist"),
-
-
+    path('api/card/assign_member/', views.assign_member_to_card, name='assign_member_to_card'),
 ]

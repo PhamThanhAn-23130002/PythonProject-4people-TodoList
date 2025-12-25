@@ -1649,34 +1649,35 @@
             </div>
         </header>
 
-        <div class="bodycard">
-            <div class="col-xl-6 editcard">
-                <label class="check-circle">
-                    <input class="complete" type="checkbox">
-                    <span></span>
-                </label>
-                <textarea class="subject" id="modalSubject" name="tile" rows="1"></textarea>
 
-                <div>
-                    <div class="buttons">
-                        <button>NHÃN</button>
-                        <button onclick="date(this)">NGÀY</button>
-                        <button onclick="openChecklistPopover(this)">CẦN LÀM</button>
-                        <button onclick="addmember(this)">THÀNH VIÊN</button>
-                    </div>
 
-                    
-                    <div class="deadline" id="modalDeadlineDisplay" style="display: none;">
-                        <span>NGÀY ĐẾN HẠN: </span>
-                        <span>02</span> <span class="dash">-</span>
-                        <span>01</span> <span class="dash">-</span>
-                        <span>2025</span>
-                    </div>
+         <div class="bodycard">
+    <div class="col-xl-6 editcard">
+        <label class="check-circle">
+            <input class="complete" type="checkbox">
+            <span></span>
+        </label>
+        <textarea class="subject" id="modalSubject" name="tile" rows="1"></textarea>
 
-                </div>
+        <div>
+            <div class="buttons">
+                <button>NHÃN</button>
+                <button onclick="date(this)">NGÀY</button>
+                <button onclick="openChecklistPopover(this)">CẦN LÀM</button>
+                <button onclick="addmember(this)">THÀNH VIÊN</button>
+            </div>
 
-                <h6 class="decriptionh6">mô tả</h6>
-                <textarea class="description" rows="4" cols="50" name="description"></textarea>
+            <div class="deadline" id="modalDeadlineDisplay" style="display: none; margin-top: 10px;">
+                <span style="color: #bbb;">NGÀY HẾT HẠN: </span>
+                <span id="deadlineDateText" style="color: #e7ecf0; font-weight: bold; margin-left: 5px;"></span>
+                <span class="chk-done" style="margin-left: 10px;">
+                    <input type="checkbox" id="deadlineCheck">
+                </span>
+            </div>
+            </div>
+
+        <h6 class="decriptionh6">mô tả</h6>
+        <textarea class="description" rows="4" cols="50" name="description"></textarea>
 
                 <h6 class="decriptionh6">trường tùy chỉnh</h6>
                 <div class="dtuychinh">
@@ -2469,5 +2470,32 @@
             updateProgress(checklist);
         });
     });
+
+    function saveDate() {
+    const dateInput = document.querySelector('input[name="inputdate"]').value;
+    const timeInput = document.querySelector('input[name="inputtime"]').value;
+
+    if (dateInput) {
+        // Format ngày (VD: 2025-01-01 -> 01/01/2025)
+        const dateObj = new Date(dateInput);
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const year = dateObj.getFullYear();
+        let displayString = `${day}/${month}/${year}`;
+
+        if (timeInput) {
+            displayString += ` lúc ${timeInput}`;
+        }
+
+        // Cập nhật giao diện
+        document.getElementById('deadlineDateText').innerText = displayString;
+        document.getElementById('modalDeadlineDisplay').style.display = 'flex'; // Hiện lên
+
+        // Đóng popup
+        document.getElementById("choosedate").style.display = 'none';
+        
+     
+    }
+}
 </script>
 </html>
