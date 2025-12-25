@@ -1,4 +1,3 @@
-
 from django.db import models
 from accounts.models import User
 import uuid
@@ -47,6 +46,32 @@ class Card(models.Model):
     title = models.CharField(max_length=255)
     position = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+class Checklist(models.Model):
+    card = models.ForeignKey(
+        Card,
+        related_name="checklists",
+        on_delete=models.CASCADE
+    )
+    title = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+
+class ChecklistItem(models.Model):
+    checklist = models.ForeignKey(
+        Checklist,
+        related_name="items",
+        on_delete=models.CASCADE
+    )
+    title = models.CharField(max_length=255)
+    is_done = models.BooleanField(default=False)
+    position = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title

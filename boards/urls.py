@@ -17,4 +17,10 @@ urlpatterns = [
     path("about_me", views.about_me, name="about_me"),
     path('join/<uuid:token>/', views.join_via_link, name='join_via_link'),
     path('dismiss-intro/', views.dismiss_intro, name='dismiss_intro'),
+    path("api/checklist/create/", views.create_checklist, name="create_checklist"),
+    path("api/checklist/item/add/", views.add_checklist_item, name="add_checklist_item"),
+    path("api/checklist/item/toggle/", views.toggle_checklist_item, name="toggle_checklist_item"),
+    path("api/checklist/delete/", views.delete_checklist, name="delete_checklist"),
+
+
 ]

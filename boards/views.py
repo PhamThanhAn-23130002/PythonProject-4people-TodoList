@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from tasks.models import Task
 import json
 from django.db.models import Q #phép tuyển
-from .models import Board, List, Card
+from .models import Board, List, Card,Checklist, ChecklistItem
 from tasks.models import Task
 from datetime import datetime
 from django.utils import timezone
@@ -20,12 +20,22 @@ def create_board(request):
 def card_detail(request):
     return render(request, "boards/CardDetail.html")
 
+# def card_detail_id(request, card_id):
+#     card = get_object_or_404(Card, id=card_id)
+#
+#     return render(request, "boards/CardDetail.html", {
+#         "card": card
+#     })
 def card_detail_id(request, card_id):
     card = get_object_or_404(Card, id=card_id)
 
+    checklists = card.checklists.prefetch_related("items").all()
+
     return render(request, "boards/CardDetail.html", {
-        "card": card
+        "card": card,
+        "checklists": checklists
     })
+
 
 def home_page(request):
     return render(request, "boards/TrangChu.html")
@@ -186,7 +196,7 @@ def save_board_db(request, board_id):
                 title=card_title,
                 position=card_index
             )
-
+            
     return JsonResponse({"status": "saved"})
     
 
@@ -248,6 +258,95 @@ def detail_task(request, id):
 
 
 
+def create_checklist(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid method"}, status=405)
+
+    data = json.loads(request.body)
+
+    card_id = data.get("card_id")
+    title = data.get("title", "Việc cần làm")
+
+    if not card_id:
+        return JsonResponse({"error": "Missing card_id"}, status=400)
+
+    card = Card.objects.get(id=card_id)
+
+    checklist = Checklist.objects.create(
+        card=card,
+        title=title
+    )
+
+    return JsonResponse({
+        "status": "ok",
+        "checklist_id": checklist.id,
+        "title": checklist.title
+    })
+
+@csrf_exempt
+@login_required
+def add_checklist_item(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        checklist_id = data.get("checklist_id")
+        title = data.get("title")
+
+        checklist = get_object_or_404(Checklist, id=checklist_id)
+
+        item = ChecklistItem.objects.create(
+            checklist=checklist,
+            title=title,
+            position=checklist.items.count()
+        )
+
+        return JsonResponse({
+            "id": item.id,
+            "title": item.title,
+            "is_done": item.is_done
+        })
+
+
+@csrf_exempt
+@login_required
+def toggle_checklist_item(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid method"}, status=405)
+
+    data = json.loads(request.body)
+    item_id = data.get("item_id")
+
+    item = get_object_or_404(ChecklistItem, id=item_id)
+    item.is_done = not item.is_done
+    item.save()
+
+    return JsonResponse({
+        "is_done": item.is_done
+    })
+
+
+@csrf_exempt
+@login_required
+def delete_checklist(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid method"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        checklist_id = data.get("checklist_id")
+
+        if not checklist_id:
+            return JsonResponse({"error": "Missing checklist_id"}, status=400)
+
+        # Kiểm tra checklist có tồn tại không
+        checklist = get_object_or_404(Checklist, id=checklist_id)
+
+        # Xóa
+        checklist.delete()
+
+        return JsonResponse({"status": "ok", "message": "Deleted successfully"})
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 
