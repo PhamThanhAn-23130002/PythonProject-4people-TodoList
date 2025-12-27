@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
+from django.contrib.auth import logout, get_user_model
 from .models import Board, BoardMember, User
 from django.contrib import messages # Để thông báo lỗi/thành công
 from django.http import HttpResponse, request, JsonResponse
@@ -14,6 +14,7 @@ from tasks.models import Task
 from datetime import datetime
 from django.utils import timezone
 from .models import Card, BoardMember # Import model của bạn
+User = get_user_model()
 def create_board(request):
     return render(request, "boards/BangCVcuaToi.html")
 
@@ -348,43 +349,57 @@ def delete_checklist(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
-    
-    
+
 
 def assign_member_to_card(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        card_id = data.get('card_id')
-        email_or_username = data.get('email')
-
+    if request.method == 'POST':
         try:
+            data = json.loads(request.body)
+            card_id = data.get('card_id')  # ID của thẻ (chúng ta sẽ sửa HTML để lấy cái này)
+            username = data.get('username')
+            action = data.get('action')  # 'add' hoặc 'remove'
+
             card = Card.objects.get(id=card_id)
-            
-            # Tìm user theo email hoặc username
-            user = User.objects.filter(email=email_or_username).first() or \
-                   User.objects.filter(username=email_or_username).first()
-            
-            if not user:
-                return JsonResponse({'status': 'error', 'error': 'Không tìm thấy người dùng này.'})
+            user = User.objects.get(username=username)
 
-            # Kiểm tra xem user có trong Board chưa (tùy chọn)
-            # if not BoardMember.objects.filter(project=card.list.board, user=user).exists():
-            #     return JsonResponse({'status': 'error', 'error': 'Người này chưa tham gia vào Bảng.'})
+            if action == 'add':
+                card.members.add(user)
+            elif action == 'remove':
+                card.members.remove(user)
 
-            # Thêm user vào thẻ (Giả sử model Card có field many-to-many 'members')
-            card.members.add(user)
-            
-            return JsonResponse({
-                'status': 'ok', 
-                'username': user.username,
-                'avatar': user.username[:2].upper()
-            })
-            
-        except Card.DoesNotExist:
-            return JsonResponse({'status': 'error', 'error': 'Thẻ không tồn tại'})
+            return JsonResponse({'status': 'ok'})
         except Exception as e:
-            return JsonResponse({'status': 'error', 'error': str(e)})
+            return JsonResponse({'status': 'error', 'message': str(e)})
 
-    return JsonResponse({'status': 'error', 'error': 'Invalid method'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid method'})
+
+@csrf_exempt
+def update_card_member(request):
+    if request.method == 'POST':
+        try:
+            # 1. Lấy dữ liệu từ Javascript gửi lên
+            data = json.loads(request.body)
+            card_id = data.get('card_id')
+            username = data.get('username')
+            action = data.get('action')  # 'add' hoặc 'remove'
+
+            # 2. Tìm thẻ và user tương ứng
+            card = get_object_or_404(Card, id=card_id)
+            user = get_object_or_404(User, username=username)
+
+            # 3. Thêm hoặc Xóa khỏi quan hệ Many-to-Many
+            if action == 'add':
+                card.members.add(user)  # Lưu vào bảng boards_card_members
+                message = f"Đã thêm {username} vào thẻ."
+            elif action == 'remove':
+                card.members.remove(user)  # Xóa khỏi bảng boards_card_members
+                message = f"Đã xóa {username} khỏi thẻ."
+
+            return JsonResponse({'status': 'ok', 'message': message})
+
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 
