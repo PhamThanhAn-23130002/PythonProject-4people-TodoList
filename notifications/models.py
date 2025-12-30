@@ -1,7 +1,7 @@
 from django.db import models
 from boards.models import Board
 from accounts.models import User
-from tasks.models import Task
+from boards.models import Card
 
 class BoardShare(models.Model):
     ROLE_CHOICES = [
@@ -32,7 +32,7 @@ class Notification(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    task = models.ForeignKey(Task, on_delete=models.SET_NULL, null=True, blank=True)
+    task = models.ForeignKey(Card, on_delete=models.SET_NULL, null=True, blank=True)
     project = models.ForeignKey(Board, on_delete=models.SET_NULL, null=True, blank=True)
 
     type = models.CharField(max_length=20, choices=TYPE_CHOICES)
