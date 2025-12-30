@@ -140,7 +140,7 @@
 
         .container {
             display: grid;
-            grid-template-columns:260px 1fr 320px;
+            grid-template-columns: 260px 1fr;
             gap: 24px;
             padding: 24px;
             height: calc(100vh - 56px);
@@ -191,8 +191,8 @@
 
         .board-section-content {
             width: 100%;
-            max-width: 800px; /* Giới hạn chiều rộng cho đẹp */
-            padding-top: 20px;
+            max-width:  100%; 
+          
         }
 
         .board-grid {
@@ -254,7 +254,8 @@
         .main {
             display: flex;
             align-items: flex-start;
-            justify-content: center
+            justify-content: flex-start; 
+            width: 100%;
         }
 
         .hero {
@@ -307,74 +308,6 @@
             text-decoration: underline
         }
 
-        /* RIGHT RAIL */
-        .right {
-            padding-top: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px
-        }
-
-        .section-title {
-            color: #cfd6dc;
-            font-weight: 700;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px
-        }
-
-        .recent-card {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            padding: 10px;
-            background: transparent;
-            border-radius: 8px;
-            cursor: default;
-        }
-
-        .recent-thumb {
-            width: 40px;
-            height: 28px;
-            border-radius: 6px;
-            background: linear-gradient(135deg, #a06adf, #f285c8);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .recent-info .title {
-            font-weight: 600
-        }
-
-        .recent-info .meta {
-            color: var(--muted);
-            font-size: 16px
-        }
-
-        .create-tile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            width: fit-content;
-            border: 1px solid var(--stroke);
-            border-radius: 8px;
-            background: #2b3038;
-            color: #d9dee3;
-            font-weight: 700;
-        }
-
-        .create-tile .plus {
-            width: 26px;
-            height: 26px;
-            border-radius: 6px;
-            background: #3b4048;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--stroke);
-            font-weight: 800;
-        }
 
         /* Hiệu ứng điều hướng  */
         .nav-item {

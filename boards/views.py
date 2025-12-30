@@ -6,14 +6,14 @@ from django.contrib import messages # Để thông báo lỗi/thành công
 from django.http import HttpResponse, request, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from tasks.models import Task
+from boards.models import Card
 import json
 from django.db.models import Q #phép tuyển
 from .models import Board, List, Card,Checklist, ChecklistItem
-from tasks.models import Task
 from datetime import datetime
 from django.utils import timezone
 from .models import Card, BoardMember # Import model của bạn
+
 User = get_user_model()
 def create_board(request):
     return render(request, "boards/BangCVcuaToi.html")
@@ -235,7 +235,7 @@ def createdealine(request):
             f"{d6} {d7}",
             "%Y-%m-%d %H:%M"
         )
-    Task.objects.create(
+    Card.objects.create(
         title = d1,
         description = d2,
         priority = d3, 
@@ -244,7 +244,7 @@ def createdealine(request):
         deadline = dt)
     return redirect("boards/BangCVcuaToi.html")
 def loaddealine(request,id):
-    list=Task.objects.get(id==id)
+    list=Card.objects.get(id==id)
     dealine = list.deadline
     if timezone.is_aware(dealine):
         dealine = timezone.localtime(dealine)
@@ -255,9 +255,8 @@ def loaddealine(request,id):
     }
     return render(request, "CardDetail.html", context)
 def detail_task(request, id):
-    task = Task.objects.get(id=id)
+    task = Card.objects.get(id=id)
     return render(request, "detail.html", {"task": task})
-
 
 
 def create_checklist(request):
@@ -401,5 +400,35 @@ def update_card_member(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+def update_card_deadline(request, card_id):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            date_str = data.get('date') # Chuỗi: "2025-12-30"
+            time_str = data.get('time') # Chuỗi: "15:30"
+            
+            card = get_object_or_404(Card, id=card_id)
+            
+            if date_str:
+                # Nếu không chọn giờ, mặc định là 00:00 hoặc giờ hiện tại tùy bạn
+                # Ở đây mình gộp ngày và giờ để lưu vào DateTimeField
+                if not time_str:
+                    time_str = "09:00" # Giờ mặc định nếu user quên chọn giờ
+                
+                # Tạo chuỗi datetime đầy đủ: "2025-12-30 15:30"
+                full_datetime_str = f"{date_str} {time_str}"
+                
+                # Chuyển đổi sang object datetime
+                # Lưu ý: Định dạng phải khớp với chuỗi ghép bên trên
+                card.deadline = datetime.strptime(full_datetime_str, "%Y-%m-%d %H:%M")
+                card.save()
+                
+                return JsonResponse({'status': 'success', 'message': 'Đã lưu ngày hết hạn'})
+            
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+            
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 
