@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Tag
 from boards.models import Card
+from .models import Card, Tag
+from django.http import JsonResponse
 
 def task_list(request):
     return render(request, 'boards/TrangChu.html')
@@ -29,13 +31,20 @@ def add_tag_to_card(request, card_id):
     return redirect('home')
 
 def remove_tag_from_card(request, card_id, tag_id):
-    card = get_object_or_404(Card, id=card_id)
-    tag = get_object_or_404(Tag, id=tag_id)
-    
-    # Gỡ tag khỏi card
-    card.tags.remove(tag)
-    
-    # Quay lại trang chi tiết bảng
-    return redirect('board_detail', board_id=card.list.board.id)
+    if request.method == "POST":
+        try:
+            card = get_object_or_404(Card, id=card_id)
+            tag = get_object_or_404(Tag, id=tag_id)
+            
+            # Xóa tag khỏi card
+            card.tags.remove(tag)
+            
+            # QUAN TRỌNG: Phải trả về JsonResponse, KHÔNG ĐƯỢC dùng redirect()
+            return JsonResponse({'status': 'success', 'message': 'Đã gỡ nhãn'})
+            
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+            
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 
