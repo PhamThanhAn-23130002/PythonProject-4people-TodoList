@@ -432,3 +432,31 @@ def update_card_deadline(request, card_id):
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 
+def manage_card_member(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            card_id = data.get('card_id')
+            username = data.get('username')
+            action = data.get('action') # 'add' hoặc 'remove'
+
+            card = get_object_or_404(Card, id=card_id)
+            user = get_object_or_404(User, username=username)
+
+            if action == 'add':
+                card.members.add(user)
+                message = f"Đã thêm {username} vào thẻ"
+            elif action == 'remove':
+                card.members.remove(user)
+                message = f"Đã xóa {username} khỏi thẻ"
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Action không hợp lệ'})
+
+            return JsonResponse({'status': 'success', 'message': message})
+
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid method'})
+
+

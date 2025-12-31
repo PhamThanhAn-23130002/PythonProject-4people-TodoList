@@ -2295,34 +2295,73 @@ function openCardDetail() {
 
     // --- MEMBER FUNCTIONS ---
 
-    function assignMemberToCard(username, fullname) {
+// 1. Hàm Thêm Thành Viên
+   function assignMemberToCard(username, fullname) {
         if (!currentActiveCard) return;
 
         let currentData = currentActiveCard.getAttribute('data-members') || "";
         let memberList = currentData ? currentData.split(',') : [];
 
+        // Kiểm tra trùng lặp
         if (memberList.some(item => item.split('|')[0] === username)) {
             alert("Thành viên này đã có trong thẻ!");
             return;
         }
 
-        // Thêm vào mảng: username|fullname
+        // Cập nhật giao diện ngay lập tức
         memberList.push(`${username}|${fullname}`);
         currentActiveCard.setAttribute('data-members', memberList.join(','));
-
-        // Cập nhật giao diện
         document.getElementById('membersLabel').style.display = 'block';
         addMemberToView(username, fullname);
         document.getElementById("member").style.display = 'none';
 
-        // GỌI API LƯU DB
+        // Gửi API
         const cardId = currentActiveCard.getAttribute('data-id');
         if (cardId) {
             fetch('/boards/api/card/member/', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
                 body: JSON.stringify({ card_id: cardId, username: username, action: 'add' })
-            }).then(r => console.log("Added member"));
+            })
+            .then(res => res.json())
+            .then(data => {
+                // --- ĐOẠN ĐÃ SỬA ---
+                // Chấp nhận cả 'success' (hàm mới) và 'ok' (hàm cũ) là thành công
+                if(data.status === 'success' || data.status === 'ok') {
+                    console.log("Đã lưu thành viên vào DB");
+                } else {
+                    alert("Lỗi: " + (data.message || "Không xác định"));
+                }
+            })
+            .catch(err => console.error(err));
+        }
+    }
+
+    // 2. Hàm Xóa Thành Viên
+function removeMemberFromCard(username) {
+        if (!currentActiveCard) return;
+        
+        let currentData = currentActiveCard.getAttribute('data-members') || "";
+        let memberList = currentData.split(',');
+        const newList = memberList.filter(item => item.split('|')[0] !== username);
+        currentActiveCard.setAttribute('data-members', newList.join(','));
+
+        const cardId = currentActiveCard.getAttribute('data-id');
+        if (cardId) {
+            fetch('/boards/api/card/member/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+                body: JSON.stringify({ card_id: cardId, username: username, action: 'remove' })
+            })
+            .then(res => res.json())
+            .then(data => {
+                // --- ĐOẠN ĐÃ SỬA ---
+                if(data.status === 'success' || data.status === 'ok') {
+                    console.log("Đã xóa thành viên khỏi DB");
+                } else {
+                    alert("Lỗi: " + (data.message || "Không xác định"));
+                }
+            });
         }
     }
 
@@ -2385,7 +2424,7 @@ function openCardDetail() {
         const memberPopup = document.getElementById("member");
         
         // --- NÚT CHỌN (LƯU NGÀY) ---
-        if (e.id == "bdate") {
+        if (e.id == "bdate") { 
             const dateVal = document.querySelector('input[name="inputdate"]').value; // YYYY-MM-DD
             const timeVal = document.querySelector('input[name="inputtime"]').value; // HH:MM
             
