@@ -41,9 +41,11 @@ urlpatterns = [
     path('api/card/<int:card_id>/delete/', views.delete_card_api, name='delete_card_api'),
     path('api/card/update-title/', views.update_card_title, name='update_card_title'),
     
-    # Cập nhật Deadline, Thành viên
+    # Cập nhật Deadline, Thành viên, Lưu mô tả, lưu trạng thái hoàn thành
     path('api/card/<int:card_id>/deadline/', views.update_card_deadline, name='update_card_deadline'),
-    path('api/card/member/', views.manage_card_member, name='manage_card_member'), 
+    path('api/card/member/', views.manage_card_member, name='manage_card_member'),
+    path('api/card/update-description/', views.update_card_description, name='update_card_description'),
+    path('api/card/<int:card_id>/toggle-completed/', views.toggle_card_completed_api, name='toggle_card_completed_api'),
 
     # Các view hiển thị chi tiết thẻ (Legacy/Render HTML)
     path("card_detail", views.card_detail, name="card_detail"),

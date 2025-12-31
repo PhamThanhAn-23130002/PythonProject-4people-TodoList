@@ -507,3 +507,48 @@ def delete_list_api(request, list_id):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     return JsonResponse({'status': 'error', 'message': 'Yêu cầu không hợp lệ'})
+
+
+# Xử lý chuyện lưu thông tin mô tả của một thẻ xuống db.
+
+def update_card_description(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            card_id = data.get('card_id')
+            description = data.get('description')
+            
+            card = get_object_or_404(Card, id=card_id)
+            
+            # Cập nhật mô tả (cho phép rỗng)
+            card.description = description
+            card.save()
+            
+            return JsonResponse({'status': 'success', 'message': 'Đã lưu mô tả'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+            
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+#Trạng thái hoàn thành của thẻ
+
+# boards/views.py
+
+@csrf_exempt
+def toggle_card_completed_api(request, card_id):
+    if request.method == "POST":
+        try:
+            card = get_object_or_404(Card, id=card_id)
+            # Đảo ngược trạng thái (True -> False, False -> True)
+            # Lưu ý: Bạn cần chắc chắn trong models.py, model Card đã có trường is_completed
+            # Nếu chưa có, bạn cần thêm: is_completed = models.BooleanField(default=False) và makemigrations
+            
+            # Nếu chưa có trường is_completed trong model, hãy tạm dùng 1 trường khác hoặc thêm vào model nhé.
+            # Giả sử bạn đã thêm trường is_completed vào Model Card:
+            card.is_completed = not card.is_completed
+            card.save()
+            
+            return JsonResponse({'status': 'success', 'is_completed': card.is_completed})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})

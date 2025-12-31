@@ -1635,9 +1635,13 @@
                     data-title="{{ c.title }}" 
                     data-desc="{{ c.description|default:'' }}"
                     data-deadline="{{ c.deadline|date:'d-m-Y H:i' }}"
+                    data-completed="{{ c.is_completed|yesno:'true,false' }}"
                     data-members="{% for m in c.members.all %}{{ m.username }}|{{ m.get_full_name|default:m.username }}{% if not forloop.last %},{% endif %}{% endfor %}"
-                    data-tags="{% for tag in c.tags.all %}{{ tag.id }}|{{ tag.name }}|{{ tag.color }}{% if not forloop.last %},{% endif %}{% endfor %}"
-                        >                    
+                    data-tags="{% for tag in c.tags.all %}{{ tag.id }}|{{ tag.name }}|{{ tag.color }}{% if not forloop.last %},{% endif %}{% endfor %}">      
+                    
+                    <div class="card-done-icon" style="display: {% if c.is_completed %}block{% else %}none{% endif %}; color: #61bd4f; font-weight: bold; margin-bottom: 4px;">
+                        ✅ Đã hoàn thành
+                    </div>
                     {% if c.tags.all %}
                     <div class="card-tags" style="display:flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px;">
                         {% for tag in c.tags.all %}
@@ -1845,42 +1849,6 @@
                 <h6 class="decriptionh6">Mô tả</h6>
                 <textarea class="description" rows="4" cols="50" name="description"></textarea>
 
-                <h6 class="decriptionh6">Trường tùy chỉnh</h6>
-                <div class="dtuychinh">
-
-                    <div class="detailtuychinh">
-
-                    <p>Ưu Tiên</p>
-
-                    <select class="priority" name="priority">
-
-                    <option value="">--</option>
-
-                    <option value="">Ưu tiên cao nhất</option>
-
-                    <option value="">Trung bình</option>
-
-                    </select>
-
-                    </div>
-
-                    <div class="detailtuychinh">
-
-                    <p>Trạng Thái</p>
-
-                    <select class="priority" name="process">
-
-                    <option value="">--</option>
-
-                    <option value="">Đang làm</option>
-
-                    <option value="">Đã hoàn thành</option>
-
-                    </select>
-
-                    </div>
-
-                    </div>
 
                     </div>
             </div>
@@ -2101,7 +2069,54 @@
         }
     });
 
-    // 1.7. Đóng menu khi click ra ngoài
+        // 1.7. Xử lý Lưu Mô tả Thẻ (Auto Save khi click ra ngoài)
+        const descInput = document.querySelector('.description');
+        
+        if (descInput) {
+            descInput.addEventListener('blur', function() {
+                // 1. Lấy nội dung mới
+                const newDesc = this.value;
+                
+                if (!currentActiveCard) return;
+
+                // 2. Kiểm tra xem nội dung có thay đổi không
+                // (Lấy nội dung cũ từ attribute data-desc để so sánh)
+                const oldDesc = currentActiveCard.getAttribute('data-desc') || "";
+                
+                if (newDesc === oldDesc) return; // Không đổi thì không làm gì cả
+
+                // 3. Cập nhật data-desc ở thẻ ngoài bảng (để lần sau mở lại không bị load lại cái cũ)
+                currentActiveCard.setAttribute('data-desc', newDesc);
+
+                // 4. Gửi về Server
+                const cardId = currentActiveCard.getAttribute('data-id');
+                if (cardId) {
+                    console.log("Đang lưu mô tả...");
+                    fetch('/boards/api/card/update-description/', {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}' 
+                        },
+                        body: JSON.stringify({ 
+                            card_id: cardId, 
+                            description: newDesc 
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.status === 'success') {
+                            console.log("Đã lưu mô tả thành công!");
+                        } else {
+                            alert("Lỗi lưu mô tả: " + data.message);
+                        }
+                    })
+                    .catch(err => console.error("Lỗi:", err));
+                }
+            });
+        }
+
+    // 1.8. Đóng menu khi click ra ngoài
     document.addEventListener("click", () => {
         document.querySelectorAll('.account-menu, .noti-menu, .board-more-menu, .list-menu').forEach(m => m.classList.remove('show'));
         safeHide('switchBoardMenu');
@@ -2109,6 +2124,53 @@
         safeHide('tagPopover'); 
         safeHide('cardMoreMenu'); // <--- Thêm đóng menu thẻ
     });
+
+    // 1.9. Xử lý Checkbox Hoàn thành công việc
+    const completeCheckbox = document.querySelector('.complete'); // Checkbox trong modal
+
+    if (completeCheckbox) {
+        completeCheckbox.addEventListener('change', function() {
+            if (!currentActiveCard) return;
+            
+            const cardId = currentActiveCard.getAttribute('data-id');
+            
+            // Gọi API toggle
+            fetch(`/boards/api/card/${cardId}/toggle-completed/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    // Cập nhật trạng thái (data-completed) cho thẻ active
+                    const newState = data.is_completed;
+                    currentActiveCard.setAttribute('data-completed', newState);
+                    
+                    // Cập nhật giao diện bên ngoài (Hiện/Ẩn dấu tích xanh)
+                    let doneIcon = currentActiveCard.querySelector('.card-done-icon');
+                    
+                    // Nếu chưa có icon thì tạo mới (phòng trường hợp thẻ mới tạo)
+                    if (!doneIcon) {
+                        doneIcon = document.createElement('div');
+                        doneIcon.className = 'card-done-icon';
+                        doneIcon.style.cssText = "color: #61bd4f; font-weight: bold; margin-bottom: 4px;";
+                        doneIcon.innerText = "✅ Đã hoàn thành";
+                        // Chèn vào đầu thẻ card
+                        currentActiveCard.insertBefore(doneIcon, currentActiveCard.firstChild);
+                    }
+                    
+                    // Ẩn/Hiện dựa trên kết quả trả về
+                    doneIcon.style.display = newState ? 'block' : 'none';
+
+                } else {
+                    alert("Lỗi cập nhật trạng thái: " + data.message);
+                    // Revert lại checkbox nếu lỗi
+                    this.checked = !this.checked;
+                }
+            })
+            .catch(err => console.error(err));
+        });
+    }
 
 
     /**
@@ -2295,6 +2357,10 @@
 
             if(cardOverlay) cardOverlay.style.display = 'flex';
         }
+        //Sync trạng thái checkbox
+        const isCompleted = currentActiveCard.getAttribute('data-completed') === 'true';
+            const checkbox = document.querySelector('.complete');
+            if (checkbox) checkbox.checked = isCompleted;
     }
 
     function closeCardModal() {
