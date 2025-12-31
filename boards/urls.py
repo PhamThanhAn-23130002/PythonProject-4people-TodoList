@@ -27,4 +27,8 @@ urlpatterns = [
     path('api/card/member/', views.manage_card_member, name='manage_card_member'),
     path('api/card/update-title/', views.update_card_title, name='update_card_title'),
     path('api/card/<int:card_id>/delete/', views.delete_card_api, name='delete_card_api'),
+    path('api/list/create/', views.create_list_api, name='create_list_api'),
+    path('api/card/create/', views.create_card_api, name='create_card_api'),
+    path('api/list/<int:list_id>/delete/', views.delete_list_api, name='delete_list_api'),
+
 ]

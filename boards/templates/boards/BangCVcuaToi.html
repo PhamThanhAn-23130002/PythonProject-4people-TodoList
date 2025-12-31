@@ -1611,7 +1611,7 @@
     <div class="lists" role="list" id="listsContainer">
 
         {% for l in lists %}
-            <div class="list">
+           <div class="list" data-id="{{ l.id }}">
                 <div class="list-header">
                     <div class="list-title">{{ l.title }}</div>
                     <button class="list-more-btn" title="Thao tác">⋯</button>
@@ -1985,14 +1985,18 @@
             confirmAddList.onclick = () => {
                 const title = listTitleInput.value.trim();
                 if (!title) return;
-                const newList = document.createElement('div');
-                newList.className = 'list';
-                newList.innerHTML = `<div class="list-header"><div class="list-title">${title}</div></div>`;
-                listsContainer.insertBefore(newList, addListBtn);
-                saveToSession(true); 
-                listTitleInput.value = '';
-                addListForm.style.display = 'none';
-                addListBtn.style.display = 'flex';
+                
+                // Gọi API tạo list (Sửa lỗi mất dữ liệu cũ)
+                fetch('/boards/api/list/create/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ board_id: '{{ board.id }}', title: title })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'success') window.location.reload();
+                    else alert("Lỗi tạo danh sách: " + data.message);
+                });
             };
         }
 
@@ -2061,7 +2065,7 @@
                 }
                 if (newTitle === currentActiveCard.getAttribute('data-title')) return;
 
-                // Cập nhật giao diện: Tìm đúng thẻ chứa text để thay thế (tránh trùng lặp)
+                // Cập nhật giao diện an toàn
                 let updated = false;
                 const spans = currentActiveCard.querySelectorAll('span');
                 for(let s of spans) {
@@ -2102,7 +2106,8 @@
         document.querySelectorAll('.account-menu, .noti-menu, .board-more-menu, .list-menu').forEach(m => m.classList.remove('show'));
         safeHide('switchBoardMenu');
         safeHide('checklistPopover');
-        safeHide('tagPopover'); // <--- Đây là lý do ta cần stopPropagation ở nút bấm
+        safeHide('tagPopover'); 
+        safeHide('cardMoreMenu'); // <--- Thêm đóng menu thẻ
     });
 
 
@@ -2126,16 +2131,27 @@
             list.querySelector(".card-input").value = "";
             return;
         }
+        
+        // Tạo thẻ mới (Dùng API an toàn)
         if (e.target.classList.contains("confirm-add-card")) {
             const list = e.target.closest(".list");
+            const listId = list.getAttribute('data-id'); 
             const input = list.querySelector(".card-input");
             const title = input.value.trim();
-            if (title) {
-                const newCard = document.createElement("div");
-                newCard.className = "card";
-                newCard.innerHTML = `<span>${title}</span>`;
-                list.querySelector(".cards").appendChild(newCard);
-                saveToSession(true); 
+            
+            if (title && listId) {
+                fetch('/boards/api/card/create/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ list_id: listId, title: title })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'success') window.location.reload(); 
+                    else alert("Lỗi tạo thẻ: " + data.message);
+                });
+            } else {
+                if(!listId) alert("Lỗi: Không tìm thấy ID danh sách");
             }
             return;
         }
@@ -2150,10 +2166,16 @@
             e.target.closest(".list-menu").classList.remove("show");
             return;
         }
+        
+        // Xóa danh sách (Dùng API an toàn)
         if (e.target.classList.contains("delete-list")) {
             if (confirm("Xóa danh sách này?")) {
-                e.target.closest(".list").remove();
-                saveToSession();
+                const list = e.target.closest(".list");
+                const listId = list.getAttribute('data-id');
+                if(listId) {
+                    fetch(`/boards/api/list/${listId}/delete/`, { method: 'POST' })
+                    .then(() => window.location.reload());
+                }
             }
             return;
         }
@@ -2171,7 +2193,7 @@
      * PHẦN 3: HIỂN THỊ MODAL CHI TIẾT
      * ==========================================================================
      */
-   function openCardDetail() {
+    function openCardDetail() {
         if (currentActiveCard) {
             // A. Tên danh sách
             const parentList = currentActiveCard.closest('.list');
@@ -2187,11 +2209,10 @@
             document.getElementById('modalSubject').value = title;
             document.querySelector('.description').value = description;
 
-            // C. Nhãn (Tags) - ĐÃ SỬA LỖI MẤT MÀU
+            // C. Nhãn (Tags)
             const tagsRaw = currentActiveCard.getAttribute('data-tags');
             const tagsWrapper = document.getElementById('modalTagsWrapper');
             const tagsDisplay = document.getElementById('modalTagsDisplay');
-            
             if(tagsDisplay) tagsDisplay.innerHTML = ''; 
 
             if (tagsDisplay && tagsRaw && tagsRaw.trim() !== '') {
@@ -2206,11 +2227,8 @@
                         let tagColor = parts.length >= 3 ? parts[2] : parts[1];
 
                         const tagEl = document.createElement('div');
-                        
-                        // --- FIX: Đặt cssText trước, backgroundColor sau ---
                         tagEl.style.cssText = "padding: 4px 8px; border-radius: 3px; color: #fff; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; margin-right: 4px; margin-bottom: 4px;";
                         tagEl.style.backgroundColor = tagColor; 
-                        // --------------------------------------------------
 
                         const textSpan = document.createElement('span');
                         textSpan.innerText = tagName;
@@ -2285,6 +2303,7 @@
             safeHide("choosedate");
             safeHide("member");
             safeHide("tagPopover");
+            safeHide("cardMoreMenu");
             currentActiveCard = null;
         }
     }
@@ -2297,9 +2316,8 @@
      * ==========================================================================
      */
 
-    // --- A. QUẢN LÝ NHÃN (TAGS) - ĐÃ SỬA LỖI ---
+    // --- A. QUẢN LÝ NHÃN (TAGS) ---
     function toggleTagPopover(e) {
-        // [QUAN TRỌNG] Chặn sự kiện click lan ra document
         if (e && e.stopPropagation) e.stopPropagation();
 
         const popover = document.getElementById('tagPopover');
@@ -2307,10 +2325,10 @@
         
         safeHide("choosedate");
         safeHide("member");
+        safeHide("cardMoreMenu");
 
         if (!popover || !form) return;
 
-        // Cũng cần chặn click trong popover lan ra ngoài
         popover.onclick = function(ev) { ev.stopPropagation(); };
 
         if (popover.style.display === 'none' || popover.style.display === '') {
@@ -2360,6 +2378,7 @@
         const memberPopup = document.getElementById("member");
         safeHide("choosedate");
         safeHide("tagPopover");
+        safeHide("cardMoreMenu");
         
         if (e.id == "xxdate") {
             if(memberPopup) memberPopup.style.display = 'none';
@@ -2451,6 +2470,7 @@
         const datePopup = document.getElementById("choosedate");
         safeHide("member");
         safeHide("tagPopover");
+        safeHide("cardMoreMenu");
 
         if (e.id == "bdate") {
             const dateVal = document.querySelector('input[name="inputdate"]').value;
@@ -2487,7 +2507,7 @@
         }
     }
 
-    // --- D. HỆ THỐNG SAVE & CHECKLIST ---
+    // --- D. CHECKLIST & HỆ THỐNG (SAVE) ---
     function openChecklistPopover(btn) {
         const popover = document.getElementById("checklistPopover");
         if(btn && popover) {
@@ -2508,30 +2528,10 @@
         if(title) { alert("Checklist created: " + title); closeChecklistPopover(); }
     }
 
-    function saveToSession(shouldReload = false) {
-        const lists = [];
-        document.querySelectorAll(".list").forEach(list => {
-            const title = list.querySelector(".list-title").innerText.trim();
-            const cards = [];
-            list.querySelectorAll(".card").forEach(c => cards.push(c.innerText.trim()));
-            lists.push({title, cards});
-        });
-        fetch("{% url 'save_board_db' board.id %}", {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "X-CSRFToken": "{{ csrf_token }}" },
-            body: JSON.stringify({lists})
-        }).then(() => {
-            if (shouldReload) window.location.reload();
-        });
-    }
-
-    // --- E. CHỨC NĂNG MENU THẺ (XÓA THẺ) ---
-
-    // 1. Hàm bật/tắt menu con
+    // --- E. MENU THẺ & XÓA THẺ ---
     function toggleCardMenu(e) {
         if(e) e.stopPropagation();
         const menu = document.getElementById('cardMoreMenu');
-        // Đóng các menu khác nếu cần
         safeHide("choosedate");
         safeHide("member");
         safeHide("tagPopover");
@@ -2543,7 +2543,6 @@
         }
     }
 
-    // 2. Hàm Xóa Thẻ hiện tại
     function deleteCurrentCard() {
         if (!currentActiveCard) return;
 
@@ -2561,21 +2560,14 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        // 1. Xóa thẻ khỏi giao diện bảng
                         currentActiveCard.remove();
-                        
-                        // 2. Đóng Modal
                         closeCardModal();
-                        
-                        // 3. Thông báo (tùy chọn)
-                        // alert("Đã xóa thẻ thành công");
                     } else {
                         alert("Lỗi xóa thẻ: " + data.message);
                     }
                 })
                 .catch(err => console.error("Lỗi:", err));
             } else {
-                // Trường hợp thẻ mới tạo chưa F5 (chưa có ID)
                 currentActiveCard.remove();
                 closeCardModal();
             }

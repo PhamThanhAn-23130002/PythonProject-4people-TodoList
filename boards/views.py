@@ -498,3 +498,69 @@ def delete_card_api(request, card_id):
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 
+# 1. API Tạo Danh Sách Mới (An toàn - Không xóa dữ liệu cũ)
+@csrf_exempt
+def create_list_api(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            board_id = data.get('board_id')
+            title = data.get('title')
+            
+            # Kiểm tra board_id hợp lệ
+            if not board_id:
+                return JsonResponse({'status': 'error', 'message': 'Thiếu board_id'})
+
+            board = get_object_or_404(Board, id=board_id)
+            
+            # Lấy vị trí cuối cùng để xếp danh sách mới xuống dưới
+            position = List.objects.filter(board=board).count()
+            
+            new_list = List.objects.create(board=board, title=title, position=position)
+            
+            return JsonResponse({'status': 'success', 'id': new_list.id})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+# 2. API Tạo Thẻ Mới (An toàn - Không xóa dữ liệu cũ)
+@csrf_exempt
+def create_card_api(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            list_id = data.get('list_id')
+            title = data.get('title')
+            
+            # Kiểm tra list_id
+            if not list_id:
+                return JsonResponse({'status': 'error', 'message': 'Thiếu list_id'})
+
+            parent_list = get_object_or_404(List, id=list_id)
+            position = Card.objects.filter(list=parent_list).count()
+            
+            # Chỉ tạo thẻ mới, dữ liệu các thẻ khác giữ nguyên
+            new_card = Card.objects.create(list=parent_list, title=title, position=position)
+            
+            return JsonResponse({'status': 'success', 'id': new_card.id})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+# 3. API Xóa Danh Sách (An toàn)
+# boards/views.py (Thêm vào cuối file)
+
+@csrf_exempt
+def delete_list_api(request, list_id):
+    if request.method == "POST":
+        try:
+            # Tìm danh sách theo ID và xóa nó
+            target_list = List.objects.get(id=list_id)
+            target_list.delete()
+            return JsonResponse({'status': 'success'})
+        except List.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Không tìm thấy danh sách'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Yêu cầu không hợp lệ'})
+
