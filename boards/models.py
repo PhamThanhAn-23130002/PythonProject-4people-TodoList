@@ -44,6 +44,7 @@ class Card(models.Model):
     position = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     members = models.ManyToManyField(User, related_name='cards', blank=True)
+    is_completed = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
