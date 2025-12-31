@@ -25,4 +25,6 @@ urlpatterns = [
     path('api/card/member/', views.update_card_member, name='update_card_member'),
     path('api/card/<int:card_id>/deadline/', views.update_card_deadline, name='update_card_deadline'),
     path('api/card/member/', views.manage_card_member, name='manage_card_member'),
+    path('api/card/update-title/', views.update_card_title, name='update_card_title'),
+    path('api/card/<int:card_id>/delete/', views.delete_card_api, name='delete_card_api'),
 ]

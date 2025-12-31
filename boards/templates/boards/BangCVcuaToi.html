@@ -1066,6 +1066,36 @@
             cursor: pointer;
             font-size: 16px;
         }
+                /* Style cho menu con của thẻ */
+        .card-menu-popup {
+            position: absolute;
+            top: 35px;
+            right: 0;
+            width: 180px;
+            background: #282e33;
+            border: 1px solid #3a3f47;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            z-index: 100;
+            padding: 5px 0;
+        }
+
+        .card-menu-popup .menu-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            color: #e7ecf0;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .card-menu-popup .menu-item:hover {
+            background: #3a3f47;
+        }
+
+        .card-menu-popup .delete-card {
+            color: #ff6b6b; /* Màu đỏ cho nút xóa */
+            font-weight: 600;
+        }
 
         #choosetime {
             border: none;
@@ -1509,11 +1539,11 @@
             <button class="icon-btn" id="notiBtn" title="Thông báo">🔔</button>
             <div class="noti-menu" id="notiMenu">
                 <div class="noti-header">
-                    <h3>Notifications</h3>
+                    <h3>Thông báo</h3>
                 </div>
                 <div class="noti-content">
                     <img src="https://trello.com/assets/ee2660df9335718b1a80.svg" alt="Sleepy dog" class="noti-img">
-                    <div class="noti-empty-text">No unread notifications</div>
+                    <div class="noti-empty-text">Không có thông báo chưa đọc</div>
                     <div style="margin-top: 10px; color: #ff6b6b; font-size: 12px; display: none;">Click to view details</div>
                 </div>
             </div>
@@ -1727,10 +1757,19 @@
 
 <div id="cardDetailOverlay">
     <div class="div_toal">
-        <header class="headerchild">
-            <button id="choosetime">Hôm nay</button>
-            <div>
-                <button>...</button>
+       <header class="headerchild">
+            <button id="choosetime">List Name</button>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                
+                <div style="position: relative;">
+                    <button onclick="toggleCardMenu(event)" style="font-size: 20px; cursor: pointer; padding: 0 10px;">...</button>
+                    
+                    <div id="cardMoreMenu" class="card-menu-popup" style="display: none;">
+                        <div class="menu-item delete-card" onclick="deleteCurrentCard()">
+                            🗑️ Xóa thẻ này
+                        </div>
+                    </div>
+                </div>
                 <button onclick="closeCardModal()" style="font-size: 20px;">&#10005;</button>
             </div>
         </header>
@@ -1746,7 +1785,7 @@
                 <div>
                     <div class="buttons">
                         <div style="position: relative;">
-                            <button type="button" onclick="toggleTagPopover()">NHÃN</button>
+                         <button type="button" onclick="toggleTagPopover(event)">NHÃN</button>
 
                             <div id="tagPopover" class="popover-add-checklist" style="display: none; position: absolute; top: 40px; left: 0; width: 280px; z-index: 9999;  background: #232831;  border: 1px solid #2e3440; padding: 10px; border-radius: 5px; box-shadow: 0 5px 10px rgba(0,0,0,0.2);">
                                 
@@ -1896,19 +1935,24 @@
 
 </body>
 <script>
-    // ======================================================
-    // 1. BIẾN TOÀN CỤC
-    // ======================================================
-    let currentActiveCard = null;
+    /**
+     * ==========================================================================
+     * PHẦN 1: CẤU HÌNH & KHỞI TẠO (SETUP)
+     * ==========================================================================
+     */
+    let currentActiveCard = null; 
     const cardOverlay = document.getElementById('cardDetailOverlay');
     const listsContainer = document.getElementById("listsContainer");
 
-    // ======================================================
-    // 2. KHỞI TẠO KHI TRANG LOAD XONG
-    // ======================================================
-    document.addEventListener("DOMContentLoaded", function() {
+    // Helper: Hàm ẩn phần tử an toàn
+    function safeHide(id) {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    }
 
-        // --- A. TÌM KIẾM THÀNH VIÊN ---
+    document.addEventListener("DOMContentLoaded", function() {
+        
+        // 1.1. Tìm kiếm thành viên
         const searchInput = document.getElementById('memberSearchInput');
         if (searchInput) {
             searchInput.addEventListener('input', function(e) {
@@ -1920,68 +1964,39 @@
             });
         }
 
-        // --- B. XỬ LÝ NÚT THÊM DANH SÁCH (ADD LIST) ---
-        // Sửa lỗi: Đảm bảo logic này chạy độc lập
+        // 1.2. Thêm Danh Sách
         const addListBtn = document.getElementById('addListBtn');
         const addListForm = document.getElementById('addListForm');
         const cancelAddList = document.getElementById('cancelAddList');
         const confirmAddList = document.getElementById('confirmAddList');
         const listTitleInput = document.getElementById('listTitleInput');
 
-        if (addListBtn) {
-            // Mở form
+        if (addListBtn && addListForm) {
             addListBtn.onclick = () => {
                 addListBtn.style.display = 'none';
                 addListForm.style.display = 'flex';
                 listTitleInput.focus();
             };
-            // Hủy form
             cancelAddList.onclick = () => {
                 addListForm.style.display = 'none';
                 addListBtn.style.display = 'flex';
                 listTitleInput.value = '';
             };
-            // Xác nhận thêm
             confirmAddList.onclick = () => {
                 const title = listTitleInput.value.trim();
                 if (!title) return;
-
-                // Tạo HTML List mới
                 const newList = document.createElement('div');
                 newList.className = 'list';
-                newList.innerHTML = `
-                    <div class="list-header">
-                        <div class="list-title">${title}</div>
-                        <button class="list-more-btn">⋯</button>
-                        <div class="list-menu">
-                            <div class="list-menu-header"><span>Thao tác</span><button class="close-list-menu">✕</button></div>
-                            <div class="list-menu-body">
-                                <div class="list-menu-item">Thêm thẻ</div>
-                                <div class="list-menu-divider"></div>
-                                <div class="list-menu-item delete-list">🗑️ Xóa danh sách</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="cards"></div>
-                    <div class="add-card">+ Thêm thẻ</div>
-                    <div class="add-card-form" style="display:none;">
-                        <input type="text" class="card-input" placeholder="Nhập tiêu đề..."/>
-                        <div class="add-card-actions">
-                            <button class="confirm-add-card">Thêm thẻ</button>
-                            <button class="cancel-add-card">✕</button>
-                        </div>
-                    </div>`;
-
-                listsContainer.insertBefore(newList, addListBtn); // Chèn trước nút thêm
-                saveToSession(); // Lưu DB
-
+                newList.innerHTML = `<div class="list-header"><div class="list-title">${title}</div></div>`;
+                listsContainer.insertBefore(newList, addListBtn);
+                saveToSession(true); 
                 listTitleInput.value = '';
                 addListForm.style.display = 'none';
                 addListBtn.style.display = 'flex';
             };
         }
 
-        // --- C. CÁC NÚT MENU (Account, Noti, Share...) ---
+        // 1.3. Menu Account/Noti/Share
         const setupMenu = (btnId, menuId) => {
             const btn = document.getElementById(btnId);
             const menu = document.getElementById(menuId);
@@ -1993,67 +2008,117 @@
                     });
                     menu.classList.toggle('show');
                 };
+                menu.onclick = (e) => e.stopPropagation();
             }
         };
         setupMenu('accountBtn', 'accountMenu');
         setupMenu('notiBtn', 'notiMenu');
         setupMenu('boardMoreBtn', 'boardMoreMenu');
 
-        // Switch Board
+        // 1.4. Chuyển đổi Bảng
         const switchBtn = document.getElementById('switchViewBtn');
         if (switchBtn) {
             switchBtn.onclick = (e) => {
                 e.stopPropagation();
                 const m = document.getElementById('switchBoardMenu');
-                m.style.display = (m.style.display === 'block') ? 'none' : 'block';
+                if (m) m.style.display = (m.style.display === 'block') ? 'none' : 'block';
             };
         }
 
-        // Share Modal
+        // 1.5. Modal Chia sẻ & Copy Link
         const modalOverlay = document.getElementById("modalOverlay");
         const openModalBtn = document.getElementById("openModalBtn");
         const closeBtn = document.getElementById("closeBtn");
-        if (openModalBtn) openModalBtn.onclick = () => { modalOverlay.style.display = "flex"; };
-        if (closeBtn) closeBtn.onclick = () => { modalOverlay.style.display = "none"; };
+        if (openModalBtn) openModalBtn.onclick = () => { if(modalOverlay) modalOverlay.style.display = "flex"; };
+        if (closeBtn) closeBtn.onclick = () => { if(modalOverlay) modalOverlay.style.display = "none"; };
         if (modalOverlay) modalOverlay.onclick = (e) => { if (e.target === modalOverlay) modalOverlay.style.display = "none"; };
 
-        // Copy Link
         const createLinkBtn = document.getElementById("createLinkBtn");
         const copyLinkBtn = document.getElementById("copyLinkBtn");
-        if(createLinkBtn) createLinkBtn.onclick = () => { createLinkBtn.style.display = "none"; document.getElementById("linkDisplay").style.display = "flex"; };
+        const linkDisplay = document.getElementById("linkDisplay");
+        if(createLinkBtn) createLinkBtn.onclick = () => { createLinkBtn.style.display = "none"; if(linkDisplay) linkDisplay.style.display = "flex"; };
         if(copyLinkBtn) copyLinkBtn.onclick = () => {
-            document.getElementById("shareUrlInput").select();
-            document.execCommand("copy");
-            document.getElementById("copySuccess").style.display = "block";
+            const urlInput = document.getElementById("shareUrlInput");
+            if(urlInput) {
+                urlInput.select();
+                document.execCommand("copy");
+                const successMsg = document.getElementById("copySuccess");
+                if(successMsg) successMsg.style.display = "block";
+            }
         };
+
+        // 1.6. Sửa Tên Thẻ
+        const modalSubject = document.getElementById('modalSubject');
+        if (modalSubject) {
+            modalSubject.addEventListener('blur', function() {
+                const newTitle = this.value.trim();
+                if (!currentActiveCard) return;
+                
+                if (!newTitle) {
+                    alert("Tiêu đề thẻ không được để trống!");
+                    this.value = currentActiveCard.getAttribute('data-title');
+                    return;
+                }
+                if (newTitle === currentActiveCard.getAttribute('data-title')) return;
+
+                // Cập nhật giao diện: Tìm đúng thẻ chứa text để thay thế (tránh trùng lặp)
+                let updated = false;
+                const spans = currentActiveCard.querySelectorAll('span');
+                for(let s of spans) {
+                    if (!s.classList.contains('card-member-chip') && !s.style.backgroundColor) {
+                        s.innerText = newTitle;
+                        updated = true;
+                        break;
+                    }
+                }
+                if(!updated) {
+                     for (let i = 0; i < currentActiveCard.childNodes.length; i++) {
+                        if (currentActiveCard.childNodes[i].nodeType === 3 && currentActiveCard.childNodes[i].textContent.trim()) {
+                            currentActiveCard.childNodes[i].textContent = newTitle;
+                            break;
+                        }
+                    }
+                }
+
+                currentActiveCard.setAttribute('data-title', newTitle);
+                const cardId = currentActiveCard.getAttribute('data-id');
+                if (cardId) {
+                    fetch('/boards/api/card/update-title/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+                        body: JSON.stringify({ card_id: cardId, title: newTitle })
+                    }).then(res => res.json()).then(d => { if(d.status!=='success') alert(d.message); });
+                }
+            });
+            
+            modalSubject.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') { e.preventDefault(); this.blur(); }
+            });
+        }
     });
 
-    // Đóng menu khi click ra ngoài
+    // 1.7. Đóng menu khi click ra ngoài
     document.addEventListener("click", () => {
         document.querySelectorAll('.account-menu, .noti-menu, .board-more-menu, .list-menu').forEach(m => m.classList.remove('show'));
-        const sw = document.getElementById('switchBoardMenu'); if(sw) sw.style.display = 'none';
-        const cl = document.getElementById('checklistPopover'); if(cl) cl.style.display = 'none';
+        safeHide('switchBoardMenu');
+        safeHide('checklistPopover');
+        safeHide('tagPopover'); // <--- Đây là lý do ta cần stopPropagation ở nút bấm
     });
 
 
-    // ======================================================
-    // 3. XỬ LÝ SỰ KIỆN TRÊN BẢNG (QUAN TRỌNG NHẤT)
-    // ======================================================
+    /**
+     * ==========================================================================
+     * PHẦN 2: XỬ LÝ SỰ KIỆN DANH SÁCH & THẺ
+     * ==========================================================================
+     */
     listsContainer.addEventListener("click", function(e) {
-
-        // --- ƯU TIÊN 1: CÁC NÚT BẤM (Thêm thẻ, Menu, Xóa...) ---
-        // Phải kiểm tra các nút này TRƯỚC khi kiểm tra thẻ Card để tránh xung đột
-
-        // 1. Nút "+ Thêm thẻ"
         if (e.target.classList.contains("add-card")) {
             const list = e.target.closest(".list");
             e.target.style.display = "none";
             list.querySelector(".add-card-form").style.display = "block";
             list.querySelector(".card-input").focus();
-            return; // Dừng, không làm gì thêm
+            return;
         }
-
-        // 2. Nút "Hủy" thêm thẻ
         if (e.target.classList.contains("cancel-add-card")) {
             const list = e.target.closest(".list");
             list.querySelector(".add-card-form").style.display = "none";
@@ -2061,8 +2126,6 @@
             list.querySelector(".card-input").value = "";
             return;
         }
-
-        // 3. Nút "Xác nhận" thêm thẻ
         if (e.target.classList.contains("confirm-add-card")) {
             const list = e.target.closest(".list");
             const input = list.querySelector(".card-input");
@@ -2070,39 +2133,23 @@
             if (title) {
                 const newCard = document.createElement("div");
                 newCard.className = "card";
-                newCard.textContent = title;
-                // Gán thuộc tính rỗng để tránh lỗi khi click vào thẻ mới
-                newCard.setAttribute('data-id', '');
-                newCard.setAttribute('data-title', title);
-                newCard.setAttribute('data-deadline', '');
-                newCard.setAttribute('data-desc', '');
-                newCard.setAttribute('data-members', '');
-
+                newCard.innerHTML = `<span>${title}</span>`;
                 list.querySelector(".cards").appendChild(newCard);
-                saveToSession();
-
-                input.value = "";
-                list.querySelector(".add-card-form").style.display = "none";
-                list.querySelector(".add-card").style.display = "block";
+                saveToSession(true); 
             }
             return;
         }
 
-        // 4. Nút Menu List (dấu 3 chấm)
         if (e.target.classList.contains("list-more-btn")) {
             e.stopPropagation();
             document.querySelectorAll(".list-menu").forEach(m => m.classList.remove("show"));
             e.target.closest(".list").querySelector(".list-menu").classList.add("show");
             return;
         }
-
-        // 5. Nút đóng menu list
         if (e.target.classList.contains("close-list-menu")) {
             e.target.closest(".list-menu").classList.remove("show");
             return;
         }
-
-        // 6. Nút xóa list
         if (e.target.classList.contains("delete-list")) {
             if (confirm("Xóa danh sách này?")) {
                 e.target.closest(".list").remove();
@@ -2111,11 +2158,7 @@
             return;
         }
 
-        // --- ƯU TIÊN 2: CLICK VÀO THẺ CARD ĐỂ MỞ MODAL ---
-        // Chỉ chạy xuống đây nếu KHÔNG click vào các nút bên trên
         const card = e.target.closest('.card');
-
-        // Kiểm tra kỹ: Phải là thẻ card VÀ không nằm trong form thêm thẻ
         if (card && !e.target.closest(".add-card-form")) {
             currentActiveCard = card;
             openCardDetail();
@@ -2123,148 +2166,102 @@
     });
 
 
-    // ======================================================
-    // 4. MODAL CHI TIẾT & LOGIC THÀNH VIÊN (ĐÃ FIX)
-    // ======================================================
-function openCardDetail() {
+    /**
+     * ==========================================================================
+     * PHẦN 3: HIỂN THỊ MODAL CHI TIẾT
+     * ==========================================================================
+     */
+   function openCardDetail() {
         if (currentActiveCard) {
-            // 1. Load Title & Desc (Giữ nguyên)
+            // A. Tên danh sách
+            const parentList = currentActiveCard.closest('.list');
+            if (parentList) {
+                const listTitle = parentList.querySelector('.list-title').innerText;
+                const headerBtn = document.getElementById('choosetime');
+                if (headerBtn) headerBtn.innerText = listTitle;
+            }
+
+            // B. Thông tin thẻ
             const title = currentActiveCard.getAttribute('data-title');
             const description = currentActiveCard.getAttribute('data-desc');
             document.getElementById('modalSubject').value = title;
             document.querySelector('.description').value = description;
 
-            // ============================================================
-            // 2. LOGIC XỬ LÝ NHÃN (TAGS) - CÓ NÚT XÓA
-            // ============================================================
+            // C. Nhãn (Tags) - ĐÃ SỬA LỖI MẤT MÀU
             const tagsRaw = currentActiveCard.getAttribute('data-tags');
             const tagsWrapper = document.getElementById('modalTagsWrapper');
             const tagsDisplay = document.getElementById('modalTagsDisplay');
             
-            // Xóa nội dung cũ để không bị trùng lặp khi mở thẻ khác
             if(tagsDisplay) tagsDisplay.innerHTML = ''; 
 
             if (tagsDisplay && tagsRaw && tagsRaw.trim() !== '') {
                 if(tagsWrapper) tagsWrapper.style.display = 'block';
-                
                 const tagsList = tagsRaw.split(',');
                 
                 tagsList.forEach(tagItem => {
-                    // Kiểm tra chuỗi dữ liệu (Format: ID|Tên|Màu)
                     if(tagItem.includes('|')) {
                         const parts = tagItem.split('|');
-                        
-                        // Xử lý linh hoạt: Nếu có 3 phần (ID|Tên|Màu) hoặc 2 phần (Tên|Màu - code cũ)
-                        let tagId = null;
-                        let tagName = "";
-                        let tagColor = "";
+                        let tagId = parts.length >= 3 ? parts[0] : null;
+                        let tagName = parts.length >= 3 ? parts[1] : parts[0];
+                        let tagColor = parts.length >= 3 ? parts[2] : parts[1];
 
-                        if (parts.length >= 3) {
-                            tagId = parts[0];
-                            tagName = parts[1];
-                            tagColor = parts[2];
-                        } else {
-                            // Fallback cho dữ liệu cũ chưa có ID
-                            tagName = parts[0];
-                            tagColor = parts[1];
-                        }
+                        const tagEl = document.createElement('div');
                         
-                        // --- TẠO GIAO DIỆN TAG ---
-                        const tagEl = document.createElement('div'); 
-                        tagEl.style.backgroundColor = tagColor;
-                        
-                        // CSS cho Tag
-                        tagEl.style.padding = '4px 8px';
-                        tagEl.style.borderRadius = '3px';
-                        tagEl.style.color = '#fff'; 
-                        tagEl.style.fontWeight = '600';
-                        tagEl.style.fontSize = '12px';
-                        tagEl.style.display = 'inline-flex'; // Để căn chỉnh chữ và nút xóa
-                        tagEl.style.alignItems = 'center';
-                        tagEl.style.marginRight = '4px';
-                        tagEl.style.marginBottom = '4px';
-                        tagEl.style.gap = '6px'; // Khoảng cách giữa tên và dấu x
+                        // --- FIX: Đặt cssText trước, backgroundColor sau ---
+                        tagEl.style.cssText = "padding: 4px 8px; border-radius: 3px; color: #fff; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; margin-right: 4px; margin-bottom: 4px;";
+                        tagEl.style.backgroundColor = tagColor; 
+                        // --------------------------------------------------
 
-                        // 1. Tên Tag
                         const textSpan = document.createElement('span');
                         textSpan.innerText = tagName;
                         tagEl.appendChild(textSpan);
 
-                        // 2. Nút Xóa (Chỉ hiện nếu lấy được ID)
                         if (tagId) {
                             const removeBtn = document.createElement('span');
-                            removeBtn.innerHTML = '&times;'; // Ký tự dấu nhân (x)
-                            removeBtn.style.cursor = 'pointer';
-                            removeBtn.style.fontSize = '14px';
-                            removeBtn.style.opacity = '0.7';
-                            removeBtn.title = "Gỡ nhãn này";
-                            
-                            // Hiệu ứng hover
+                            removeBtn.innerHTML = '&times;';
+                            removeBtn.style.cssText = "cursor: pointer; font-size: 14px; opacity: 0.7;";
                             removeBtn.onmouseover = function() { this.style.opacity = '1'; };
                             removeBtn.onmouseout = function() { this.style.opacity = '0.7'; };
-
-                            // Sự kiện Click Xóa
                             removeBtn.onclick = function(e) {
-                                e.stopPropagation(); // Ngăn click lan ra ngoài
-                                if(confirm('Bạn có chắc muốn gỡ nhãn "' + tagName + '" không?')) {
-                                    removeTag(tagId); // Gọi hàm xóa (Hàm này phải khai báo ở ngoài)
-                                }
+                                e.stopPropagation();
+                                if(confirm('Gỡ nhãn "' + tagName + '"?')) removeTag(tagId, tagEl);
                             };
                             tagEl.appendChild(removeBtn);
                         }
-                        
                         tagsDisplay.appendChild(tagEl);
                     }
                 });
                 
-                // Thêm nút dấu cộng (+) để thêm nhãn nhanh
                 const addBtn = document.createElement('button');
                 addBtn.innerHTML = '+';
-                addBtn.onclick = function() { toggleTagPopover(); }; 
-                
-                // CSS cho nút cộng
-                addBtn.style.backgroundColor = '#3a3a3a';
-                addBtn.style.color = '#e7ecf0';
-                addBtn.style.border = 'none';
-                addBtn.style.borderRadius = '3px';
-                addBtn.style.width = '24px';
-                addBtn.style.height = '24px';
-                addBtn.style.cursor = 'pointer';
-                addBtn.style.fontSize = '14px';
+                addBtn.onclick = function(e) { toggleTagPopover(e); }; 
+                addBtn.style.cssText = "background: #3a3a3a; color: #e7ecf0; border: none; border-radius: 3px; width: 24px; height: 24px; cursor: pointer;";
                 addBtn.title = "Thêm nhãn khác";
-                
                 tagsDisplay.appendChild(addBtn);
-
             } else {
-                // Nếu không có tag nào thì ẩn khu vực này đi
                 if(tagsWrapper) tagsWrapper.style.display = 'none';
             }
-            // ============================================================
-            // KẾT THÚC LOGIC TAGS
-            // ============================================================
 
-
-            // 3. Load Deadline (Giữ nguyên)
+            // D. Deadline
             const deadlineRaw = currentActiveCard.getAttribute('data-deadline');
             const deadlineDiv = document.getElementById('modalDeadlineDisplay');
-            
             if (deadlineRaw && deadlineRaw.trim() !== '') {
                 document.getElementById('deadlineDateText').innerText = deadlineRaw;
-                deadlineDiv.style.display = 'flex'; 
+                if(deadlineDiv) deadlineDiv.style.display = 'flex'; 
             } else {
-                deadlineDiv.style.display = 'none';
+                if(deadlineDiv) deadlineDiv.style.display = 'none';
             }
 
-            // 4. Load Members (Giữ nguyên)
+            // E. Members
             const membersRaw = currentActiveCard.getAttribute('data-members');
             const membersContainer = document.getElementById('cardMembersDisplay');
             const membersLabel = document.getElementById('membersLabel');
-            membersContainer.innerHTML = ''; 
+            if(membersContainer) membersContainer.innerHTML = ''; 
 
             if (membersRaw && membersRaw.trim() !== "") {
                 const list = membersRaw.split(',');
                 if (list.length > 0 && list[0] !== "") {
-                    membersLabel.style.display = 'block';
+                    if(membersLabel) membersLabel.style.display = 'block';
                     list.forEach(item => {
                         let parts = item.split('|');
                         let uName = parts[0];
@@ -2272,75 +2269,142 @@ function openCardDetail() {
                         addMemberToView(uName, fName);
                     });
                 } else {
-                    membersLabel.style.display = 'none';
+                    if(membersLabel) membersLabel.style.display = 'none';
                 }
             } else {
-                membersLabel.style.display = 'none';
+                if(membersLabel) membersLabel.style.display = 'none';
             }
 
-            cardOverlay.style.display = 'flex';
+            if(cardOverlay) cardOverlay.style.display = 'flex';
         }
     }
 
     function closeCardModal() {
         if (cardOverlay) {
             cardOverlay.style.display = 'none';
-            document.getElementById("choosedate").style.display = 'none';
-            document.getElementById("member").style.display = 'none';
+            safeHide("choosedate");
+            safeHide("member");
+            safeHide("tagPopover");
             currentActiveCard = null;
         }
     }
-
     window.onclick = function(event) { if (event.target == cardOverlay) closeCardModal(); }
 
-    // --- MEMBER FUNCTIONS ---
 
-// 1. Hàm Thêm Thành Viên
-   function assignMemberToCard(username, fullname) {
+    /**
+     * ==========================================================================
+     * PHẦN 4: CÁC HÀM CHỨC NĂNG (LOGIC)
+     * ==========================================================================
+     */
+
+    // --- A. QUẢN LÝ NHÃN (TAGS) - ĐÃ SỬA LỖI ---
+    function toggleTagPopover(e) {
+        // [QUAN TRỌNG] Chặn sự kiện click lan ra document
+        if (e && e.stopPropagation) e.stopPropagation();
+
+        const popover = document.getElementById('tagPopover');
+        const form = document.getElementById('addTagForm');
+        
+        safeHide("choosedate");
+        safeHide("member");
+
+        if (!popover || !form) return;
+
+        // Cũng cần chặn click trong popover lan ra ngoài
+        popover.onclick = function(ev) { ev.stopPropagation(); };
+
+        if (popover.style.display === 'none' || popover.style.display === '') {
+            if (!currentActiveCard) { alert("Chưa chọn thẻ!"); return; }
+            const cardId = currentActiveCard.getAttribute('data-id'); 
+            
+            if (cardId) {
+                form.action = `/tasks/card/${cardId}/add-tag/`;
+                popover.style.display = 'block';
+                const nameInput = form.querySelector('input[name="name"]');
+                if(nameInput) nameInput.focus();
+            } else {
+                alert("Thẻ chưa có ID. Hãy tải lại trang (F5).");
+            }
+        } else {
+            popover.style.display = 'none';
+        }
+    }
+
+    function removeTag(tagId, tagElement) {
+        if(!currentActiveCard) return;
+        const cardId = currentActiveCard.getAttribute('data-id');
+        if(cardId && tagId) {
+            fetch(`/tasks/card/${cardId}/tag/${tagId}/remove/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success' || data.status === 'ok') {
+                    if(tagElement) tagElement.remove();
+                    let currentTags = currentActiveCard.getAttribute('data-tags');
+                    if(currentTags) {
+                        let newTags = currentTags.split(',').filter(t => !t.startsWith(tagId + '|')).join(',');
+                        currentActiveCard.setAttribute('data-tags', newTags);
+                    }
+                } else {
+                    alert("Lỗi: " + data.message);
+                }
+            })
+            .catch(err => console.error("Lỗi xóa tag:", err));
+        }
+    }
+
+    // --- B. QUẢN LÝ THÀNH VIÊN ---
+    function addmember(e) {
+        const memberPopup = document.getElementById("member");
+        safeHide("choosedate");
+        safeHide("tagPopover");
+        
+        if (e.id == "xxdate") {
+            if(memberPopup) memberPopup.style.display = 'none';
+        } else {
+            if(memberPopup) {
+                memberPopup.style.display = 'block';
+                const input = document.getElementById('memberSearchInput');
+                if(input) input.focus();
+            }
+        }
+    }
+
+    function assignMemberToCard(username, fullname) {
         if (!currentActiveCard) return;
-
         let currentData = currentActiveCard.getAttribute('data-members') || "";
         let memberList = currentData ? currentData.split(',') : [];
 
-        // Kiểm tra trùng lặp
         if (memberList.some(item => item.split('|')[0] === username)) {
             alert("Thành viên này đã có trong thẻ!");
             return;
         }
 
-        // Cập nhật giao diện ngay lập tức
         memberList.push(`${username}|${fullname}`);
         currentActiveCard.setAttribute('data-members', memberList.join(','));
-        document.getElementById('membersLabel').style.display = 'block';
+        const lbl = document.getElementById('membersLabel');
+        if(lbl) lbl.style.display = 'block';
+        
         addMemberToView(username, fullname);
-        document.getElementById("member").style.display = 'none';
+        safeHide("member");
 
-        // Gửi API
         const cardId = currentActiveCard.getAttribute('data-id');
         if (cardId) {
             fetch('/boards/api/card/member/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
                 body: JSON.stringify({ card_id: cardId, username: username, action: 'add' })
-            })
-            .then(res => res.json())
-            .then(data => {
-                // --- ĐOẠN ĐÃ SỬA ---
-                // Chấp nhận cả 'success' (hàm mới) và 'ok' (hàm cũ) là thành công
-                if(data.status === 'success' || data.status === 'ok') {
-                    console.log("Đã lưu thành viên vào DB");
-                } else {
-                    alert("Lỗi: " + (data.message || "Không xác định"));
-                }
-            })
-            .catch(err => console.error(err));
+            }).then(res => res.json()).then(data => {
+                if(data.status === 'success' || data.status === 'ok') console.log("Member added");
+                else alert("Lỗi: " + data.message);
+            });
         }
     }
 
-    // 2. Hàm Xóa Thành Viên
-function removeMemberFromCard(username) {
+    function removeMemberFromCard(username) {
         if (!currentActiveCard) return;
-        
         let currentData = currentActiveCard.getAttribute('data-members') || "";
         let memberList = currentData.split(',');
         const newList = memberList.filter(item => item.split('|')[0] !== username);
@@ -2352,21 +2416,17 @@ function removeMemberFromCard(username) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
                 body: JSON.stringify({ card_id: cardId, username: username, action: 'remove' })
-            })
-            .then(res => res.json())
-            .then(data => {
-                // --- ĐOẠN ĐÃ SỬA ---
-                if(data.status === 'success' || data.status === 'ok') {
-                    console.log("Đã xóa thành viên khỏi DB");
-                } else {
-                    alert("Lỗi: " + (data.message || "Không xác định"));
-                }
+            }).then(res => res.json()).then(data => {
+                if(data.status === 'success' || data.status === 'ok') console.log("Member removed");
+                else alert("Lỗi: " + data.message);
             });
         }
     }
 
     function addMemberToView(username, fullname) {
         const container = document.getElementById('cardMembersDisplay');
+        if(!container) return;
+        
         const label = document.getElementById('membersLabel');
         if (label) label.style.display = 'block';
 
@@ -2375,7 +2435,7 @@ function removeMemberFromCard(username) {
         chip.className = 'card-member-chip';
         chip.title = fullname;
         chip.innerText = initials;
-
+        
         chip.onclick = function() {
             if (confirm("Gỡ thành viên " + fullname + " khỏi thẻ?")) {
                 removeMemberFromCard(username);
@@ -2386,114 +2446,61 @@ function removeMemberFromCard(username) {
         container.appendChild(chip);
     }
 
-    function removeMemberFromCard(username) {
-        if (!currentActiveCard) return;
-        let currentData = currentActiveCard.getAttribute('data-members') || "";
-        let memberList = currentData.split(',');
-
-        const newList = memberList.filter(item => item.split('|')[0] !== username);
-        currentActiveCard.setAttribute('data-members', newList.join(','));
-
-        // API Xóa
-        const cardId = currentActiveCard.getAttribute('data-id');
-        if (cardId) {
-            fetch('/boards/api/card/member/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ card_id: cardId, username: username, action: 'remove' })
-            });
-        }
-    }
-
-    // --- OTHER HELPERS (Date, Checklist, etc.) ---
-
-    function addmember(e) {
-        const memberPopup = document.getElementById("member");
+    // --- C. QUẢN LÝ NGÀY (DEADLINE) ---
+    function date(e) {
         const datePopup = document.getElementById("choosedate");
-        if (e.id == "xxdate") {
-            memberPopup.style.display = 'none';
-        } else {
-            memberPopup.style.display = 'block';
-            datePopup.style.display = 'none';
-            document.getElementById('memberSearchInput').focus();
-        }
-    }
+        safeHide("member");
+        safeHide("tagPopover");
 
-   function date(e) {
-        const datePopup = document.getElementById("choosedate");
-        const memberPopup = document.getElementById("member");
-        
-        // --- NÚT CHỌN (LƯU NGÀY) ---
-        if (e.id == "bdate") { 
-            const dateVal = document.querySelector('input[name="inputdate"]').value; // YYYY-MM-DD
-            const timeVal = document.querySelector('input[name="inputtime"]').value; // HH:MM
+        if (e.id == "bdate") {
+            const dateVal = document.querySelector('input[name="inputdate"]').value;
+            const timeVal = document.querySelector('input[name="inputtime"]').value;
             
             if (dateVal) {
-                // 1. CẬP NHẬT GIAO DIỆN (Code cũ của bạn)
                 const [year, month, day] = dateVal.split('-');
                 const formattedDate = `${day}-${month}-${year}`;
                 const displayString = timeVal ? `${formattedDate} lúc ${timeVal}` : formattedDate;
                 
                 if (currentActiveCard) {
                     currentActiveCard.setAttribute('data-deadline', displayString);
-                    // Cập nhật text hiển thị trong modal
                     document.getElementById('deadlineDateText').innerText = displayString;
-                    document.getElementById('modalDeadlineDisplay').style.display = 'flex';
+                    const dDiv = document.getElementById('modalDeadlineDisplay');
+                    if(dDiv) dDiv.style.display = 'flex';
                     
-                    // 2. GỬI DỮ LIỆU VỀ SERVER (Code mới thêm)
                     const cardId = currentActiveCard.getAttribute('data-id');
                     if(cardId) {
                         fetch(`/boards/api/card/${cardId}/deadline/`, {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRFToken': '{{ csrf_token }}' // Bắt buộc để Django không chặn
-                            },
-                            body: JSON.stringify({
-                                date: dateVal, // Gửi "2025-12-30"
-                                time: timeVal  // Gửi "15:30"
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if(data.status === 'success') {
-                                console.log("Đã lưu deadline thành công!");
-                            } else {
-                                alert("Lỗi khi lưu ngày: " + data.message);
-                            }
-                        })
-                        .catch(error => console.error('Lỗi:', error));
+                            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+                            body: JSON.stringify({ date: dateVal, time: timeVal })
+                        }).then(res => res.json()).then(d => { if(d.status!=='success') alert(d.message); });
                     }
                 }
-                
-                datePopup.style.display = 'none';
+                if(datePopup) datePopup.style.display = 'none';
             } else {
                 alert("Vui lòng chọn ngày!");
             }
-            
-        // --- CÁC NÚT KHÁC (GIỮ NGUYÊN) ---
         } else if (e.id == "xdate") {
-            datePopup.style.display = 'none';
+            if(datePopup) datePopup.style.display = 'none';
         } else {
-            // Mở popup
-            datePopup.style.display = 'block';
-            memberPopup.style.display = 'none';
+            if(datePopup) datePopup.style.display = 'block';
         }
     }
 
+    // --- D. HỆ THỐNG SAVE & CHECKLIST ---
     function openChecklistPopover(btn) {
         const popover = document.getElementById("checklistPopover");
-        if(btn) {
+        if(btn && popover) {
             const rect = btn.getBoundingClientRect();
             popover.style.top = (rect.bottom + window.scrollY + 5) + "px";
             popover.style.left = rect.left + "px";
+            popover.style.display = "block";
+            popover.onclick = (e) => e.stopPropagation();
         }
-        popover.style.display = "block";
-        popover.onclick = (e) => e.stopPropagation();
     }
 
     function closeChecklistPopover() {
-        document.getElementById("checklistPopover").style.display = "none";
+        safeHide("checklistPopover");
     }
 
     function createChecklist() {
@@ -2501,7 +2508,7 @@ function removeMemberFromCard(username) {
         if(title) { alert("Checklist created: " + title); closeChecklistPopover(); }
     }
 
-    function saveToSession() {
+    function saveToSession(shouldReload = false) {
         const lists = [];
         document.querySelectorAll(".list").forEach(list => {
             const title = list.querySelector(".list-title").innerText.trim();
@@ -2513,70 +2520,66 @@ function removeMemberFromCard(username) {
             method: "POST",
             headers: { "Content-Type": "application/json", "X-CSRFToken": "{{ csrf_token }}" },
             body: JSON.stringify({lists})
+        }).then(() => {
+            if (shouldReload) window.location.reload();
         });
     }
-</script>
-<script>
 
+    // --- E. CHỨC NĂNG MENU THẺ (XÓA THẺ) ---
 
-// --- LOGIC: THÊM NHÃN (TAG) ---
-{% comment %} Bấm nút NHÃN.
-
-Javascript sẽ lấy ID của thẻ bạn đang xe
-
-Popup hiện ra -> Bạn nhập tên -> Bấm Tạo Nhãn.
-
-Form gửi dữ liệu về View add_tag_to_card -> Lưu vào DB -> Load lại trang. {% endcomment %}
-
-function toggleTagPopover() {
-    const popover = document.getElementById('tagPopover');
-    const form = document.getElementById('addTagForm');
-    
-    // 1. Đóng các popup khác cho đỡ rối (nếu đang mở)
-    document.getElementById("choosedate").style.display = 'none';
-    document.getElementById("member").style.display = 'none';
-    if(document.getElementById("checklistPopover")) 
-        document.getElementById("checklistPopover").style.display = 'none';
-
-    // 2. Logic Bật/Tắt
-    if (popover.style.display === 'none') {
-        // Kiểm tra xem có đang chọn thẻ nào không
-        if (!currentActiveCard) {
-            alert("Lỗi: Không xác định được thẻ đang chọn!");
-            return;
-        }
-
-        // Lấy ID từ thẻ HTML (cái data-id="{{ c.id }}" ở vòng lặp bên trên)
-        const cardId = currentActiveCard.getAttribute('data-id'); 
+    // 1. Hàm bật/tắt menu con
+    function toggleCardMenu(e) {
+        if(e) e.stopPropagation();
+        const menu = document.getElementById('cardMoreMenu');
+        // Đóng các menu khác nếu cần
+        safeHide("choosedate");
+        safeHide("member");
+        safeHide("tagPopover");
         
-        if (cardId) {
-            // QUAN TRỌNG: Cập nhật đường dẫn action cho form để gửi đúng về server
-            // Giả sử URL bên tasks/urls.py là: path('card/<int:card_id>/add-tag/', ...)
-            // Và bạn đã include tasks urls với prefix là 'tasks/'
-            form.action = `/tasks/card/${cardId}/add-tag/`;
-            
-            popover.style.display = 'block';
-            
-            // Tự động focus vào ô nhập tên cho tiện
-            const nameInput = form.querySelector('input[name="name"]');
-            if(nameInput) nameInput.focus();
+        if (menu.style.display === 'block') {
+            menu.style.display = 'none';
         } else {
-            alert("Lỗi: Thẻ HTML thiếu thuộc tính data-id.");
+            menu.style.display = 'block';
         }
-    } else {
-        popover.style.display = 'none';
     }
-}
 
-// Hàm xóa Tag (Gửi request xóa về server)
-function removeTag(tagId) {
-    if(!currentActiveCard) return;
-    const cardId = currentActiveCard.getAttribute('data-id');
-    
-    if(cardId && tagId) {
-        // Gửi yêu cầu xóa về server (URL khớp với tasks/urls.py)
-        window.location.href = `/tasks/card/${cardId}/tag/${tagId}/remove/`;
+    // 2. Hàm Xóa Thẻ hiện tại
+    function deleteCurrentCard() {
+        if (!currentActiveCard) return;
+
+        if (confirm("Bạn có chắc chắn muốn xóa thẻ này vĩnh viễn không?")) {
+            const cardId = currentActiveCard.getAttribute('data-id');
+            
+            if (cardId) {
+                fetch(`/boards/api/card/${cardId}/delete/`, {
+                    method: 'POST',
+                    headers: { 
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // 1. Xóa thẻ khỏi giao diện bảng
+                        currentActiveCard.remove();
+                        
+                        // 2. Đóng Modal
+                        closeCardModal();
+                        
+                        // 3. Thông báo (tùy chọn)
+                        // alert("Đã xóa thẻ thành công");
+                    } else {
+                        alert("Lỗi xóa thẻ: " + data.message);
+                    }
+                })
+                .catch(err => console.error("Lỗi:", err));
+            } else {
+                // Trường hợp thẻ mới tạo chưa F5 (chưa có ID)
+                currentActiveCard.remove();
+                closeCardModal();
+            }
+        }
     }
-}
 </script>
 </html>

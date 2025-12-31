@@ -460,3 +460,41 @@ def manage_card_member(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid method'})
 
 
+
+#Cập nhật tên cho từng thẻ
+def update_card_title(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            card_id = data.get('card_id')
+            new_title = data.get('title')
+            
+            card = get_object_or_404(Card, id=card_id)
+            
+            if new_title:
+                card.title = new_title
+                card.save()
+                return JsonResponse({'status': 'success', 'message': 'Đã cập nhật tiêu đề'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Tiêu đề không được để trống'})
+                
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+            
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+
+# xóa thẻ
+
+@csrf_exempt
+def delete_card_api(request, card_id):
+    if request.method == "POST":
+        try:
+            card = get_object_or_404(Card, id=card_id)
+            card.delete()
+            return JsonResponse({'status': 'success', 'message': 'Đã xóa thẻ'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+
