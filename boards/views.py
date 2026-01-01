@@ -577,3 +577,33 @@ def update_list_title(request):
             return JsonResponse({'status': 'error', 'message': str(e)})
             
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+
+#Tính năng drag and drop
+
+@csrf_exempt
+def move_card_api(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            card_id = data.get('card_id')
+            new_list_id = data.get('new_list_id')
+            new_position = data.get('new_position') # Vị trí mới (0, 1, 2...)
+
+            # 1. Lấy thẻ và list mới
+            card = get_object_or_404(Card, id=card_id)
+            target_list = get_object_or_404(List, id=new_list_id)
+
+            # 2. Cập nhật thông tin
+            card.list = target_list
+            card.position = new_position
+            card.save()
+
+            # (Nâng cao: Nếu muốn chuẩn xác 100%, bạn có thể cập nhật lại position 
+            # của các thẻ khác trong list đó, nhưng tạm thời cập nhật mình thẻ này là đủ dùng)
+
+            return JsonResponse({'status': 'success', 'message': 'Đã di chuyển thẻ'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+            
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})

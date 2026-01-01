@@ -51,6 +51,9 @@ urlpatterns = [
     # Các view hiển thị chi tiết thẻ (Legacy/Render HTML)
     path("card_detail", views.card_detail, name="card_detail"),
     path("card/<int:card_id>/", views.card_detail_id, name="card_detail_id"),
+    
+    #Drag and drop thẻ
+    path('api/card/move/', views.move_card_api, name='move_card_api'),
 
     # ============================================
     # 5. API CHECKLIST - Dùng Fetch/Ajax
