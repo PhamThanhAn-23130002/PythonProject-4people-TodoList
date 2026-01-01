@@ -36,10 +36,11 @@ urlpatterns = [
     # ============================================
     # 4. API THẺ (CARD) - Dùng Fetch/Ajax
     # ============================================
-    # Tạo thẻ, Xóa thẻ, Đổi tên thẻ
+    # Tạo thẻ, Xóa thẻ, Đổi tên thẻ, đổi tên List
     path('api/card/create/', views.create_card_api, name='create_card_api'),
     path('api/card/<int:card_id>/delete/', views.delete_card_api, name='delete_card_api'),
     path('api/card/update-title/', views.update_card_title, name='update_card_title'),
+    path('api/list/update-title/', views.update_list_title, name='update_list_title'),
     
     # Cập nhật Deadline, Thành viên, Lưu mô tả, lưu trạng thái hoàn thành
     path('api/card/<int:card_id>/deadline/', views.update_card_deadline, name='update_card_deadline'),

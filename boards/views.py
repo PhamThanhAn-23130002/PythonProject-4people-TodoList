@@ -552,3 +552,28 @@ def toggle_card_completed_api(request, card_id):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+
+# Rename tên cho list
+
+@csrf_exempt
+def update_list_title(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            list_id = data.get('list_id')
+            new_title = data.get('title')
+            
+            if not list_id or not new_title:
+                return JsonResponse({'status': 'error', 'message': 'Dữ liệu không hợp lệ'})
+
+            # Tìm và cập nhật
+            list_obj = get_object_or_404(List, id=list_id)
+            list_obj.title = new_title
+            list_obj.save()
+            
+            return JsonResponse({'status': 'success', 'message': 'Đã đổi tên danh sách'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+            
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
