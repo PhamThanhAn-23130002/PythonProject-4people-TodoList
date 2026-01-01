@@ -1722,16 +1722,27 @@
 
         /* ITEMS */
         .checklist-items {
-            display: flex;
+            display: flex !important;
             flex-direction: column;
-            gap: 8px;
+            align-items: flex-start !important;
         }
 
+        /* mỗi item */
         .checklist-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            position: relative;
+            width: 100%;
+
+            padding: 6px 36px 6px 28px; /* chừa chỗ cho checkbox & ... */
+            margin-bottom: 6px;
+
+            border-radius: 6px;
+            transition: background 0.15s ease;
         }
+
+        .checklist-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
 
         .checklist-item input {
             width: 16px;
@@ -1739,7 +1750,81 @@
         }
 
         .checklist-item span {
+            display: block;
+            text-align: left;
+            line-height: 1;
+            word-break: break-word;
+            padding-right: 28px;
+        }
+
+
+        .checklist-item input[type="checkbox"] {
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+
+        .item-more {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+
+            width: 28px;
+            height: 28px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+
+            color: #cfd6df;
+            font-size: 20px;
+            cursor: pointer;
+
+            opacity: 0;
+            transition: background 0.15s ease, opacity 0.15s ease;
+        }
+
+
+        .checklist-item:hover .item-more {
+            opacity: 1;
+        }
+
+        .item-more:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+
+        .item-menu {
+            position: absolute;
+            right: 6px;
+            top: 34px;
+
+            background: #2b2d31;
+            border-radius: 8px;
+            min-width: 140px;
+
+            box-shadow: 0 10px 28px rgba(0, 0, 0, .5);
+            padding: 4px 0;
+            display: none;
+            z-index: 50;
+        }
+
+
+        .item-menu-delete {
+            padding: 8px 14px;
+            cursor: pointer;
             font-size: 14px;
+        }
+
+        .item-menu-delete:hover {
+            background: rgba(255, 255, 255, 0.08);
         }
 
 
@@ -1880,7 +1965,8 @@
                 <div class="menu-section">
                     <div class="menu-title">LIST</div>
 
-                    <a class="menu-item" href="{% url 'switch_account' %}" style="text-decoration:none">Chuyển đổi tài khoản</a>
+                    <a class="menu-item" href="{% url 'switch_account' %}" style="text-decoration:none">Chuyển đổi tài
+                        khoản</a>
                     <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Hồ sơ và hiển thị</a>
                     <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Cài đặt</a>
                 </div>
@@ -1920,86 +2006,99 @@
     <div class="lists" role="list" id="listsContainer">
 
         {% for l in lists %}
-        <div class="list" data-id="{{ l.id }}">
-            <div class="list-header">
-                <div class="list-title">{{ l.title }}</div>
-                <button class="list-more-btn" title="Thao tác">⋯</button>
-                <div class="list-menu">
-                    <div class="list-menu-header">
-                        <span>Thao tác</span>
-                        <button class="close-list-menu">✕</button>
-                    </div>
-                    <div class="list-menu-body">
-                        <div class="list-menu-item">Thêm thẻ</div>
-                        <div class="list-menu-divider"></div>
-                        <div class="list-menu-item delete-list">🗑️ Xóa danh sách</div>
+            <div class="list" data-id="{{ l.id }}">
+                <div class="list-header">
+                    <div class="list-title">{{ l.title }}</div>
+                    <button class="list-more-btn" title="Thao tác">⋯</button>
+                    <div class="list-menu">
+                        <div class="list-menu-header">
+                            <span>Thao tác</span>
+                            <button class="close-list-menu">✕</button>
+                        </div>
+                        <div class="list-menu-body">
+                            <div class="list-menu-item">Thêm thẻ</div>
+                            <div class="list-menu-divider"></div>
+                            <div class="list-menu-item delete-list">🗑️ Xóa danh sách</div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="cards">
-                {% for c in l.cards.all %}
-                <div class="card"
-                     data-id="{{ c.id }}"
-                     data-title="{{ c.title }}"
-                     data-desc="{{ c.description|default:'' }}"
-                     data-deadline="{{ c.deadline|date:'d-m-Y H:i' }}"
-                     data-completed="{{ c.is_completed|yesno:'true,false' }}"
-                     data-overdue="{{ c.is_overdue|yesno:'true,false' }}"
-                     data-members="{% for m in c.members.all %}{{ m.username }}|{{ m.get_full_name|default:m.username }}{% if not forloop.last %},{% endif %}{% endfor %}"
-                     data-tags="{% for tag in c.tags.all %}{{ tag.id }}|{{ tag.name }}|{{ tag.color }}{% if not forloop.last %},{% endif %}{% endfor %}">
+                <div class="cards">
+                    {% for c in l.cards.all %}
+                        <div class="card"
+                             data-id="{{ c.id }}"
+                             data-title="{{ c.title }}"
+                             data-desc="{{ c.description|default:'' }}"
+                             data-deadline="{{ c.deadline|date:'d-m-Y H:i' }}"
+                             data-completed="{{ c.is_completed|yesno:'true,false' }}"
+                             data-overdue="{{ c.is_overdue|yesno:'true,false' }}"
+                             data-members="{% for m in c.members.all %}{{ m.username }}|
 
-                    <div class="card-done-icon"
-                         style="display: {% if c.is_completed %}block{% else %}none{% endif %}; color: #61bd4f; font-weight: bold; margin-bottom: 4px;">
-                        ✅ Đã hoàn thành
-                    </div>
-                    {% if c.tags.all %}
-                    <div class="card-tags" style="display:flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px;">
-                        {% for tag in c.tags.all %}
-                        <span style="background-color: {{ tag.color }}; width: 40px; height: 8px; border-radius: 4px; display: inline-block;"
-                              title="{{ tag.name }}"></span>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
 
-                    <span>{{ c.title }}</span>
 
-                    {% if c.deadline %}
-                    <div style="margin-top: 6px;">
+
+
+
+
+
+
+
+                                 {{ m.get_full_name|default:m.username }}{% if not forloop.last %},{% endif %}{% endfor %}"
+                             data-tags="{% for tag in c.tags.all %}{{ tag.id }}|{{ tag.name }}|
+                                 {{ tag.color }}{% if not forloop.last %},{% endif %}{% endfor %}">
+
+                            <div class="card-done-icon"
+                                 style="display: {% if c.is_completed %}block{% else %}none{% endif %}; color: #61bd4f; font-weight: bold; margin-bottom: 4px;">
+                                ✅ Đã hoàn thành
+                            </div>
+                            {% if c.tags.all %}
+                                <div class="card-tags"
+                                     style="display:flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px;">
+                                    {% for tag in c.tags.all %}
+                                        <span style="background-color: {{ tag.color }}; width: 40px; height: 8px; border-radius: 4px; display: inline-block;"
+                                              title="{{ tag.name }}"></span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <span>{{ c.title }}</span>
+
+                            {% if c.deadline %}
+                                <div style="margin-top: 6px;">
                             <span class="card-date-badge {% if c.is_overdue %}overdue{% elif c.is_completed %}completed{% endif %}">
                                 🕒 {{ c.deadline|date:"d/m" }}
                                 {% if c.is_overdue %}(Quá hạn){% endif %}
                             </span>
-                    </div>
-                    {% endif %}
+                                </div>
+                            {% endif %}
 
-                    {% if c.members.all %}
-                    <div style="display:flex; justify-content:flex-end; margin-top:6px; gap:4px;">
-                    </div>
-                    {% endif %}
+                            {% if c.members.all %}
+                                <div style="display:flex; justify-content:flex-end; margin-top:6px; gap:4px;">
+                                </div>
+                            {% endif %}
 
-                    {% if c.members.all %}
-                    <div style="display:flex; justify-content:flex-end; margin-top:6px; gap:4px;">
-                        {% for m in c.members.all|slice:":3" %}
-                        <div style="width:20px; height:20px; background:#ffb03a; border-radius:50%; font-size:10px; display:flex; align-items:center; justify-content:center; color:#000; font-weight:bold;">
-                            {{ m.username|slice:":1"|upper }}
+                            {% if c.members.all %}
+                                <div style="display:flex; justify-content:flex-end; margin-top:6px; gap:4px;">
+                                    {% for m in c.members.all|slice:":3" %}
+                                        <div style="width:20px; height:20px; background:#ffb03a; border-radius:50%; font-size:10px; display:flex; align-items:center; justify-content:center; color:#000; font-weight:bold;">
+                                            {{ m.username|slice:":1"|upper }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
+                    {% endfor %}
                 </div>
-                {% endfor %}
-            </div>
 
-            <div class="add-card">+ Thêm thẻ</div>
-            <div class="add-card-form" style="display:none;">
-                <input type="text" class="card-input" placeholder="Nhập tiêu đề..."/>
-                <div class="add-card-actions">
-                    <button class="confirm-add-card">Thêm thẻ</button>
-                    <button class="cancel-add-card">✕</button>
+                <div class="add-card">+ Thêm thẻ</div>
+                <div class="add-card-form" style="display:none;">
+                    <input type="text" class="card-input" placeholder="Nhập tiêu đề..."/>
+                    <div class="add-card-actions">
+                        <button class="confirm-add-card">Thêm thẻ</button>
+                        <button class="cancel-add-card">✕</button>
+                    </div>
                 </div>
             </div>
-        </div>
         {% endfor %}
 
         <div class="add-list" id="addListBtn">+ Thêm danh sách khác</div>
@@ -2033,7 +2132,8 @@
                    style="color:#579dff; font-size:14px; text-decoration:none;">Tạo liên kết</a>
                 <div id="linkDisplay" style="display: none; align-items: center; gap: 5px;">
                     <input type="text" id="shareUrlInput"
-                           value="{{ request.scheme }}://{{ request.get_host }}{% url 'join_via_link' board.share_token %}"
+                           value="{{ request.scheme }}://
+                                   {{ request.get_host }}{% url 'join_via_link' board.share_token %}"
                            readonly
                            style="font-size: 13px; color: #aaa; background: #222; border: 1px solid #444; width: 100%; padding: 8px;">
                     <button type="button" id="copyLinkBtn" title="Sao chép"
@@ -2050,22 +2150,22 @@
             <h3 style="margin-bottom: 10px;">Thành viên</h3>
             <div style="max-height: 200px; overflow-y: auto;">
                 {% for member in members %}
-                <div class="member-row"
-                     style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-                    <div class="member-info" style="display: flex; align-items: center; gap: 10px;">
-                        <div class="avatar"
-                             style="width: 32px; height: 32px; background: #ffb03a; color: #141414; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
-                            {{ member.user.username|slice:":2"|upper }}
+                    <div class="member-row"
+                         style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <div class="member-info" style="display: flex; align-items: center; gap: 10px;">
+                            <div class="avatar"
+                                 style="width: 32px; height: 32px; background: #ffb03a; color: #141414; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                {{ member.user.username|slice:":2"|upper }}
+                            </div>
+                            <div>
+                                <div style="font-weight: 600;">{{ member.user.username }}</div>
+                                <div style="font-size:12px; color:#aaa;">{{ member.user.email }}</div>
+                            </div>
                         </div>
-                        <div>
-                            <div style="font-weight: 600;">{{ member.user.username }}</div>
-                            <div style="font-size:12px; color:#aaa;">{{ member.user.email }}</div>
-                        </div>
+                        <span style="color: #a8b0b8; font-size: 13px;">{{ member.role }}</span>
                     </div>
-                    <span style="color: #a8b0b8; font-size: 13px;">{{ member.role }}</span>
-                </div>
-                {% empty %}
-                <p style="color: #aaa; font-style: italic;">Chưa có thành viên nào.</p>
+                    {% empty %}
+                    <p style="color: #aaa; font-style: italic;">Chưa có thành viên nào.</p>
                 {% endfor %}
             </div>
         </div>
@@ -2084,15 +2184,15 @@
     <div class="switch-header">Các bảng của bạn</div>
     <div class="switch-list">
         {% for b in all_boards %}
-        <a href="{% url 'board_detail' b.id %}" class="switch-item {% if b.id == board.id %}active{% endif %}">
-            <div class="switch-thumb"></div>
-            <div class="switch-info">
-                <div class="name">{{ b.name }}</div>
-                {% if b.id == board.id %}
-                <div class="current-indicator">Đang xem</div>
-                {% endif %}
-            </div>
-        </a>
+            <a href="{% url 'board_detail' b.id %}" class="switch-item {% if b.id == board.id %}active{% endif %}">
+                <div class="switch-thumb"></div>
+                <div class="switch-info">
+                    <div class="name">{{ b.name }}</div>
+                    {% if b.id == board.id %}
+                        <div class="current-indicator">Đang xem</div>
+                    {% endif %}
+                </div>
+            </a>
         {% endfor %}
     </div>
 </div>
@@ -2205,6 +2305,11 @@
                 <h6 class="decriptionh6">Mô tả</h6>
                 <textarea class="description" rows="4" cols="50" name="description"></textarea>
 
+                <div id="checklistContainer">
+                    <!--Modal render checklist table nằm trong này-->
+                </div>
+
+
             </div>
         </div>
 
@@ -2241,66 +2346,20 @@
 
         <div class="member-list-popup" id="memberListPopup">
             {% for member in members %}
-            {% with display_name=member.user.get_full_name|default:member.user.username %}
+                {% with display_name=member.user.get_full_name|default:member.user.username %}
 
-            <div class="member-item" onclick="assignMemberToCard('{{ member.user.username }}', '{{ display_name }}')">
-                <div class="member-avatar-small">
-                    {{ display_name|slice:":1"|upper }}
-                </div>
-                <span>{{ display_name }}</span>
-            </div>
+                    <div class="member-item"
+                         onclick="assignMemberToCard('{{ member.user.username }}', '{{ display_name }}')">
+                        <div class="member-avatar-small">
+                            {{ display_name|slice:":1"|upper }}
+                        </div>
+                        <span>{{ display_name }}</span>
+                    </div>
 
-            {% endwith %}
+                {% endwith %}
             {% endfor %}
         </div>
     </div>
-
-
-    <div class="checklist-section" id="checklistPopover">
-
-        <!-- HEADER -->
-        <div class="checklist-header">
-            <div class="checklist-title">
-                <span class="icon">☑</span>
-                <span>Việc cần làm</span>
-            </div>
-            <button class="btn-delete">Xóa</button>
-        </div>
-
-        <!-- PROGRESS -->
-        <div class="checklist-progress-row">
-            <span class="percent" id="checklistPercent">0%</span>
-            <div class="progress-bar">
-                <div class="progress-fill" id="checklistProgress"></div>
-            </div>
-        </div>
-
-        <!-- ITEMS -->
-        <div class="checklist-items" id="checklistItems">
-            <!-- item -->
-            <!--
-            <div class="checklist-item">
-                <input type="checkbox">
-                <span>Task name</span>
-            </div>
-            -->
-        </div>
-
-        <!-- ADD ITEM -->
-        <div class="checklist-add">
-        <textarea placeholder="Thêm một mục" onkeydown="addChecklistItemUI(event)"></textarea>
-
-            <div class="actions">
-                <button class="btn-primary">Thêm</button>
-                <button class="btn-cancel">Hủy</button>
-            </div>
-        </div>
-
-    </div>
-
-
-
-
 
 
 </div>
@@ -2317,19 +2376,14 @@
         <div class="modal-body">
             <label>Tiêu đề</label>
             <input
-                type="text"
-                id="checklistTitleInput"
-                placeholder="Ví dụ: Việc cần làm"
+                    type="text"
+                    id="checklistTitleInput"
+                    placeholder="Ví dụ: Việc cần làm"
             >
-
-            <label style="margin-top:10px;">Sao chép mục từ…</label>
-            <select disabled>
-                <option>(không có)</option>
-            </select>
         </div>
 
         <div class="modal-footer">
-            <button class="btn-primary" onclick="createChecklist()">Thêm</button>
+            <button class="btn-primary" onclick="createChecklist(event)">Thêm</button>
         </div>
 
     </div>
@@ -3226,44 +3280,141 @@
         checklist.style.display = "block";
     }
 
-    //
+    ////////////
     function closeChecklistPopover() {
         safeHide("checklistPopover");
     }
 
-    //
-    function addChecklistItemUI(e) {
-        if (e.key !== "Enter") return;
+    ///////////////////////////
+    function createChecklist(e) {
+        if (e) e.stopPropagation();
 
-        const text = e.target.value.trim();
-        if (!text) return;
+        const titleInput = document.getElementById("checklistTitleInput");
+        const title = titleInput.value.trim();
+        if (!title) return;
 
-        const container = document.getElementById("checklistItems");
+        const container = document.getElementById("checklistContainer");
 
-        const div = document.createElement("div");
-        div.className = "checklist-item";
-        div.innerHTML = `
-        <input type="checkbox" onchange="updateChecklistProgress()">
-        <span>${text}</span>
-    `;
+        const checklistEl = document.createElement("div");
+        checklistEl.className = "checklist-section";
+        checklistEl.innerHTML = checklistEl.innerHTML = `
+    <div class="checklist-header">
+        <div class="checklist-title">
+            <span class="icon">☑</span>
+            <span>${title}</span>
+        </div>
+        <button class="btn-delete"
+            onclick="this.closest('.checklist-section').remove()">Xóa</button>
+    </div>
 
-        container.appendChild(div);
-        e.target.value = "";
+    <div class="checklist-progress-row">
+        <span class="percent">0%</span>
+        <div class="progress-bar">
+            <div class="progress-fill" style="width:0%"></div>
+        </div>
+    </div>
 
-        updateChecklistProgress();
+    <div class="checklist-items"></div>
+
+    <div class="checklist-add">
+        <textarea placeholder="Thêm một mục"></textarea>
+        <div class="actions">
+            <button class="btn-primary"
+                onclick="addChecklistItem(this)">Thêm</button>
+            <button class="btn-cancel" onclick="cancelAddChecklistItem(this)">Hủy</button>
+        </div>
+    </div>`;
+
+        container.appendChild(checklistEl);
+
+        // Đóng modal + reset
+        closeChecklistCreateModal();
+        titleInput.value = "";
     }
 
-    //
-    function updateChecklistProgress() {
-        const items = document.querySelectorAll("#checklistItems input[type='checkbox']");
-        const checked = document.querySelectorAll("#checklistItems input[type='checkbox']:checked");
 
-        const percent = items.length === 0
+    /////////////////
+    function addChecklistItem(btn) {
+        const checklist = btn.closest(".checklist-section");
+        const textarea = checklist.querySelector("textarea");
+        const text = textarea.value.trim();
+        if (!text) return;
+
+        const items = checklist.querySelector(".checklist-items");
+
+        const item = document.createElement("div");
+        item.className = "checklist-item";
+        item.innerHTML = `
+    <input type="checkbox" onchange="updateChecklistProgress(this)">
+    <span class="item-text">${text}</span>
+
+    <button class="item-more"
+        onclick="toggleItemMenu(this)">…</button>
+
+    <div class="item-menu">
+        <div class="item-menu-delete"
+            onclick="deleteChecklistItem(this)">Xóa</div>
+    </div>
+`;
+
+        items.appendChild(item);
+        textarea.value = "";
+
+        updateChecklistProgress(item);
+    }
+
+    /////////////
+    function updateChecklistProgress(el) {
+        const checklist = el.closest(".checklist-section");
+
+        const checkboxes = checklist.querySelectorAll(
+            ".checklist-items input[type='checkbox']"
+        );
+        const checked = checklist.querySelectorAll(
+            ".checklist-items input[type='checkbox']:checked"
+        );
+
+        const percent = checkboxes.length === 0
             ? 0
-            : Math.round((checked.length / items.length) * 100);
+            : Math.round((checked.length / checkboxes.length) * 100);
 
-        document.getElementById("checklistProgress").style.width = percent + "%";
-        document.getElementById("checklistPercent").innerText = percent + "%";
+        checklist.querySelector(".percent").innerText = percent + "%";
+        checklist.querySelector(".progress-fill").style.width = percent + "%";
+    }
+
+    //////
+    function cancelAddChecklistItem(btn) {
+        const checklist = btn.closest(".checklist-section");
+        const textarea = checklist.querySelector(".checklist-add textarea");
+
+        // Xóa nội dung đang gõ
+        textarea.value = "";
+
+        // Bỏ focus
+        textarea.blur();
+    }
+
+    ///////////////
+    function deleteChecklistItem(el) {
+        const item = el.closest(".checklist-item");
+        const checklist = item.closest(".checklist-section");
+
+        item.remove();
+        updateChecklistProgress(checklist);
+    }
+
+    /////////////
+    function toggleItemMenu(btn) {
+        const item = btn.closest(".checklist-item");
+        const menu = item.querySelector(".item-menu");
+
+        // đóng menu khác
+        document.querySelectorAll(".item-menu").forEach(m => {
+            if (m !== menu) m.style.display = "none";
+        });
+
+        menu.style.display =
+            menu.style.display === "block" ? "none" : "block";
     }
 
     //Mọi click bên trong checklist không được nổi lên document
@@ -3271,32 +3422,23 @@
         e.stopPropagation();
     });
 
-    //
-    function openChecklistCreateModal(e) {
-    if (e) e.stopPropagation();
-    document.getElementById("checklistCreateModal").style.display = "flex";
-}
 
-    function closeChecklistCreateModal() {
-        document.getElementById("checklistCreateModal").style.display = "none";
+    ///////////////////////////////
+    document.addEventListener("click", function () {
+        document.querySelectorAll(".item-menu")
+            .forEach(m => m.style.display = "none");
+    });
+
+
+    /////////////////////
+    function openChecklistCreateModal(e) {
+        if (e) e.stopPropagation();
+        document.getElementById("checklistCreateModal").style.display = "flex";
     }
 
-
-    function createChecklist() {
-        const title = document.getElementById("checklistTitleInput").value.trim();
-        if (!title) return;
-
-        // Set tiêu đề checklist
-        document.querySelector(".checklist-title span:last-child").innerText = title;
-
-        // Hiện checklist section trong card
-        document.getElementById("checklistPopover").style.display = "block";
-
-        // Đóng modal
-        closeChecklistCreateModal();
-
-        // Reset input
-        document.getElementById("checklistTitleInput").value = "";
+    //////////////////////////////////
+    function closeChecklistCreateModal() {
+        document.getElementById("checklistCreateModal").style.display = "none";
     }
 
 
