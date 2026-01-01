@@ -1522,6 +1522,19 @@
     cursor: pointer;
     border: 2px solid #242528; /* Viền trùng màu nền để tách nhau */
 }
+
+/* Style cho ô nhập khi sửa tên list */
+.list-title-edit-input {
+    width: 100%;
+    padding: 4px 8px;
+    font-size: 15px;
+    font-weight: 700;
+    border: 2px solid #6ea6ff;
+    border-radius: 4px;
+    background: #222;
+    color: #fff;
+    outline: none;
+}
     </style>
 
 
@@ -2246,6 +2259,69 @@
         if (card && !e.target.closest(".add-card-form")) {
             currentActiveCard = card;
             openCardDetail();
+        }
+        
+        // --- LOGIC SỬA TÊN DANH SÁCH ---
+        if (e.target.classList.contains("list-title")) {
+            const titleDiv = e.target;
+            const currentTitle = titleDiv.innerText;
+            const list = titleDiv.closest('.list');
+            const listId = list.getAttribute('data-id');
+
+            // 1. Tạo ô input để sửa
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentTitle;
+            input.className = 'list-title-edit-input'; // Class CSS vừa thêm ở trên
+            
+            // 2. Thay thế div bằng input
+            titleDiv.replaceWith(input);
+            input.focus();
+            input.select(); // Bôi đen toàn bộ chữ để sửa cho nhanh
+
+            // 3. Hàm lưu lại
+            const saveTitle = () => {
+                const newTitle = input.value.trim();
+                
+                // Tạo lại thẻ div title mới
+                const newTitleDiv = document.createElement('div');
+                newTitleDiv.className = 'list-title';
+                
+                if (newTitle && newTitle !== currentTitle) {
+                    newTitleDiv.innerText = newTitle;
+                    
+                    // Gọi API lưu
+                    if (listId) {
+                        fetch('/boards/api/list/update-title/', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+                            body: JSON.stringify({ list_id: listId, title: newTitle })
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if(data.status !== 'success') {
+                                alert("Lỗi: " + data.message);
+                                newTitleDiv.innerText = currentTitle; // Revert nếu lỗi
+                            }
+                        });
+                    }
+                } else {
+                    newTitleDiv.innerText = currentTitle; // Giữ nguyên nếu rỗng hoặc không đổi
+                }
+
+                // Thay thế input trở lại thành div
+                input.replaceWith(newTitleDiv);
+            };
+
+            // 4. Bắt sự kiện khi click ra ngoài (blur) hoặc ấn Enter
+            input.addEventListener('blur', saveTitle);
+            input.addEventListener('keydown', (ev) => {
+                if (ev.key === 'Enter') {
+                    input.blur(); // Gọi sự kiện blur để lưu
+                }
+            });
+
+            return; // Dừng, không xử lý các sự kiện click khác
         }
     });
 
