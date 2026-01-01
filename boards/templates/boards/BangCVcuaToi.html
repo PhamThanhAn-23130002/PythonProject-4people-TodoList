@@ -1879,8 +1879,8 @@
                 <div class="menu-divider"></div>
                 <div class="menu-section">
                     <div class="menu-title">LIST</div>
-                    <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Chuyển đổi tài
-                        khoản</a>
+
+                    <a class="menu-item" href="{% url 'switch_account' %}" style="text-decoration:none">Chuyển đổi tài khoản</a>
                     <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Hồ sơ và hiển thị</a>
                     <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Cài đặt</a>
                 </div>
@@ -1967,7 +1967,7 @@
                     {% if c.deadline %}
                     <div style="margin-top: 6px;">
                             <span class="card-date-badge {% if c.is_overdue %}overdue{% elif c.is_completed %}completed{% endif %}">
-                                🕒 {{ c.deadline|date:"d/m" }} 
+                                🕒 {{ c.deadline|date:"d/m" }}
                                 {% if c.is_overdue %}(Quá hạn){% endif %}
                             </span>
                     </div>

@@ -656,7 +656,6 @@
         <div class="menu-section">
             <div class="menu-title">LIST</div>
             <a class="menu-item" href="{% url 'switch_account' %}" style="text-decoration:none">Chuyển đổi tài khoản</a>
-            <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Quản lý tài khoản</a>
             <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Hồ sơ và hiển thị</a>
             <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Cài đặt</a>
         </div>
@@ -682,7 +681,7 @@
 
         <!-- MAIN -->
 <main class="main">
-    
+
     {% if show_intro %}
         <section class="hero" aria-label="Giới thiệu">
             <div class="hero-illustration"></div>
@@ -698,7 +697,7 @@
     {% else %}
         <div class="board-section-content">
             <h3 style="color: #e7ecf0; margin-top: 0;">Các bảng của bạn</h3>
-            
+
             <div class="board-grid">
                 <div class="board-tile create-new-board" id="openModalCreate">
                     <span>Tạo bảng mới</span>
@@ -722,65 +721,6 @@
     {% endif %}
 
 </main>
-
-        <!-- RIGHT RAIL -->
-        {% comment %} <aside class="right">
-            <a href="{% url 'create_board' %}" class="recent-link">
-                <div>
-                    <div class="section-title">Đã xem gần đây</div>
-                    <div class="recent-card">
-                        <div class="recent-thumb"></div>
-                        <div class="recent-info">
-                            <div class="title">Bảng List của tôi</div>
-                            <div class="meta">Không gian làm việc</div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-            <div>
-                <div class="section-title">Liên Kết</div>
-                <div class="create-tile">
-                    <div class="plus">+</div>
-                    Tạo bảng mới
-                </div>
-            </div>
-        </aside>
-    </div>
-</div> {% endcomment %}
-
-{% comment %} <aside class="right">
-    <div class="section-title">Các bảng của bạn</div>
-    
-    {% for board in boards %}
-        <a href="{% url 'board_detail' board.id %}" class="recent-link"> <div>
-                <div class="recent-card">
-                    <div class="recent-thumb" style="background-color: #519839;"></div>
-                    <div class="recent-info">
-                        <div class="title">{{ board.name }}</div>
-                        <div class="meta">
-                            {% if board.visibility == 'workspace' %}
-                                Không gian làm việc
-                            {% elif board.visibility == 'public' %}
-                                Công khai
-                            {% else %}
-                                Riêng tư
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </a>
-    {% empty %}
-        <p style="color: #a8b0b8; font-size: 14px; padding: 10px;">Bạn chưa có bảng nào.</p>
-    {% endfor %}
-    <div style="margin-top: 20px;">
-        <div class="section-title">Liên Kết</div>
-        <div class="create-tile" id="openModalCreate" style="cursor: pointer;">
-            <div class="plus">+</div>
-            Tạo bảng mới
-        </div>
-    </div>
-</aside> {% endcomment %}
 
         <!-- OVERLAY (ẩn ban đầu) -->
    <form method="post" action="{% url 'create_board_logic' %}">
@@ -815,7 +755,7 @@
             const openModalBtn = document.getElementById("openModalBtn");     // Nút trên topbar
             const openModalCreate = document.getElementById("openModalCreate"); // Nút ở sidebar phải
             const closeBtn = document.getElementById("closeBtn");
-            
+
             const boardTitle = document.getElementById("boardTitle");
             const titleError = document.getElementById("titleError");
             const createBtn = document.getElementById("createBtn");
@@ -869,19 +809,19 @@
             }
         });
 
-    const btn = document.getElementById('accountBtn'); 
+    const btn = document.getElementById('accountBtn');
     const menu = document.getElementById('accountMenu');
     btn.addEventListener('click', (e) => {
-        e.stopPropagation(); 
-        menu.classList.toggle('show'); 
+        e.stopPropagation();
+        menu.classList.toggle('show');
     });
     document.addEventListener('click', () => {
         menu.classList.remove('show');
     });
 
-{% comment %} const openModalCreate = document.getElementById("openModalCreate"); 
-const openModalCenter = document.getElementById("openModalCenter"); 
-const createBoardHeroBtn = document.getElementById("createBoardHeroBtn"); 
+{% comment %} const openModalCreate = document.getElementById("openModalCreate");
+const openModalCenter = document.getElementById("openModalCenter");
+const createBoardHeroBtn = document.getElementById("createBoardHeroBtn");
 
 if (openModalCreate) openModalCreate.onclick = openModal;
 if (openModalCenter) openModalCenter.onclick = openModal;
