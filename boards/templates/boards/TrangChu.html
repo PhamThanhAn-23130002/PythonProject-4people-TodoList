@@ -656,7 +656,6 @@
         <div class="menu-section">
             <div class="menu-title">LIST</div>
             <a class="menu-item" href="{% url 'switch_account' %}" style="text-decoration:none">Chuyển đổi tài khoản</a>
-            <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Quản lý tài khoản</a>
             <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Hồ sơ và hiển thị</a>
             <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Cài đặt</a>
         </div>
@@ -682,7 +681,7 @@
 
         <!-- MAIN -->
 <main class="main">
-    
+
     {% if show_intro %}
         <section class="hero" aria-label="Giới thiệu">
             <div class="hero-illustration"></div>
@@ -698,7 +697,7 @@
     {% else %}
         <div class="board-section-content">
             <h3 style="color: #e7ecf0; margin-top: 0;">Các bảng của bạn</h3>
-            
+
             <div class="board-grid">
                 <div class="board-tile create-new-board" id="openModalCreate">
                     <span>Tạo bảng mới</span>
@@ -724,7 +723,7 @@
 </main>
 
         <!-- OVERLAY (ẩn ban đầu) -->
-   <form method="post" action="{% url 'create_board_logic' %}"> 
+   <form method="post" action="{% url 'create_board_logic' %}">
     {% csrf_token %}  <div id="modalOverlay">
         <div class="modal">
             <div class="close" id="closeBtn">×</div>
@@ -756,7 +755,7 @@
             const openModalBtn = document.getElementById("openModalBtn");     // Nút trên topbar
             const openModalCreate = document.getElementById("openModalCreate"); // Nút ở sidebar phải
             const closeBtn = document.getElementById("closeBtn");
-            
+
             const boardTitle = document.getElementById("boardTitle");
             const titleError = document.getElementById("titleError");
             const createBtn = document.getElementById("createBtn");
@@ -810,19 +809,19 @@
             }
         });
 
-    const btn = document.getElementById('accountBtn'); 
+    const btn = document.getElementById('accountBtn');
     const menu = document.getElementById('accountMenu');
     btn.addEventListener('click', (e) => {
-        e.stopPropagation(); 
-        menu.classList.toggle('show'); 
+        e.stopPropagation();
+        menu.classList.toggle('show');
     });
     document.addEventListener('click', () => {
         menu.classList.remove('show');
     });
 
-{% comment %} const openModalCreate = document.getElementById("openModalCreate"); 
-const openModalCenter = document.getElementById("openModalCenter"); 
-const createBoardHeroBtn = document.getElementById("createBoardHeroBtn"); 
+{% comment %} const openModalCreate = document.getElementById("openModalCreate");
+const openModalCenter = document.getElementById("openModalCenter");
+const createBoardHeroBtn = document.getElementById("createBoardHeroBtn");
 
 if (openModalCreate) openModalCreate.onclick = openModal;
 if (openModalCenter) openModalCenter.onclick = openModal;
