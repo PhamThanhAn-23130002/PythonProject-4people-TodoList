@@ -20,7 +20,7 @@ urlpatterns = [
     path("create_board/", views.create_board, name="create_board"),
     # Logic xử lý khi bấm nút "Tạo bảng" (POST)
     path("create_board/submit/", views.create_board_logic, name="create_board_logic"),
-
+    
     # Chi tiết bảng, Xóa bảng, Thêm thành viên vào bảng
     path("board/<int:board_id>/", views.board_detail, name="board_detail"),
     path("board/<int:board_id>/delete/", views.delete_board, name="delete_board"),
@@ -41,7 +41,7 @@ urlpatterns = [
     path('api/card/<int:card_id>/delete/', views.delete_card_api, name='delete_card_api'),
     path('api/card/update-title/', views.update_card_title, name='update_card_title'),
     path('api/list/update-title/', views.update_list_title, name='update_list_title'),
-
+    
     # Cập nhật Deadline, Thành viên, Lưu mô tả, lưu trạng thái hoàn thành
     path('api/card/<int:card_id>/deadline/', views.update_card_deadline, name='update_card_deadline'),
     path('api/card/member/', views.manage_card_member, name='manage_card_member'),
@@ -49,10 +49,10 @@ urlpatterns = [
     path('api/card/<int:card_id>/toggle-completed/', views.toggle_card_completed_api, name='toggle_card_completed_api'),
 
     # Các view hiển thị chi tiết thẻ (Legacy/Render HTML)
-    # path("card_detail", views.card_detail, name="card_detail"),
+    #path("card_detail", views.card_detail, name="card_detail"),
     path("card/<int:card_id>/", views.card_detail_id, name="card_detail_id"),
-
-    # Drag and drop thẻ
+    
+    #Drag and drop thẻ
     path('api/card/move/', views.move_card_api, name='move_card_api'),
 
     # ============================================
