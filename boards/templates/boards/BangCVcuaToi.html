@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <title>List - Bảng công việc</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>{% comment %} /*thư viện drag and drop*/ {% endcomment %}
     <style>
         :root {
             /* màu chung */
@@ -1568,6 +1569,13 @@
     color: #ff5c5c !important;
     font-weight: bold;
 }
+
+/* Hiệu ứng khi đang kéo thả */
+.sortable-ghost {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 2px dashed #444;
+    opacity: 0.5;
+}
     </style>
 
 
@@ -1994,6 +2002,9 @@
         const cancelAddList = document.getElementById('cancelAddList');
         const confirmAddList = document.getElementById('confirmAddList');
         const listTitleInput = document.getElementById('listTitleInput');
+
+        // Kích hoạt kéo thả
+        initDragAndDrop();
 
         if (addListBtn && addListForm) {
             addListBtn.onclick = () => {
@@ -2865,6 +2876,62 @@
                 closeCardModal();
             }
         }
+    }
+
+    /**
+     * ==========================================================================
+     * PHẦN 5: KÉO THẢ THẺ (DRAG & DROP) - SỬ DỤNG SORTABLEJS
+     * ==========================================================================
+     */
+    function initDragAndDrop() {
+        // Tìm tất cả các container chứa thẻ (.cards)
+        const cardContainers = document.querySelectorAll('.cards');
+
+        cardContainers.forEach(container => {
+            new Sortable(container, {
+                group: 'shared', // Cho phép kéo từ list này sang list kia
+                animation: 150,  // Hiệu ứng di chuyển mượt (ms)
+                ghostClass: 'sortable-ghost', // Class css cho vùng bóng mờ khi đang kéo
+                delay: 100, // Giữ chuột 100ms mới bắt đầu kéo (tránh click nhầm trên điện thoại)
+                delayOnTouchOnly: true,
+                
+                // Sự kiện khi thả thẻ ra
+                onEnd: function (evt) {
+                    const itemEl = evt.item; // Thẻ bị kéo
+                    const newList = itemEl.closest('.list'); // List mới chứa thẻ
+                    
+                    if (!newList) return;
+
+                    const cardId = itemEl.getAttribute('data-id');
+                    const newListId = newList.getAttribute('data-id');
+                    const newIndex = evt.newIndex; // Vị trí mới (bắt đầu từ 0)
+
+                    // Gửi API cập nhật vị trí
+                    console.log(`Di chuyển thẻ ${cardId} sang List ${newListId} tại vị trí ${newIndex}`);
+                    
+                    fetch('/boards/api/card/move/', {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            card_id: cardId,
+                            new_list_id: newListId,
+                            new_position: newIndex
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status !== 'success') {
+                            console.error("Lỗi di chuyển:", data.message);
+                            // Nếu lỗi thì nên reload để trả thẻ về chỗ cũ
+                            // window.location.reload(); 
+                        }
+                    });
+                }
+            });
+        });
     }
 </script>
 </html>
