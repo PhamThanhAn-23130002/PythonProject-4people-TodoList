@@ -1535,6 +1535,39 @@
     color: #fff;
     outline: none;
 }
+
+/* Badge hiển thị ngày tháng trên thẻ */
+.card-date-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    color: #b6c2cf;
+    padding: 2px 0;
+    margin-right: 8px;
+    gap: 4px;
+}
+
+/* Nếu hết hạn thì chuyển màu đỏ */
+.card-date-badge.overdue {
+    background-color: #ff5c5c;
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* Nếu hoàn thành thì màu xanh */
+.card-date-badge.completed {
+    background-color: #61bd4f;
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* Màu đỏ cho deadline trong Modal */
+.deadline-text-overdue {
+    color: #ff5c5c !important;
+    font-weight: bold;
+}
     </style>
 
 
@@ -1649,6 +1682,7 @@
                     data-desc="{{ c.description|default:'' }}"
                     data-deadline="{{ c.deadline|date:'d-m-Y H:i' }}"
                     data-completed="{{ c.is_completed|yesno:'true,false' }}"
+                    data-overdue="{{ c.is_overdue|yesno:'true,false' }}"
                     data-members="{% for m in c.members.all %}{{ m.username }}|{{ m.get_full_name|default:m.username }}{% if not forloop.last %},{% endif %}{% endfor %}"
                     data-tags="{% for tag in c.tags.all %}{{ tag.id }}|{{ tag.name }}|{{ tag.color }}{% if not forloop.last %},{% endif %}{% endfor %}">      
                     
@@ -1664,6 +1698,15 @@
                     {% endif %}
 
                     <span>{{ c.title }}</span>
+
+                    {% if c.deadline %}
+                        <div style="margin-top: 6px;">
+                            <span class="card-date-badge {% if c.is_overdue %}overdue{% elif c.is_completed %}completed{% endif %}">
+                                🕒 {{ c.deadline|date:"d/m" }} 
+                                {% if c.is_overdue %}(Quá hạn){% endif %}
+                            </span>
+                        </div>
+                        {% endif %}
 
                     {% if c.members.all %}
                     <div style="display:flex; justify-content:flex-end; margin-top:6px; gap:4px;">
@@ -2331,7 +2374,7 @@
      * PHẦN 3: HIỂN THỊ MODAL CHI TIẾT
      * ==========================================================================
      */
-    function openCardDetail() {
+   function openCardDetail() {
         if (currentActiveCard) {
             // A. Tên danh sách
             const parentList = currentActiveCard.closest('.list');
@@ -2351,6 +2394,7 @@
             const tagsRaw = currentActiveCard.getAttribute('data-tags');
             const tagsWrapper = document.getElementById('modalTagsWrapper');
             const tagsDisplay = document.getElementById('modalTagsDisplay');
+            
             if(tagsDisplay) tagsDisplay.innerHTML = ''; 
 
             if (tagsDisplay && tagsRaw && tagsRaw.trim() !== '') {
@@ -2376,8 +2420,6 @@
                             const removeBtn = document.createElement('span');
                             removeBtn.innerHTML = '&times;';
                             removeBtn.style.cssText = "cursor: pointer; font-size: 14px; opacity: 0.7;";
-                            removeBtn.onmouseover = function() { this.style.opacity = '1'; };
-                            removeBtn.onmouseout = function() { this.style.opacity = '0.7'; };
                             removeBtn.onclick = function(e) {
                                 e.stopPropagation();
                                 if(confirm('Gỡ nhãn "' + tagName + '"?')) removeTag(tagId, tagEl);
@@ -2392,17 +2434,66 @@
                 addBtn.innerHTML = '+';
                 addBtn.onclick = function(e) { toggleTagPopover(e); }; 
                 addBtn.style.cssText = "background: #3a3a3a; color: #e7ecf0; border: none; border-radius: 3px; width: 24px; height: 24px; cursor: pointer;";
-                addBtn.title = "Thêm nhãn khác";
                 tagsDisplay.appendChild(addBtn);
             } else {
                 if(tagsWrapper) tagsWrapper.style.display = 'none';
             }
 
-            // D. Deadline
+            // D. Deadline & Kiểm tra quá hạn (REAL-TIME CHECK)
             const deadlineRaw = currentActiveCard.getAttribute('data-deadline');
+            const isCompleted = currentActiveCard.getAttribute('data-completed') === 'true';
+
             const deadlineDiv = document.getElementById('modalDeadlineDisplay');
+            const deadlineText = document.getElementById('deadlineDateText');
+
             if (deadlineRaw && deadlineRaw.trim() !== '') {
-                document.getElementById('deadlineDateText').innerText = deadlineRaw;
+                deadlineText.innerText = deadlineRaw;
+                
+                // --- BẮT ĐẦU: Tính toán thời gian thực bằng JS ---
+                let isOverdueRealtime = false;
+                try {
+                    // deadlineRaw dạng: "01-01-2026 10:59"
+                    // Cần parse về dạng Date chuẩn
+                    let dateStr = deadlineRaw;
+                    // Nếu chuỗi có giờ "10:59" -> Javascript cần định dạng YYYY-MM-DDTHH:mm
+                    const parts = dateStr.split(' ');
+                    const dParts = parts[0].split('-'); // [01, 01, 2026]
+                    
+                    let jsDate;
+                    if (parts.length > 1) {
+                        const tParts = parts[1].split(':');
+                        // new Date(Year, Month-1, Day, Hour, Min)
+                        jsDate = new Date(dParts[2], dParts[1]-1, dParts[0], tParts[0], tParts[1]);
+                    } else {
+                        // Nếu không có giờ, mặc định cuối ngày hoặc đầu ngày tùy logic (ở đây lấy 00:00)
+                        jsDate = new Date(dParts[2], dParts[1]-1, dParts[0]);
+                    }
+
+                    // So sánh với giờ hiện tại
+                    if (jsDate < new Date()) {
+                        isOverdueRealtime = true;
+                    }
+                } catch(e) {
+                    console.error("Lỗi parse ngày:", e);
+                }
+                // --- KẾT THÚC tính toán ---
+
+                // Xử lý màu sắc
+                if (isOverdueRealtime && !isCompleted) {
+                    deadlineText.innerHTML = deadlineRaw + ' <span style="color:#ff5c5c; margin-left:5px; font-weight:bold;">(Đã quá hạn)</span>';
+                    deadlineText.style.color = "#ff5c5c"; 
+                } else {
+                    deadlineText.innerText = deadlineRaw;
+                    deadlineText.style.color = "#e7ecf0"; 
+                }
+                
+                // Cho phép bấm vào để sửa
+                deadlineDiv.style.cursor = "pointer";
+                deadlineDiv.onclick = function(e) { 
+                    e.stopPropagation(); 
+                    date(this); 
+                };
+
                 if(deadlineDiv) deadlineDiv.style.display = 'flex'; 
             } else {
                 if(deadlineDiv) deadlineDiv.style.display = 'none';
@@ -2432,13 +2523,12 @@
             }
 
             if(cardOverlay) cardOverlay.style.display = 'flex';
-        }
-        //Sync trạng thái checkbox
-        const isCompleted = currentActiveCard.getAttribute('data-completed') === 'true';
+
+            // Sync trạng thái checkbox
             const checkbox = document.querySelector('.complete');
             if (checkbox) checkbox.checked = isCompleted;
+        }
     }
-
     function closeCardModal() {
         if (cardOverlay) {
             cardOverlay.style.display = 'none';
@@ -2607,45 +2697,106 @@
         container.appendChild(chip);
     }
 
-    // --- C. QUẢN LÝ NGÀY (DEADLINE) ---
+    // --- C. QUẢN LÝ NGÀY (DEADLINE), CHỈNH SỬA---
     function date(e) {
         const datePopup = document.getElementById("choosedate");
         safeHide("member");
         safeHide("tagPopover");
         safeHide("cardMoreMenu");
 
+        // 1. NẾU BẤM NÚT "CHỌN" (LƯU)
         if (e.id == "bdate") {
             const dateVal = document.querySelector('input[name="inputdate"]').value;
             const timeVal = document.querySelector('input[name="inputtime"]').value;
             
             if (dateVal) {
+                // Format lại ngày từ YYYY-MM-DD sang DD-MM-YYYY để hiển thị
                 const [year, month, day] = dateVal.split('-');
                 const formattedDate = `${day}-${month}-${year}`;
                 const displayString = timeVal ? `${formattedDate} lúc ${timeVal}` : formattedDate;
                 
                 if (currentActiveCard) {
                     currentActiveCard.setAttribute('data-deadline', displayString);
-                    document.getElementById('deadlineDateText').innerText = displayString;
-                    const dDiv = document.getElementById('modalDeadlineDisplay');
-                    if(dDiv) dDiv.style.display = 'flex';
                     
+                    // Cập nhật giao diện Modal ngay lập tức
+                    const deadlineText = document.getElementById('deadlineDateText');
+                    const deadlineDiv = document.getElementById('modalDeadlineDisplay');
+                    
+                    if(deadlineText) {
+                        deadlineText.innerText = displayString;
+                        deadlineText.style.color = "#e7ecf0"; // Reset màu về trắng (nếu đang đỏ)
+                    }
+                    if(deadlineDiv) deadlineDiv.style.display = 'flex';
+                    
+                    // Gọi API lưu
                     const cardId = currentActiveCard.getAttribute('data-id');
                     if(cardId) {
                         fetch(`/boards/api/card/${cardId}/deadline/`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
                             body: JSON.stringify({ date: dateVal, time: timeVal })
-                        }).then(res => res.json()).then(d => { if(d.status!=='success') alert(d.message); });
+                        }).then(res => res.json())
+                        .then(d => { 
+                            if(d.status === 'success') {
+                                // Reload để cập nhật tính toán Quá hạn/Sắp hết hạn chính xác từ server
+                                window.location.reload(); 
+                            } else {
+                                alert(d.message); 
+                            }
+                        });
                     }
                 }
                 if(datePopup) datePopup.style.display = 'none';
             } else {
                 alert("Vui lòng chọn ngày!");
             }
-        } else if (e.id == "xdate") {
+        } 
+        // 2. NẾU BẤM NÚT "X" (ĐÓNG)
+        else if (e.id == "xdate") {
             if(datePopup) datePopup.style.display = 'none';
-        } else {
-            if(datePopup) datePopup.style.display = 'block';
+        } 
+        // 3. NẾU BẤM MỞ POPUP (NÚT "NGÀY" HOẶC CLICK VÀO DEADLINE CŨ)
+        else {
+            if(datePopup) {
+                datePopup.style.display = 'block';
+                
+                // --- LOGIC MỚI: ĐIỀN SẴN NGÀY GIỜ CŨ VÀO Ô INPUT ---
+                if (currentActiveCard) {
+                    const currentString = currentActiveCard.getAttribute('data-deadline');
+                    
+                    // Reset input trước
+                    const dateInput = document.querySelector('input[name="inputdate"]');
+                    const timeInput = document.querySelector('input[name="inputtime"]');
+                    dateInput.value = '';
+                    timeInput.value = '';
+
+                    // Nếu thẻ đã có deadline, ta parse ngược lại để điền vào input
+                    // Format đang là: "05-01-2026" hoặc "05-01-2026 lúc 14:30"
+                    if (currentString && currentString.trim() !== '') {
+                        try {
+                            let datePart = currentString;
+                            let timePart = '';
+
+                            if (currentString.includes(' lúc ')) {
+                                const parts = currentString.split(' lúc ');
+                                datePart = parts[0];
+                                timePart = parts[1];
+                            }
+
+                            // Convert DD-MM-YYYY -> YYYY-MM-DD (Chuẩn input date)
+                            const [d, m, y] = datePart.split('-');
+                            const isoDate = `${y}-${m}-${d}`;
+
+                            dateInput.value = isoDate;
+                            if (timePart) timeInput.value = timePart;
+                            
+                        } catch (err) {
+                            console.log("Không thể parse ngày cũ:", err);
+                        }
+                    }
+                }
+                // ---------------------------------------------------
+            }
         }
     }
 

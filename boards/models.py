@@ -2,6 +2,7 @@
 from django.db import models
 from accounts.models import User
 import uuid
+from django.utils import timezone
 
 class Board(models.Model):
     name = models.CharField(max_length=50)
@@ -45,6 +46,12 @@ class Card(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     members = models.ManyToManyField(User, related_name='cards', blank=True)
     is_completed = models.BooleanField(default=False)
+    @property
+    def is_overdue(self):
+        # Nếu có deadline VÀ deadline nhỏ hơn giờ hiện tại VÀ chưa hoàn thành
+        if self.deadline and self.deadline < timezone.now() and not self.is_completed:
+            return True
+        return False
 
     def __str__(self):
         return self.title
