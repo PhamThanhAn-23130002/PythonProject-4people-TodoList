@@ -49,7 +49,7 @@ urlpatterns = [
     path('api/card/<int:card_id>/toggle-completed/', views.toggle_card_completed_api, name='toggle_card_completed_api'),
 
     # Các view hiển thị chi tiết thẻ (Legacy/Render HTML)
-    path("card_detail", views.card_detail, name="card_detail"),
+    #path("card_detail", views.card_detail, name="card_detail"),
     path("card/<int:card_id>/", views.card_detail_id, name="card_detail_id"),
     
     #Drag and drop thẻ
