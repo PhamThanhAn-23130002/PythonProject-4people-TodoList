@@ -22,12 +22,12 @@ User = get_user_model()
 def create_board(request):
     return render(request, "boards/BangCVcuaToi.html")
 
-# Render trang chi tiết thẻ (Template gốc)
-def card_detail(request):
-    return render(request, "boards/CardDetail.html")
+# # Render trang chi tiết thẻ (Template gốc)
+# def card_detail(request):
+#     return render(request, "boards/CardDetail.html")
 
 # Render trang chủ (Phiên bản template 1)
-def home_page_template_1(request): # Đã đổi tên nhẹ để tránh xung đột
+def home_page_template_1(request): 
     return render(request, "boards/TrangChu.html")
 
 # Render trang chủ (Phiên bản template 2)
@@ -69,7 +69,7 @@ def home_page(request):
 
 # 2. Xử lý tạo Board mới (Form Submit)
 @login_required(login_url='/login/')
-def create_board_logic(request): # Đã đổi tên để tránh trùng với hàm view ở trên
+def create_board_logic(request): 
     if request.method == "POST":
         board_name = request.POST.get('title') 
         board_visibility = request.POST.get('visibility')

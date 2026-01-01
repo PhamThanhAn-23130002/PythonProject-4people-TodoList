@@ -723,67 +723,8 @@
 
 </main>
 
-        <!-- RIGHT RAIL -->
-        {% comment %} <aside class="right">
-            <a href="{% url 'create_board' %}" class="recent-link">
-                <div>
-                    <div class="section-title">Đã xem gần đây</div>
-                    <div class="recent-card">
-                        <div class="recent-thumb"></div>
-                        <div class="recent-info">
-                            <div class="title">Bảng List của tôi</div>
-                            <div class="meta">Không gian làm việc</div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-            <div>
-                <div class="section-title">Liên Kết</div>
-                <div class="create-tile">
-                    <div class="plus">+</div>
-                    Tạo bảng mới
-                </div>
-            </div>
-        </aside>
-    </div>
-</div> {% endcomment %}
-
-{% comment %} <aside class="right">
-    <div class="section-title">Các bảng của bạn</div>
-    
-    {% for board in boards %}
-        <a href="{% url 'board_detail' board.id %}" class="recent-link"> <div>
-                <div class="recent-card">
-                    <div class="recent-thumb" style="background-color: #519839;"></div>
-                    <div class="recent-info">
-                        <div class="title">{{ board.name }}</div>
-                        <div class="meta">
-                            {% if board.visibility == 'workspace' %}
-                                Không gian làm việc
-                            {% elif board.visibility == 'public' %}
-                                Công khai
-                            {% else %}
-                                Riêng tư
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </a>
-    {% empty %}
-        <p style="color: #a8b0b8; font-size: 14px; padding: 10px;">Bạn chưa có bảng nào.</p>
-    {% endfor %}
-    <div style="margin-top: 20px;">
-        <div class="section-title">Liên Kết</div>
-        <div class="create-tile" id="openModalCreate" style="cursor: pointer;">
-            <div class="plus">+</div>
-            Tạo bảng mới
-        </div>
-    </div>
-</aside> {% endcomment %}
-
         <!-- OVERLAY (ẩn ban đầu) -->
-   <form method="post" action="{% url 'create_board' %}"> 
+   <form method="post" action="{% url 'create_board_logic' %}"> 
     {% csrf_token %}  <div id="modalOverlay">
         <div class="modal">
             <div class="close" id="closeBtn">×</div>
