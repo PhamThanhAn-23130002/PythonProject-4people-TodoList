@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>Trang chủ – List</title>
+    <title>Trang chủ – List</title>+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -140,7 +140,7 @@
 
         .container {
             display: grid;
-            grid-template-columns:260px 1fr 320px;
+            grid-template-columns: 260px 1fr;
             gap: 24px;
             padding: 24px;
             height: calc(100vh - 56px);
@@ -189,11 +189,73 @@
             opacity: .9
         }
 
+        .board-section-content {
+            width: 100%;
+            max-width:  100%; 
+          
+        }
+
+        .board-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); /* Tự động chia cột */
+            gap: 16px;
+        }
+
+        .board-tile {
+            display: block;
+            height: 100px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #a06adf, #f285c8);
+            padding: 10px;
+            position: relative;
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            transition: filter 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .board-tile:hover {
+            filter: brightness(110%); /* Sáng lên khi hover */
+        }
+
+        .board-tile-title {
+            font-size: 16px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .board-tile-sub {
+            font-size: 12px;
+            font-weight: 400;
+            margin-top: 4px;
+            opacity: 0.8;
+        }
+
+        /* Nút tạo bảng dạng Tile */
+        .create-new-board {
+            background-color: #2b3038; /* Màu xám */
+            color: #9fadbc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .create-new-board:hover {
+            background-color: #343a44;
+            color: white;
+        }
+
         /* MAIN */
         .main {
             display: flex;
             align-items: flex-start;
-            justify-content: center
+            justify-content: flex-start; 
+            width: 100%;
         }
 
         .hero {
@@ -246,74 +308,6 @@
             text-decoration: underline
         }
 
-        /* RIGHT RAIL */
-        .right {
-            padding-top: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px
-        }
-
-        .section-title {
-            color: #cfd6dc;
-            font-weight: 700;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px
-        }
-
-        .recent-card {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            padding: 10px;
-            background: transparent;
-            border-radius: 8px;
-            cursor: default;
-        }
-
-        .recent-thumb {
-            width: 40px;
-            height: 28px;
-            border-radius: 6px;
-            background: linear-gradient(135deg, #a06adf, #f285c8);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .recent-info .title {
-            font-weight: 600
-        }
-
-        .recent-info .meta {
-            color: var(--muted);
-            font-size: 16px
-        }
-
-        .create-tile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            width: fit-content;
-            border: 1px solid var(--stroke);
-            border-radius: 8px;
-            background: #2b3038;
-            color: #d9dee3;
-            font-weight: 700;
-        }
-
-        .create-tile .plus {
-            width: 26px;
-            height: 26px;
-            border-radius: 6px;
-            background: #3b4048;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--stroke);
-            font-weight: 800;
-        }
 
         /* Hiệu ứng điều hướng  */
         .nav-item {
@@ -348,7 +342,7 @@
             background: #20242b;
         }
 
-        /* --- PHẦN CSS CÒN THIẾU CHO MODAL --- */
+        /* --- PHẦN CSS CHO MODAL --- */
         #modalOverlay {
             display: none; /* Ẩn mặc định */
             position: fixed;
@@ -449,6 +443,155 @@
             background: var(--primary-2);
         }
 
+        /* ===== ACCOUNT MENU ===== */
+        .account-wrap {
+            position: relative;
+        }
+
+        .account-menu {
+            position: absolute;
+            top: 44px;
+            right: 0;
+            width: 300px;
+            background: #2b2f36;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .5);
+            padding: 12px 0;
+            display: none;
+            z-index: 1000;
+        }
+
+        .account-menu.show {
+            display: block;
+        }
+
+        .menu-section {
+            padding: 0 16px;
+        }
+
+        .menu-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #9aa3ad;
+            margin-bottom: 8px;
+        }
+
+        .account-info {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            padding: 8px 0;
+            cursor: pointer;
+
+        }
+
+        .account-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ffb03a;
+            color: #141414;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+        }
+
+        .account-name {
+            font-weight: 700;
+        }
+
+        .account-email {
+            font-size: 13px;
+            color: #a8b0b8;
+        }
+
+            .menu-item {
+        display: block; 
+        width: 100%;   
+        padding: 10px 16px;
+        cursor: pointer;
+        color: #e7ecf0;
+        font-size: 14px;
+        text-decoration: none; 
+        box-sizing: border-box; 
+        transition: background 0.2s; 
+        }
+
+        .menu-item:hover {
+            background: #3a3f47;
+        }
+
+
+        .menu-item.logout {
+            color: #ff8b8b;
+            font-weight: 600;
+            margin-left: 0 !important; 
+            border-top: 1px solid #3a3f47; 
+            margin-top: 4px;
+        }
+
+.noti-wrap {
+    position: relative;
+}
+
+.noti-menu {
+    position: absolute;
+    top: 44px;
+    right: -120px;
+    width: 400px;
+    background: #282e33;
+    border: 1px solid #38414a;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    display: none;
+    z-index: 1000;
+    color: #b6c2cf;
+}
+
+.noti-menu.show {
+    display: block;
+}
+
+/* Header bây giờ đơn giản hơn */
+.noti-header {
+    padding: 12px 20px;
+    border-bottom: 1px solid #38414a;
+    /* Căn giữa tiêu đề hoặc để mặc định bên trái */
+    text-align: center;
+}
+
+.noti-header h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #e7ecf0;
+    font-weight: 600;
+    text-align: left;
+}
+
+/* Nội dung bên trong */
+.noti-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.noti-img {
+    width: 150px;
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+.noti-empty-text {
+    font-size: 16px;
+    color: #e7ecf0;
+}
+
 
     </style>
 </head>
@@ -458,7 +601,7 @@
 <header class="topbar">
     <div class="brand">
         <div class="logo">L</div>
-        <span>List</span>
+        <span >List</span>
     </div>
 
     <div class="search">
@@ -467,9 +610,63 @@
 
     <div class="top-actions">
         <button id="openModalBtn" class="btn">Tạo mới</button>
-        <button class="icon-btn" title="Thông báo">🔔</button>
+        <div class="noti-wrap">
+    <button class="icon-btn" id="notiBtn" title="Thông báo">🔔</button>
+
+    <div class="noti-menu" id="notiMenu">
+    <div class="noti-header">
+        <h3>Thông báo</h3>
+    </div>
+
+    <div class="noti-content">
+        <img src="https://trello.com/assets/ee2660df9335718b1a80.svg" alt="Sleepy dog" class="noti-img">
+        <div class="noti-empty-text">Không có thông báo chưa đọc</div>
+        <div style="margin-top: 10px; color: #ff6b6b; font-size: 12px; display: none;">Click to view details</div>
+    </div>
+</div>
+</div>
         <button class="icon-btn" title="Trợ giúp">?</button>
-        <div class="avatar" title="TT">TT</div>
+        <div class="account-wrap">
+    <div class="avatar" id="accountBtn">
+        {{ request.user.username|first|upper }}
+    </div>
+
+    <div class="account-menu" id="accountMenu">
+        <div class="menu-section">
+            <div class="menu-title">TÀI KHOẢN</div>
+            <div class="account-info">
+                <div class="account-avatar">
+                    {{ request.user.username|first|upper }}
+                </div>
+
+                <div>
+                    <div class="account-name">
+                        {{ request.user.get_full_name }}
+                    </div>
+
+                    <div class="account-email">
+                        {{ request.user.email }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-divider"></div>
+
+        <div class="menu-section">
+            <div class="menu-title">LIST</div>
+            <a class="menu-item" href="{% url 'switch_account' %}" style="text-decoration:none">Chuyển đổi tài khoản</a>
+            <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Quản lý tài khoản</a>
+            <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Hồ sơ và hiển thị</a>
+            <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Cài đặt</a>
+        </div>
+
+        <div class="menu-divider"></div>
+
+        <a class="menu-item logout" href="{% url 'log_out' %}" style="text-decoration:none; margin-left: 20px">Đăng xuất</a>
+    </div>
+</div>
+    </div>
     </div>
 </header>
 
@@ -478,27 +675,53 @@
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <nav class="nav-group" aria-label="Chính">
-                <a href="{% url 'home_page_Table' %}" class="nav-item"><span class="glyph">📋</span>Bảng</a>
                 <a href="{% url 'home_page' %}" class="nav-item active"><span class="glyph">➜</span>Trang chủ</a>
+                <a href="{% url 'home_page_Table' %}" class="nav-item"><span class="glyph">📋</span>Lịch sử xem</a>
             </nav>
-
-
-            <div class="add-ws">+ Tạo Không gian làm việc</div>
         </aside>
 
         <!-- MAIN -->
-        <main class="main">
-            <section class="hero" aria-label="Giới thiệu">
-                <div class="hero-illustration"></div>
-                <h2>Tổ chức mọi thứ</h2>
-                <p>Đặt tất cả mọi thứ ở một nơi và bắt đầu di chuyển mọi thứ về phía trước với
-                    bảng List đầu tiên của bạn!</p>
-                <div class="cta">
-                    <button class="primary">Tạo một bảng Không gian làm việc</button>
-                    <a href="{% url 'home_page2' %}">Đã hiểu! Bỏ qua điều này.</a>
+<main class="main">
+    
+    {% if show_intro %}
+        <section class="hero" aria-label="Giới thiệu">
+            <div class="hero-illustration"></div>
+            <h2>Tổ chức mọi thứ</h2>
+            <p>Đặt tất cả mọi thứ ở một nơi và bắt đầu di chuyển mọi thứ về phía trước với
+                bảng List đầu tiên của bạn!</p>
+            <div class="cta">
+                {% comment %} <button class="primary" id="createBoardHeroBtn">Tạo một bảng Không gian làm việc</button> {% endcomment %}
+                <a href="{% url 'dismiss_intro' %}" style="cursor: pointer;">Đã hiểu! Bỏ qua điều này.</a>
+            </div>
+        </section>
+
+    {% else %}
+        <div class="board-section-content">
+            <h3 style="color: #e7ecf0; margin-top: 0;">Các bảng của bạn</h3>
+            
+            <div class="board-grid">
+                <div class="board-tile create-new-board" id="openModalCreate">
+                    <span>Tạo bảng mới</span>
                 </div>
-            </section>
-        </main>
+
+                {% for board in boards %}
+                    <a href="{% url 'board_detail' board.id %}" class="board-tile" style="background-color: #519839;">
+                        <div class="board-tile-details">
+                            <div class="board-tile-title">{{ board.name }}</div>
+                            <div class="board-tile-sub">
+                                {% if board.visibility == 'private' %}🔒 Riêng tư
+                                {% elif board.visibility == 'public' %}🌍 Công khai
+                                {% else %}👥 Không gian làm việc
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+</main>
 
         <!-- RIGHT RAIL -->
         {% comment %} <aside class="right">
@@ -525,7 +748,7 @@
     </div>
 </div> {% endcomment %}
 
-<aside class="right">
+{% comment %} <aside class="right">
     <div class="section-title">Các bảng của bạn</div>
     
     {% for board in boards %}
@@ -557,7 +780,7 @@
             Tạo bảng mới
         </div>
     </div>
-</aside>
+</aside> {% endcomment %}
 
         <!-- OVERLAY (ẩn ban đầu) -->
    <form method="post" action="{% url 'create_board' %}"> 
@@ -645,7 +868,57 @@
                 };
             }
         });
-    </script>
+
+    const btn = document.getElementById('accountBtn'); 
+    const menu = document.getElementById('accountMenu');
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation(); 
+        menu.classList.toggle('show'); 
+    });
+    document.addEventListener('click', () => {
+        menu.classList.remove('show');
+    });
+
+{% comment %} const openModalCreate = document.getElementById("openModalCreate"); 
+const openModalCenter = document.getElementById("openModalCenter"); 
+const createBoardHeroBtn = document.getElementById("createBoardHeroBtn"); 
+
+if (openModalCreate) openModalCreate.onclick = openModal;
+if (openModalCenter) openModalCenter.onclick = openModal;
+if (createBoardHeroBtn) createBoardHeroBtn.onclick = openModal;  {% endcomment %}
+</script>
+
+<script>
+    // --- XỬ LÝ NOTIFICATION POPUP ---
+    const notiBtn = document.getElementById('notiBtn');
+    const notiMenu = document.getElementById('notiMenu');
+
+    if (notiBtn && notiMenu) {
+        notiBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Ngăn sự kiện lan ra ngoài
+            notiMenu.classList.toggle('show'); // Bật/Tắt class show
+
+            // Nếu đang mở menu account thì đóng lại cho đỡ rối
+            const accMenu = document.getElementById('accountMenu');
+            if (accMenu && accMenu.classList.contains('show')) {
+                accMenu.classList.remove('show');
+            }
+        });
+
+        // Click bên trong menu thông báo thì không đóng
+        notiMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
+
+    // Đóng popup khi click bất kỳ đâu bên ngoài (Sửa lại đoạn lắng nghe click body cũ của bạn)
+    document.addEventListener('click', () => {
+        const accMenu = document.getElementById('accountMenu');
+        if (accMenu) accMenu.classList.remove('show');
+
+        if (notiMenu) notiMenu.classList.remove('show');
+    });
+</script>
 
 </body>
 </html>
