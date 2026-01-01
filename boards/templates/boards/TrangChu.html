@@ -783,7 +783,7 @@
 </aside> {% endcomment %}
 
         <!-- OVERLAY (ẩn ban đầu) -->
-   <form method="post" action="{% url 'create_board' %}"> 
+   <form method="post" action="{% url 'create_board_logic' %}">
     {% csrf_token %}  <div id="modalOverlay">
         <div class="modal">
             <div class="close" id="closeBtn">×</div>
