@@ -659,7 +659,6 @@
     color: #e7ecf0;
 }
 
-
     </style>
 </head>
 <body>
@@ -670,16 +669,29 @@
         <div class="logo">L</div>
         <span >List</span>
     </div>
-
-    <div class="search">
-        <input placeholder="Tìm kiếm" aria-label="Tìm kiếm">
+    <!--<form method="post">
+    {% csrf_token %}-->
+    <!--<div class="search">
+        <input placeholder="Tìm kiếm" aria-label="Tìm kiếm" name="search">
+    </div>-->
+    <div class="search" name="search" placeholder="Tìm kiếm" aria-label="Tìm kiếm"> 
+        <form method="post" action="{% url 'find_board'%}">
+        {% csrf_token %}
+        <input 
+            type="text" 
+            id="search-input" 
+            name="search" 
+            placeholder="Tìm kiếm bảng..." 
+            autocomplete="off" 
+            value="{{ search_term }}">
+        <button class="btn" type"submit">Tìm Kếm </button>
+        </form>
+          
     </div>
-
     <div class="top-actions">
         <button id="openModalBtn" class="btn">Tạo mới</button>
         <div class="noti-wrap">
     <button class="icon-btn" id="notiBtn" title="Thông báo">🔔</button>
-
     <div class="noti-menu" id="notiMenu">
     <div class="noti-header">
         <h3>Notifications</h3>
@@ -774,7 +786,7 @@
                     <span>Tạo bảng mới</span>
                 </div>
 
-                {% for board in boards %}
+                <!--/**{% for board in boards %}
                     <a href="{% url 'board_detail' board.id %}" class="board-tile" style="background-color: #519839;">
                         <div class="board-tile-details">
                             <div class="board-tile-title">{{ board.name }}</div>
@@ -786,7 +798,22 @@
                             </div>
                         </div>
                     </a>
-                {% endfor %}
+                {% endfor %}*/-->
+                {% for board in boards %}
+        <a href="{% url 'board_detail' board.id %}" class="board-tile" style="background-color: #519839;">
+            <div class="board-tile-details">
+                <div class="board-tile-title">{{ board.name }}</div>
+                <div class="board-tile-sub">
+                    {% if board.visibility == 'private' %}🔒 Riêng tư
+                    {% elif board.visibility == 'public' %}🌍 Công khai
+                    {% else %}👥 Không gian làm việc
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+    {% empty %}
+        <p>Không tìm thấy bảng nào.</p>
+    {% endfor %}
             </div>
         </div>
     {% endif %}
@@ -979,16 +1006,19 @@ if (createBoardHeroBtn) createBoardHeroBtn.onclick = openModal;  {% endcomment %
         notiMenu.addEventListener('click', (e) => {
             e.stopPropagation();
         });
-    }
-
+    }///
+    // Ẩn hộp gợi ý khi click ra ngoài
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !suggestionBox.contains(e.target)) {
+            suggestionBox.style.display = 'none';
+        }
+    });
     // Đóng popup khi click bất kỳ đâu bên ngoài (Sửa lại đoạn lắng nghe click body cũ của bạn)
     document.addEventListener('click', () => {
         const accMenu = document.getElementById('accountMenu');
         if (accMenu) accMenu.classList.remove('show');
-
         if (notiMenu) notiMenu.classList.remove('show');
     });
 </script>
-
 </body>
 </html>
