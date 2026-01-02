@@ -2036,13 +2036,6 @@
 
 
 
-
-
-
-
-
-
-
                                  {{ m.get_full_name|default:m.username }}{% if not forloop.last %},{% endif %}{% endfor %}"
                              data-tags="{% for tag in c.tags.all %}{{ tag.id }}|{{ tag.name }}|
                                  {{ tag.color }}{% if not forloop.last %},{% endif %}{% endfor %}">
@@ -2750,6 +2743,8 @@
         const card = e.target.closest('.card');
         if (card && !e.target.closest(".add-card-form")) {
             currentActiveCard = card;
+            //QUAN TRỌNG
+            loadChecklistsByCard(card.dataset.id); //thiếu là ăn cám ko load id dl mỗi checklist từ từng item-card lên đc
             openCardDetail();
         }
 
@@ -3261,109 +3256,228 @@
     }
 
     // --- D. CHECKLIST & HỆ THỐNG (SAVE) ---
-    function openChecklistPopover(e) {
-        if (e && e.stopPropagation) e.stopPropagation();
 
-        const checklist = document.getElementById("checklistPopover");
-        const mount = document.getElementById("checklistMount");
 
-        if (!checklist || !mount) return;
-
-        // Toggle
-        if (checklist.style.display === "block") {
-            checklist.style.display = "none";
-            return;
-        }
-
-        // ĐƯA CHECKLIST VÀO GIỮA MÔ TẢ & NHẬN XÉT
-        mount.appendChild(checklist);
-        checklist.style.display = "block";
+    //lấy csft token cho các request post để xóa các thẻ mục được thêm
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
     }
 
-    ////////////
-    function closeChecklistPopover() {
-        safeHide("checklistPopover");
-    }
-
-    ///////////////////////////
+    //Tạo checklist mới cho thẻ đang mở
     function createChecklist(e) {
         if (e) e.stopPropagation();
+
+        if (!currentActiveCard) {
+            alert("Chưa chọn thẻ");
+            return;
+        }
 
         const titleInput = document.getElementById("checklistTitleInput");
         const title = titleInput.value.trim();
         if (!title) return;
 
+        fetch("/boards/api/checklist/create/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken()
+            },
+            body: JSON.stringify({
+                card_id: currentActiveCard.dataset.id,
+                title: title
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status !== "ok") {
+                    alert("Tạo checklist thất bại");
+                    return;
+                }
+
+                renderChecklist({
+                    id: data.checklist_id,
+                    title: data.title,
+                    items: []
+                });
+
+                closeChecklistCreateModal();
+                titleInput.value = "";
+            });
+    }
+
+    //Render 1 checklist (UI)
+    function renderChecklist(checklist) {
         const container = document.getElementById("checklistContainer");
 
-        const checklistEl = document.createElement("div");
-        checklistEl.className = "checklist-section";
-        checklistEl.innerHTML = checklistEl.innerHTML = `
-    <div class="checklist-header">
-        <div class="checklist-title">
-            <span class="icon">☑</span>
-            <span>${title}</span>
+        const el = document.createElement("div");
+        el.className = "checklist-section";
+        el.dataset.id = checklist.id;
+
+        el.innerHTML = `
+        <div class="checklist-header">
+            <div class="checklist-title">
+                <span class="icon">☑</span>
+                <span>${checklist.title}</span>
+            </div>
+            <button class="btn-delete"
+                onclick="deleteChecklist(${checklist.id}, this)">Xóa</button>
         </div>
-        <button class="btn-delete"
-            onclick="this.closest('.checklist-section').remove()">Xóa</button>
-    </div>
 
-    <div class="checklist-progress-row">
-        <span class="percent">0%</span>
-        <div class="progress-bar">
-            <div class="progress-fill" style="width:0%"></div>
+        <div class="checklist-progress-row">
+            <span class="percent">0%</span>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
         </div>
-    </div>
 
-    <div class="checklist-items"></div>
+        <div class="checklist-items"></div>
 
-    <div class="checklist-add">
-        <textarea placeholder="Thêm một mục"></textarea>
-        <div class="actions">
-            <button class="btn-primary"
-                onclick="addChecklistItem(this)">Thêm</button>
-            <button class="btn-cancel" onclick="cancelAddChecklistItem(this)">Hủy</button>
+        <div class="checklist-add">
+            <textarea placeholder="Thêm một mục"></textarea>
+            <div class="actions">
+                <button class="btn-primary"
+                    onclick="addChecklistItem(this)">Thêm</button>
+                <button class="btn-cancel"
+                    onclick="cancelAddChecklistItem(this)">Hủy</button>
+            </div>
         </div>
-    </div>`;
+    `;
 
-        container.appendChild(checklistEl);
-
-        // Đóng modal + reset
-        closeChecklistCreateModal();
-        titleInput.value = "";
+        container.appendChild(el);
     }
 
 
-    /////////////////
+    //Thêm 1 mục công việc vào checklist
     function addChecklistItem(btn) {
-        const checklist = btn.closest(".checklist-section");
-        const textarea = checklist.querySelector("textarea");
+        const checklistEl = btn.closest(".checklist-section");
+        const textarea = checklistEl.querySelector("textarea");
         const text = textarea.value.trim();
         if (!text) return;
 
-        const items = checklist.querySelector(".checklist-items");
-
-        const item = document.createElement("div");
-        item.className = "checklist-item";
-        item.innerHTML = `
-    <input type="checkbox" onchange="updateChecklistProgress(this)">
-    <span class="item-text">${text}</span>
-
-    <button class="item-more"
-        onclick="toggleItemMenu(this)">…</button>
-
-    <div class="item-menu">
-        <div class="item-menu-delete"
-            onclick="deleteChecklistItem(this)">Xóa</div>
-    </div>
-`;
-
-        items.appendChild(item);
-        textarea.value = "";
-
-        updateChecklistProgress(item);
+        fetch("/boards/api/checklist/item/add/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken()
+            },
+            body: JSON.stringify({
+                checklist_id: checklistEl.dataset.id,
+                title: text
+            })
+        })
+            .then(res => res.json())
+            .then(item => {
+                renderChecklistItem(checklistEl, item);
+                textarea.value = "";
+                updateChecklistProgress(checklistEl);
+            });
     }
 
-    /////////////
+    //Load toàn bộ checklist của 1 thẻ
+    function loadChecklistsByCard(cardId) {
+        const checklistContainer = document.getElementById("checklistContainer");
+        checklistContainer.innerHTML = ""; //  clear checklist cũ
+
+        fetch(`/boards/api/card/${cardId}/checklists/`)
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(cl => {
+                    renderChecklist(cl);
+
+                    const section = document.querySelector(
+                        `.checklist-section[data-id="${cl.id}"]`
+                    );
+
+                    cl.items.forEach(item => {
+                        renderChecklistItem(section, item);
+                    });
+
+                    updateChecklistProgress(section);
+                });
+            });
+    }
+
+    // render 1 checklist item UI
+    function renderChecklistItem(checklistEl, item) {
+        const items = checklistEl.querySelector(".checklist-items");
+
+        const el = document.createElement("div");
+        el.className = "checklist-item";
+        el.dataset.id = item.id;
+
+        el.innerHTML = `
+        <input type="checkbox"
+            ${item.is_done ? "checked" : ""}
+            onchange="toggleChecklistItem(${item.id}, this)">
+        <span class="item-text">${item.title}</span>
+
+        <button class="item-more"
+            onclick="toggleItemMenu(this)">…</button>
+
+        <div class="item-menu">
+            <div class="item-menu-delete"
+                onclick="deleteChecklistItem(this)">Xóa</div>
+        </div>
+    `;
+
+        items.appendChild(el);
+    }
+
+    //Đánh dấu hoàn thành / chưa hoàn thành item
+    function toggleChecklistItem(itemId, checkbox) {
+        fetch("/boards/api/checklist/item/toggle/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken()
+            },
+            body: JSON.stringify({item_id: itemId})
+        })
+            .then(res => res.json())
+            .then(() => {
+                const checklist = checkbox.closest(".checklist-section");
+                updateChecklistProgress(checklist);
+            });
+    }
+
+    //Xóa 1 checklist item
+    function deleteChecklistItem(el) {
+        const item = el.closest(".checklist-item");
+        const checklist = item.closest(".checklist-section");
+        const itemId = item.dataset.id;
+
+        fetch("/boards/api/checklist/item/delete/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken()
+            },
+            body: JSON.stringify({item_id: itemId})
+        })
+            .then(() => {
+                item.remove();
+                updateChecklistProgress(checklist);
+            });
+    }
+
+    //Xóa toàn bộ checklist
+    function deleteChecklist(checklistId, btn) {
+        if (!confirm("Xóa danh sách công việc này?")) return;
+
+        fetch("/boards/api/checklist/delete/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken()
+            },
+            body: JSON.stringify({checklist_id: checklistId})
+        })
+            .then(() => {
+                btn.closest(".checklist-section").remove();
+            });
+    }
+
+    //Tính & hiển thị % hoàn thành checklist
     function updateChecklistProgress(el) {
         const checklist = el.closest(".checklist-section");
 
@@ -3382,7 +3496,7 @@
         checklist.querySelector(".progress-fill").style.width = percent + "%";
     }
 
-    //////
+    //Hủy thao tác thêm item
     function cancelAddChecklistItem(btn) {
         const checklist = btn.closest(".checklist-section");
         const textarea = checklist.querySelector(".checklist-add textarea");
@@ -3394,16 +3508,7 @@
         textarea.blur();
     }
 
-    ///////////////
-    function deleteChecklistItem(el) {
-        const item = el.closest(".checklist-item");
-        const checklist = item.closest(".checklist-section");
-
-        item.remove();
-        updateChecklistProgress(checklist);
-    }
-
-    /////////////
+    //Mở / đóng menu … của checklist item
     function toggleItemMenu(btn) {
         const item = btn.closest(".checklist-item");
         const menu = item.querySelector(".item-menu");
@@ -3423,20 +3528,21 @@
     });
 
 
-    ///////////////////////////////
+    ///
     document.addEventListener("click", function () {
         document.querySelectorAll(".item-menu")
             .forEach(m => m.style.display = "none");
     });
 
 
-    /////////////////////
+    //Mở modal “Thêm danh sách công việc”
+
     function openChecklistCreateModal(e) {
         if (e) e.stopPropagation();
         document.getElementById("checklistCreateModal").style.display = "flex";
     }
 
-    //////////////////////////////////
+    //Đóng modal tạo checklist
     function closeChecklistCreateModal() {
         document.getElementById("checklistCreateModal").style.display = "none";
     }
