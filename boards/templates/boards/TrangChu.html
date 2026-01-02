@@ -140,7 +140,7 @@
 
         .container {
             display: grid;
-            grid-template-columns:260px 1fr 320px;
+            grid-template-columns: 260px 1fr;
             gap: 24px;
             padding: 24px;
             height: calc(100vh - 56px);
@@ -191,8 +191,8 @@
 
         .board-section-content {
             width: 100%;
-            max-width: 800px; /* Giới hạn chiều rộng cho đẹp */
-            padding-top: 20px;
+            max-width:  100%; 
+          
         }
 
         .board-grid {
@@ -254,7 +254,8 @@
         .main {
             display: flex;
             align-items: flex-start;
-            justify-content: center
+            justify-content: flex-start; 
+            width: 100%;
         }
 
         .hero {
@@ -307,74 +308,6 @@
             text-decoration: underline
         }
 
-        /* RIGHT RAIL */
-        .right {
-            padding-top: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px
-        }
-
-        .section-title {
-            color: #cfd6dc;
-            font-weight: 700;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px
-        }
-
-        .recent-card {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            padding: 10px;
-            background: transparent;
-            border-radius: 8px;
-            cursor: default;
-        }
-
-        .recent-thumb {
-            width: 40px;
-            height: 28px;
-            border-radius: 6px;
-            background: linear-gradient(135deg, #a06adf, #f285c8);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .recent-info .title {
-            font-weight: 600
-        }
-
-        .recent-info .meta {
-            color: var(--muted);
-            font-size: 16px
-        }
-
-        .create-tile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            width: fit-content;
-            border: 1px solid var(--stroke);
-            border-radius: 8px;
-            background: #2b3038;
-            color: #d9dee3;
-            font-weight: 700;
-        }
-
-        .create-tile .plus {
-            width: 26px;
-            height: 26px;
-            border-radius: 6px;
-            background: #3b4048;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--stroke);
-            font-weight: 800;
-        }
 
         /* Hiệu ứng điều hướng  */
         .nav-item {
@@ -694,12 +627,12 @@
     <button class="icon-btn" id="notiBtn" title="Thông báo">🔔</button>
     <div class="noti-menu" id="notiMenu">
     <div class="noti-header">
-        <h3>Notifications</h3>
+        <h3>Thông báo</h3>
     </div>
 
     <div class="noti-content">
         <img src="https://trello.com/assets/ee2660df9335718b1a80.svg" alt="Sleepy dog" class="noti-img">
-        <div class="noti-empty-text">No unread notifications</div>
+        <div class="noti-empty-text">Không có thông báo chưa đọc</div>
         <div style="margin-top: 10px; color: #ff6b6b; font-size: 12px; display: none;">Click to view details</div>
     </div>
 </div>
@@ -735,7 +668,6 @@
         <div class="menu-section">
             <div class="menu-title">LIST</div>
             <a class="menu-item" href="{% url 'switch_account' %}" style="text-decoration:none">Chuyển đổi tài khoản</a>
-            <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Quản lý tài khoản</a>
             <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Hồ sơ và hiển thị</a>
             <a class="menu-item" href="{% url 'about_me' %}" style="text-decoration:none">Cài đặt</a>
         </div>
@@ -754,17 +686,14 @@
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <nav class="nav-group" aria-label="Chính">
-                <a href="{% url 'home_page_Table' %}" class="nav-item"><span class="glyph">📋</span>Bảng</a>
                 <a href="{% url 'home_page' %}" class="nav-item active"><span class="glyph">➜</span>Trang chủ</a>
+                <a href="{% url 'home_page_Table' %}" class="nav-item"><span class="glyph">📋</span>Lịch sử xem</a>
             </nav>
-
-
-            <div class="add-ws">+ Tạo Không gian làm việc</div>
         </aside>
 
         <!-- MAIN -->
 <main class="main">
-    
+
     {% if show_intro %}
         <section class="hero" aria-label="Giới thiệu">
             <div class="hero-illustration"></div>
@@ -780,7 +709,7 @@
     {% else %}
         <div class="board-section-content">
             <h3 style="color: #e7ecf0; margin-top: 0;">Các bảng của bạn</h3>
-            
+
             <div class="board-grid">
                 <div class="board-tile create-new-board" id="openModalCreate">
                     <span>Tạo bảng mới</span>
@@ -820,67 +749,8 @@
 
 </main>
 
-        <!-- RIGHT RAIL -->
-        {% comment %} <aside class="right">
-            <a href="{% url 'create_board' %}" class="recent-link">
-                <div>
-                    <div class="section-title">Đã xem gần đây</div>
-                    <div class="recent-card">
-                        <div class="recent-thumb"></div>
-                        <div class="recent-info">
-                            <div class="title">Bảng List của tôi</div>
-                            <div class="meta">Không gian làm việc</div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-            <div>
-                <div class="section-title">Liên Kết</div>
-                <div class="create-tile">
-                    <div class="plus">+</div>
-                    Tạo bảng mới
-                </div>
-            </div>
-        </aside>
-    </div>
-</div> {% endcomment %}
-
-{% comment %} <aside class="right">
-    <div class="section-title">Các bảng của bạn</div>
-    
-    {% for board in boards %}
-        <a href="{% url 'board_detail' board.id %}" class="recent-link"> <div>
-                <div class="recent-card">
-                    <div class="recent-thumb" style="background-color: #519839;"></div>
-                    <div class="recent-info">
-                        <div class="title">{{ board.name }}</div>
-                        <div class="meta">
-                            {% if board.visibility == 'workspace' %}
-                                Không gian làm việc
-                            {% elif board.visibility == 'public' %}
-                                Công khai
-                            {% else %}
-                                Riêng tư
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </a>
-    {% empty %}
-        <p style="color: #a8b0b8; font-size: 14px; padding: 10px;">Bạn chưa có bảng nào.</p>
-    {% endfor %}
-    <div style="margin-top: 20px;">
-        <div class="section-title">Liên Kết</div>
-        <div class="create-tile" id="openModalCreate" style="cursor: pointer;">
-            <div class="plus">+</div>
-            Tạo bảng mới
-        </div>
-    </div>
-</aside> {% endcomment %}
-
         <!-- OVERLAY (ẩn ban đầu) -->
-   <form method="post" action="{% url 'create_board' %}"> 
+   <form method="post" action="{% url 'create_board_logic' %}">
     {% csrf_token %}  <div id="modalOverlay">
         <div class="modal">
             <div class="close" id="closeBtn">×</div>
@@ -912,7 +782,7 @@
             const openModalBtn = document.getElementById("openModalBtn");     // Nút trên topbar
             const openModalCreate = document.getElementById("openModalCreate"); // Nút ở sidebar phải
             const closeBtn = document.getElementById("closeBtn");
-            
+
             const boardTitle = document.getElementById("boardTitle");
             const titleError = document.getElementById("titleError");
             const createBtn = document.getElementById("createBtn");
@@ -966,19 +836,19 @@
             }
         });
 
-    const btn = document.getElementById('accountBtn'); 
+    const btn = document.getElementById('accountBtn');
     const menu = document.getElementById('accountMenu');
     btn.addEventListener('click', (e) => {
-        e.stopPropagation(); 
-        menu.classList.toggle('show'); 
+        e.stopPropagation();
+        menu.classList.toggle('show');
     });
     document.addEventListener('click', () => {
         menu.classList.remove('show');
     });
 
-{% comment %} const openModalCreate = document.getElementById("openModalCreate"); 
-const openModalCenter = document.getElementById("openModalCenter"); 
-const createBoardHeroBtn = document.getElementById("createBoardHeroBtn"); 
+{% comment %} const openModalCreate = document.getElementById("openModalCreate");
+const openModalCenter = document.getElementById("openModalCenter");
+const createBoardHeroBtn = document.getElementById("createBoardHeroBtn");
 
 if (openModalCreate) openModalCreate.onclick = openModal;
 if (openModalCenter) openModalCenter.onclick = openModal;
