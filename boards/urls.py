@@ -61,8 +61,8 @@ urlpatterns = [
     path("api/checklist/item/add/", views.add_checklist_item, name="add_checklist_item"),
     path("api/checklist/item/toggle/", views.toggle_checklist_item, name="toggle_checklist_item"),
     path("api/checklist/delete/", views.delete_checklist, name="delete_checklist"),
+    path('search-suggest/', views.search_suggest, name='search_suggest'),
+    path('tim-kiem/', views.findBoard, name='find_board'),
     path("api/card/<int:card_id>/checklists/", views.get_card_checklists),
-
-    path("api/checklist/item/delete/", views.delete_checklist_item),
-
+    path("api/checklist/item/delete/", views.delete_checklist_item)
 ]

@@ -282,7 +282,75 @@ def delete_checklist(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
+'''def findBoard(request):
+    boards  = Board.objects.all()
+    search_input =""
+    if request.method=="POST":
+        search_input =request.POST["search"]
+        if search_input:
+            boards = boards.filter(name__icontains=search_input)
+            if boards.count() == 1:
+                board_id = boards.first().id
+                return redirect('board_detail', pk=board_id)
+    return render(request,"BangCVcuaToi.html")'''
+def findBoard2(request):
+    # Mặc định lấy tất cả
+     boards = Board.objects.all()
+     search_input = ""
+     if request.method == "POST":
+        search_input = request.POST.get("search", "")
+        
+        if search_input:
+            # Dùng filter để không bị lỗi nếu có nhiều kết quả
+            results = Board.objects.filter(name__icontains=search_input)
+            
+            # --- LOGIC CHUYỂN TRANG ---
+            
+            # Trường hợp 1: Tìm thấy đúng 1 bảng duy nhất -> Chuyển ngay sang trang chi tiết
+            if results.count() == 1:
+                board_id = results.first().id
+                return redirect('board_detail', pk=board_id) # Chuyển trang là ở đây
+            
+            # Trường hợp 2: Tìm thấy nhiều bảng hoặc không thấy -> Hiện danh sách lọc
+            boards = results
 
+    # Render lại trang hiện tại với danh sách kết quả
+     return render(request, "BangCVcuaToi.html", {
+        "boards": boards,
+        "search_term": search_input
+     })
+def findBoard(request):
+    boards = Board.objects.all()
+    search_input = ""
+    if request.method == "POST":
+        search_input = request.POST.get("search", "")
+        
+        if search_input:
+            results = Board.objects.filter(name__icontains=search_input)
+            if results.count() == 1:
+                board = results.first()
+                return redirect('board_detail', board_id=board.id) 
+            boards = results
+
+    return render(request, "TrangChu.html")
+def search_suggest(request):
+    query = request.GET.get('term', '')
+    results = []
+    
+    if query:
+        # Lọc bảng theo tên (giới hạn 5-10 kết quả để load cho nhanh)
+        boards = Board.objects.filter(name__icontains=query)[:10]
+        
+        # Chuyển đổi dữ liệu thành danh sách Dictionary
+        for board in boards:
+            results.append({
+                'id': board.id,
+                'name': board.name,
+                # Có thể thêm ảnh bìa hoặc thông tin khác nếu muốn
+            })
+    
+    # Trả về JSON (safe=False cho phép trả về list)
+    return JsonResponse(results, safe=False)
 @login_required
 def get_card_checklists(request, card_id):
     card = get_object_or_404(Card, id=card_id)
