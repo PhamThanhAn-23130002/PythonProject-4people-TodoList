@@ -18,7 +18,35 @@ def sign_up(request):
     return render(request, 'accounts/register.html')
 
 def reset_pass(request):
-    return render(request, 'accounts/resetPassword.html')
+    error_message = None
+
+    if request.method == 'POST':
+        email = request.POST.get('email')
+
+        # Kiểm tra email có tồn tại trong hệ thống không
+        if not User.objects.filter(email=email).exists():
+            error_message = "Email này không tồn tại trong hệ thống."
+        else:
+            # Tạo mã OTP ngẫu nhiên 6 số
+            otp_code = str(random.randint(100000, 999999))
+
+            # Lưu hoặc cập nhật OTP vào database
+            EmailOTP.objects.update_or_create(email=email, defaults={'otp': otp_code})
+
+            # Gửi email
+            subject = 'Mã xác thực khôi phục mật khẩu TodoList'
+            message = f'Mã OTP của bạn là: {otp_code}'
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [email]
+            send_mail(subject, message, email_from, recipient_list)
+
+            # Lưu email vào session để dùng cho các bước sau
+            request.session['reset_email'] = email
+
+            # Chuyển sang trang xác thực
+            return redirect('verify_acc')
+
+    return render(request, 'accounts/resetPassword.html', {'error_message': error_message})
 
 # API nhận yêu cầu gửi OTP từ Javascript (AJAX)
 def send_otp_api(request):
@@ -120,7 +148,27 @@ def create_name_pass(request):
     return render(request, 'accounts/finishSettingUpAccount.html')
  
 def verify_acc(request):
-     return render(request, 'accounts/finishResetPassword.html')
+    email = request.session.get('reset_email')
+    if not email:
+        return redirect('reset_pass')
+
+    error_message = None
+
+    if request.method == 'POST':
+        otp_input = request.POST.get('otp_full')  # Lấy OTP từ input hidden
+
+        try:
+            otp_record = EmailOTP.objects.get(email=email)
+            if otp_record.otp == otp_input:
+                otp_record.delete()
+                request.session['otp_verified'] = True
+                return redirect('change_pass')
+            else:
+                error_message = "Mã OTP không chính xác."
+        except EmailOTP.DoesNotExist:
+            error_message = "Yêu cầu hết hạn, vui lòng thử lại."
+
+    return render(request, 'accounts/finishResetPassword.html', {'email': email, 'error_message': error_message})
 
 def SitePerSonal(request):
     return render(request,'accounts/SitePersonal.html')
@@ -309,3 +357,37 @@ def switch_to_other_account(request):
 
     # Nếu không có email thì về trang login bình thường
     return redirect('accounts/sign_in')
+
+def change_pass(request):
+    email = request.session.get('reset_email')
+    is_verified = request.session.get('otp_verified')
+
+    if not email or not is_verified:
+        return redirect('reset_pass')
+
+    message = None
+    is_success = False
+
+    if request.method == 'POST':
+        pass1 = request.POST.get('password1')
+        pass2 = request.POST.get('password2')
+
+        if pass1 != pass2:
+            message = "Mật khẩu nhập lại không đúng."
+        else:
+            # Đổi mật khẩu
+            user = User.objects.get(email=email)
+            user.set_password(pass1)
+            user.save()
+
+            message = "Đổi mật khẩu hoàn tất."
+            is_success = True
+
+            # Xóa session để hoàn tất quy trình
+            del request.session['reset_email']
+            del request.session['otp_verified']
+
+    return render(request, 'accounts/changePasswordAfterVerify.html', {
+        'message': message,
+        'is_success': is_success
+    })

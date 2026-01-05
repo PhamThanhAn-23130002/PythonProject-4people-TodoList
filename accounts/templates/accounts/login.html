@@ -1,3 +1,4 @@
+{% load socialaccount %}
 {% load static %}
 <!doctype html>
 <html lang="vi">
@@ -298,24 +299,15 @@
         <!-- COUNTINUE WITH -->
         <div class="line-text">Hoặc tiếp tục với:</div>
 
-        <button class="oauth-btn">
-            <img src="{% static 'accounts/logo_google.png' %}" width="18">
-            Google
-        </button>
-
-        <button class="oauth-btn">
-            <img src="{% static 'accounts/logo_microsoft.webp' %}" width="18">
-            Microsoft
-        </button>
-
-        <button class="oauth-btn">
-            <img src="{% static 'accounts/logo_apple.webp' %}" width="18">
-            Apple
-        </button>
+        <div class="bottom-buttons">
+            <button type="button" class="oauth-btn" onclick="window.location.href='{% provider_login_url 'google' %}'">
+                <img src="{% static 'accounts/logo_google.png' %}" alt="Google" width="18"> Google
+            </button>
+        </div>
 
         <!-- BOTTOM LINKS -->
         <div class="bottom-links">
-            <a href="{% url 'reset_pass' %}">Không thể đăng nhập?</a> • <a href="{% url 'sign_up' %}">Tạo tài khoản mới</a>
+            <a href="{% url 'reset_pass' %}">Quên mật khẩu?</a> • <a href="{% url 'sign_up' %}">Tạo tài khoản mới</a>
         </div>
         
 
