@@ -15,9 +15,10 @@ urlpatterns = [
     path("setting/",views.setting,name="setting"),
     path("hoatdong/",views.action,name="action"),
     path("the/",views.card,name="cards"),
-    path("boadsPersonal/",views.boardspersonal,name="boards"),
+    path("boadsPersonal/",views.boardspersonal,name="bo ards"),
     path("members/",views.members,name="members"),
     path('api/send-otp/', views.send_otp_api, name='send_otp_api'),
     path('switch-account/', views.switch_account, name='switch_account'),
     path('switch-account/exec/', views.switch_to_other_account, name='switch_to_other_account'),
+    path("change-pass/", views.change_pass, name="change_pass"),
 ]

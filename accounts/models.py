@@ -21,13 +21,8 @@ class UserProfile(models.Model):
 
 
 class EmailOTP(models.Model):
-    # Email là unique để đảm bảo chỉ có 1 mã OTP hiệu lực tại 1 thời điểm
     email = models.EmailField(unique=True, null=False, blank=False)
-
-    # Mã OTP
     otp = models.CharField(max_length=6, null=False, blank=False)
-
-    # Thời điểm tạo mã, dùng để tính toán hết hạn
     created_at = models.DateTimeField(auto_now_add=True)
 
     def is_valid(self):

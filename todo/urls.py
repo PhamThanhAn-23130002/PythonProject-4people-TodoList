@@ -23,5 +23,6 @@ urlpatterns = [
     # path('accounts/', include('accounts.urls')),
     path('boards/', include('boards.urls')),
     # path('notifications/', include('notifications.urls')),
-    path('tasks/',include('tasks.urls'))
+    path('tasks/',include('tasks.urls')),
+    path('accounts/', include('allauth.urls')),
 ]
