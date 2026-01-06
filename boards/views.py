@@ -14,6 +14,11 @@ from .models import Board, BoardMember, List, Card, Checklist, ChecklistItem
 import numpy as np
 from sentence_transformers import SentenceTransformer, util #thư viện để so sánh ngữ nghĩa câu
 
+# chuyên dùng để so sánh độ tương đồng ngữ nghĩa
+print("Đang tải model AI... vui lòng đợi trong giây lát...")
+semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
+print("Model AI đã sẵn sàng!")
+
 User = get_user_model()
 
 
