@@ -8,6 +8,7 @@ from django.core.mail import send_mail
 from django.urls import reverse
 from accounts.models import EmailOTP, User
 from todo import settings
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from accounts.models import UserProfile, Skill # Import đúng model của bạn
@@ -90,10 +91,12 @@ def verify_code(request):
             if otp_record.otp == otp_input and otp_record.is_valid():
                 otp_record.delete()
 
-                base_url = reverse('finish_signup')
-                redirect_url = f"{base_url}?email={email}"
+                # base_url = reverse('finish_signup')
+                # redirect_url = f"{base_url}?email={email}"
+                request.session['email'] = email
+                request.session.modified = True
 
-                return redirect(redirect_url)
+                return redirect('create_name_pass')
                 # ------------------------------
 
             else:
@@ -107,9 +110,18 @@ def finish_signup(request):
     return render(request, 'accounts/finishSettingUpAccount.html')
 
 def create_name_pass(request):
+    if request.method == 'GET':
+        email = request.session.get('email')
+        if not email:
+            return redirect('sign_up')
+        return render(request, 'accounts/finishSettingUpAccount.html', {'email': email})
+
     if request.method == 'POST':
         # 1. Lấy dữ liệu từ Form
-        email = request.POST.get('email')
+        # email = request.POST.get('email')
+        email = request.session.get('email')
+        if not email:
+            email = request.POST.get('email')
         fullname = request.POST.get('fullname')
         password = request.POST.get('password')
 
@@ -138,8 +150,16 @@ def create_name_pass(request):
             new_user.first_name = fullname
             new_user.save()
 
+            if hasattr(settings, 'AUTHENTICATION_BACKENDS') and settings.AUTHENTICATION_BACKENDS:
+                new_user.backend = settings.AUTHENTICATION_BACKENDS[0]
+            else:
+                new_user.backend = 'django.contrib.auth.backends.ModelBackend'
+
             # 4. TỰ ĐỘNG ĐĂNG NHẬP LUÔN
             login(request, new_user)
+
+            if 'email' in request.session:
+                del request.session['email']
 
             # 5. Chuyển hướng về trang chủ
             return redirect('home_page')
