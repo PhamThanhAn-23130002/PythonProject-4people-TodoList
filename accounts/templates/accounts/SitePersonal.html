@@ -186,7 +186,7 @@
                 <h5 class="h5_setting">KHÔNG GIAN LÀM VIỆC</h5>
                 <ul class="options">
                     <form action="boards.html" method="get">
-                    <li><a href="{%url 'boards' %}"><i class="fa-solid fa-clipboard-list"></i> Bảng</a></li>
+                        <li ><a href="{% url 'home_page' %}"><i class="fa-solid fa-clipboard-list"></i> Bảng</a></li>
                     </form>
                     <form action="members.html" method="get">
                     <li><a href="{%url 'members'%}"><i class="fa-solid fa-users"></i> Thành viên</a></li>
@@ -195,26 +195,52 @@
             </div>
         </section>
     </div>
-    <div class="col-xl-10 col-md-6 col-sm-12 col-12 infor">
+   <div class="col-xl-10 col-md-6 col-sm-12 col-12 infor">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success" style="margin: 20px; padding: 10px; background-color: #d4edda; color: #155724; border-radius: 5px;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
         <div class="infor_personal" id="fileanddisplay">
             <h3>Hồ sơ và hiển thị</h3>
             <img class='img_infor' src="https://trello.com/assets/eff3d701a9c3a71105ea.svg" alt="error">
-            <h3>về tôi</h3>
-            <p>các trường bắt buộc phải được đánh dấu bằng dấu</p>
-            <p>TÊN NGƯỜI DÙNG </p>
-            <input class="input" type="text">
-            <p>LÝ LỊCH</p>
-            <textarea class="textarea" type="text"></textarea>
-            <p>KINH NGHIỆM LÀM VIỆC</p>
-            <textarea class="textarea" type="text"></textarea>
-            <p>CÁC KĨ NĂNG</p>
-            <textarea class="textarea" type="text"></textarea>
-        </div>
+            
+            <h3>Về tôi</h3>
+            <p style="font-size: 12px; font-style: italic;">Các thay đổi sẽ được lưu vào hệ thống.</p>
+            
+            <form method="POST" action="">
+                {% csrf_token %}
+                
+                <p>TÊN NGƯỜI DÙNG</p>
+                <input class="input" type="text" name="username" value="{{ request.user.username }}" style="padding: 10px;">
+                
+                <p>LÝ LỊCH (BIO)</p>
+                <textarea class="textarea" name="bio" style="padding: 10px;">{{ profile.bio }}</textarea>
+                
+                <p>KINH NGHIỆM LÀM VIỆC (LEVEL)</p>
+                <input class="input" type="text" name="experience" value="{{ profile.experience_level }}" placeholder="VD: Senior, Junior..." style="padding: 10px;">
+                
+                <p>CÁC KĨ NĂNG (Cách nhau bằng dấu phẩy)</p>
+                <textarea class="textarea" name="skills" placeholder="VD: Python, HTML, CSS" style="padding: 10px;">{{ current_skills }}</textarea>
+                
+                <div style="margin-top: 20px; margin-bottom: 50px;">
+                    <button type="submit" class="btn btn-primary" style="background-color: #0079BF; border: none; padding: 10px 20px; font-weight: bold;">
+                        Lưu thay đổi
+                    </button>
+                    <a href="{% url 'home_page' %}" class="btn btn-secondary" style="background-color: #42526e; border: none; padding: 10px 20px; color: white;">
+                        Hủy
+                    </a>
+                </div>
+            </form>
+            </div>
+        
         <div class="x">
-            <a><p class="x">&#10005</p></a>
+            <a href="{% url 'home_page' %}"><p class="x">&#10005</p></a>
         </div>
     </div>
-</div>
 <script>
 
 </script>

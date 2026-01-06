@@ -8,6 +8,8 @@ from django.db.models import Q
 from django.utils import timezone
 from datetime import datetime
 import json
+from accounts.models import UserProfile, Skill
+import uuid
 
 # Import Models
 from .models import Board, BoardMember, List, Card, Checklist, ChecklistItem
@@ -43,9 +45,77 @@ def home_page_Table(request):
     return render(request, "boards/TrangChu-Bang.html")
 
 
-# Render trang giới thiệu bản thân
+@login_required(login_url='/login/')
 def about_me(request):
-    return render(request, "accounts/SitePersonal.html")
+    user = request.user
+    
+    try:
+        profile = UserProfile.objects.get(user_id=user)
+    except UserProfile.DoesNotExist:
+        # Nếu chưa có thì tạo mới ngay lập tức
+        new_id = uuid.uuid4().hex[:10]
+        profile = UserProfile.objects.create(
+            id=new_id, 
+            user_id=user,
+            role='Member', 
+            experience_level='Junior'
+        )
+
+    if request.method == "POST":
+        print("--- DEBUG: Đang xử lý lưu profile tại hàm about_me ---")
+        
+        # 1. Lấy dữ liệu từ form
+        username = request.POST.get('username')
+        bio = request.POST.get('bio')
+        experience = request.POST.get('experience')
+        skills_text = request.POST.get('skills')
+
+        try:
+            # 2. Lưu User (Tên đăng nhập/Email)
+            if username and username != user.username:
+                user.username = username
+                user.save()
+
+            # 3. Lưu Profile (Bio, Kinh nghiệm)
+            profile.bio = bio
+            profile.experience_level = experience
+            profile.save()
+
+            # 4. Lưu Kỹ năng (Tách chuỗi -> Lưu vào DB)
+            if skills_text is not None: # Chỉ xử lý khi có input gửi lên
+                profile.skill.clear() # Xóa skill cũ để cập nhật mới
+                
+                # Tách chuỗi "Python, HTML" thành danh sách ['Python', 'HTML']
+                skill_list = [s.strip() for s in skills_text.split(',') if s.strip()]
+                
+                for s_name in skill_list:
+                    # Kiểm tra skill đã tồn tại trong kho chưa
+                    skill_obj = Skill.objects.filter(name__iexact=s_name).first()
+                    if not skill_obj:
+                        # Chưa có thì tạo mới skill trong kho
+                        skill_id = uuid.uuid4().hex[:10]
+                        skill_obj = Skill.objects.create(id=skill_id, name=s_name)
+                    
+                    # Gán skill vào profile người dùng
+                    profile.skill.add(skill_obj)
+
+            messages.success(request, "Đã lưu thay đổi thành công!")
+            
+        except Exception as e:
+            print("Lỗi lưu DB:", e)
+            messages.error(request, f"Lỗi: {str(e)}")
+            
+        # Load lại chính trang này để thấy dữ liệu mới
+        return redirect('about_me') 
+    
+    # Chuyển danh sách skill thành chuỗi để hiện ra form (VD: "Python, HTML")
+    current_skills = ", ".join([s.name for s in profile.skill.all()])
+
+    context = {
+        'profile': profile,
+        'current_skills': current_skills
+    }
+    return render(request, "accounts/SitePersonal.html", context)
 
 
 # ============================================================================
