@@ -10,12 +10,11 @@ from datetime import datetime
 import json
 from accounts.models import UserProfile, Skill
 import uuid
-
-# Import Models
 from .models import Board, BoardMember, List, Card, Checklist, ChecklistItem
+import numpy as np
+from sentence_transformers import SentenceTransformer, util #thư viện để so sánh ngữ nghĩa câu
 
 User = get_user_model()
-
 
 # ============================================================================
 # PHẦN 1: CÁC VIEW RENDER TEMPLATE (TRANG TĨNH HOẶC ÍT LOGIC)
@@ -239,8 +238,7 @@ def join_via_link(request, token):
     return redirect('board_detail', board_id=board.id)
 
 
-# 7. (LƯU Ý) Hàm lưu toàn bộ bảng - CÓ THỂ GÂY MẤT DỮ LIỆU CŨ
-# Khuyến khích dùng create_list_api và create_card_api thay thế
+# 7. Hàm lưu toàn bộ bảng 
 def save_board_db(request, board_id):
     if request.method != "POST":
         return JsonResponse({"error": "Invalid method"}, status=405)
@@ -249,7 +247,7 @@ def save_board_db(request, board_id):
     lists_data = data.get("lists", [])
     board = Board.objects.get(id=board_id)
 
-    # XÓA toàn bộ list cũ và tạo lại (Cẩn thận khi dùng)
+    # XÓA toàn bộ list cũ và tạo lại
     List.objects.filter(board=board).delete()
 
     for list_index, l in enumerate(lists_data):
@@ -793,6 +791,89 @@ def move_card_api(request):
             # của các thẻ khác trong list đó, nhưng tạm thời cập nhật mình thẻ này là đủ dùng)
 
             return JsonResponse({'status': 'success', 'message': 'Đã di chuyển thẻ'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+
+@csrf_exempt
+def ai_auto_assign_member(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            card_id = data.get('card_id')
+            card = get_object_or_404(Card, id=card_id)
+
+            # A. Lấy danh sách thành viên trong bảng
+            board = card.list.board 
+            members = BoardMember.objects.filter(project=board)
+            
+            user_docs = []      # Chứa văn bản mô tả năng lực (để biến thành vector)
+            user_names = []     # Chứa username
+            valid_users = []    # Chứa object User thực tế
+
+            # B. Quét Profile của từng thành viên
+            for mem in members:
+                try:
+                    # Lấy profile dựa trên user_id
+                    profile = UserProfile.objects.get(user_id=mem.user)
+                    
+                    # Gom kỹ năng từ ManyToMany thành chuỗi
+                    skills_list = [s.name for s in profile.skill.all()]
+                    skills_str = ", ".join(skills_list)
+                    
+                    # Tạo đoạn văn mô tả năng lực nhân viên
+                    # Ví dụ: "Backend Developer Senior Python Django SQL. Thích làm server."
+                    doc_text = f"{profile.role} {profile.experience_level} {skills_str}. {profile.bio}"
+                    
+                    user_docs.append(doc_text)
+                    user_names.append(mem.user.username)
+                    valid_users.append(mem.user)
+                    
+                except UserProfile.DoesNotExist:
+                    continue # Bỏ qua người chưa cập nhật profile
+
+            if not user_docs:
+                return JsonResponse({
+                    'status': 'error', 
+                    'message': 'Chưa thành viên nào trong bảng này cập nhật Profile. Hãy vào mục "Hồ sơ cá nhân" để nhập liệu.'
+                })
+
+            # C. Chuẩn bị dữ liệu công việc (Task)
+            task_text = f"{card.title}. {card.description if card.description else ''}"
+            
+            # D. SO SÁNH NGỮ NGHĨA (SEMANTIC SEARCH)
+            # Biến đổi text thành vector số học
+            task_embedding = semantic_model.encode(task_text, convert_to_tensor=True)
+            user_embeddings = semantic_model.encode(user_docs, convert_to_tensor=True)
+
+            # Tính điểm tương đồng (Cosine Similarity)
+            cosine_scores = util.cos_sim(task_embedding, user_embeddings)[0]
+
+            # Tìm người có điểm cao nhất
+            best_score_index = int(np.argmax(cosine_scores.cpu().numpy()))
+            best_score = float(cosine_scores[best_score_index])
+            best_username = user_names[best_score_index]
+            match_percentage = round(best_score * 100, 1)
+
+            # E. Ra quyết định
+            # Ngưỡng 0.25 là mức chấp nhận được cho sự liên quan ngữ nghĩa
+            if best_score > 0.25: 
+                selected_user = valid_users[best_score_index]
+                
+                # Gán người này vào thẻ (nếu chưa có)
+                if not card.members.filter(id=selected_user.id).exists():
+                    card.members.add(selected_user)
+                
+                reason = f"Độ phù hợp: {match_percentage}% (Dựa trên kỹ năng & kinh nghiệm)"
+                return JsonResponse({'status': 'success', 'username': best_username, 'reason': reason})
+            else:
+                return JsonResponse({
+                    'status': 'error', 
+                    'message': f'Không tìm thấy ai phù hợp (Người cao nhất chỉ đạt {match_percentage}%)'
+                })
+
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
 
