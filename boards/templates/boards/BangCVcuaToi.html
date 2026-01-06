@@ -2288,6 +2288,9 @@
                         <button onclick="openChecklistCreateModal(event)">CẦN LÀM</button>
 
                         <button onclick="addmember(this)">THÀNH VIÊN</button>
+                        <button onclick="callAutoAssignAI(event)" style="background: linear-gradient(135deg, #6b2f86, #a64f86); border: none; color: white; margin-top: 10px; width: 100%; padding: 8px; border-radius: 3px; cursor: pointer;">
+                            ✨ AI Phân công việc
+                        </button>
                     </div>
 
                     <div style="display: flex; gap: 20px; margin-top: 15px; flex-wrap: wrap;">
@@ -3674,5 +3677,61 @@
             });
         });
     }
+
+  // Xử lý việc phân công công việc tự động
+function callAutoAssignAI(e) {
+    // 1. SỬA LỖI: Kiểm tra biến currentActiveCard thay vì tìm ID ảo
+    if (!currentActiveCard) {
+        alert("Không tìm thấy thẻ đang chọn! Hãy thử tải lại trang.");
+        return;
+    }
+
+    // 2. Lấy ID từ thẻ đang active
+    const cardId = currentActiveCard.getAttribute('data-id'); 
+    
+    if (!cardId) {
+        alert("Lỗi dữ liệu thẻ (thiếu ID).");
+        return;
+    }
+
+    const btn = e.target;
+    const originalText = btn.innerText;
+    
+    // 3. Hiệu ứng loading
+    btn.innerText = "⏳ AI đang suy nghĩ...";
+    btn.disabled = true;
+    btn.style.opacity = "0.7";
+
+    fetch('/boards/api/ai/auto-assign/', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            // 4. Bổ sung CSRF Token để tránh lỗi 403 Forbidden (quan trọng)
+            'X-CSRFToken': '{{ csrf_token }}' 
+        },
+        body: JSON.stringify({ card_id: cardId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        // Trả lại trạng thái nút
+        btn.innerText = originalText;
+        btn.disabled = false;
+        btn.style.opacity = "1";
+
+        if (data.status === 'success') {
+            alert(`✅ Đã chọn: ${data.username}\n📊 ${data.reason}`);
+            window.location.reload(); // Load lại trang để thấy avatar người mới
+        } else {
+            alert("⚠️ " + data.message);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        btn.innerText = originalText;
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        alert("Lỗi kết nối server hoặc lỗi mạng!");
+    });
+}
 </script>
 </html>
