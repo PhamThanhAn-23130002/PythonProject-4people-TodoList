@@ -1909,7 +1909,18 @@
             margin-top: 12px;
         }
 
-
+        .formtimkiem{
+    display:flex;
+    border:auto;
+    align-items: center;
+    justify-content: center;
+}
+#buttontimkiem{
+    margin-left:5px;
+    width:90px;
+    height:35px;
+    padding:0px;
+}
     </style>
 
 
@@ -1921,7 +1932,21 @@
         <a class="logo" onclick="window.location.href='{% url 'home_page' %}'">L</a>
         <span>List</span>
     </div>
-    <div class="search"><input placeholder="Tìm kiếm" aria-label="Tìm kiếm"></div>
+        </div>
+        <div class="search" name="search" placeholder="Tìm kiếm" aria-label="Tìm kiếm"> 
+        <form method="post" action="{% url 'find_board'%}"class="formtimkiem">
+        {% csrf_token %}
+        <input 
+            type="text" 
+            id="search-input" 
+            name="search" 
+            placeholder="Tìm kiếm bảng..." 
+            autocomplete="off" 
+            value="{{ search_term }}">
+        <button id="buttontimkiem" class="btn" type"submit">Tìm Kiếm</button>
+        </form>
+          
+    </div>
     <div class="top-actions">
         <div class="noti-wrap">
             <button class="icon-btn" id="notiBtn" title="Thông báo">🔔</button>

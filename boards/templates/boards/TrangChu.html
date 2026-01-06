@@ -108,8 +108,8 @@
         }
 
         .icon-btn {
-            width: 32px;
-            height: 32px;
+            width: 3px;
+            height: 3px;
             border-radius: 50%;
             border: 1px solid var(--stroke);
             background: transparent;
@@ -597,6 +597,12 @@
     align-items: center;
     justify-content: center;
 }
+#buttontimkiem{
+    margin-left:5px;
+    width:90px;
+    height:35px;
+    padding:0px;
+}
 
     </style>
 </head>
@@ -623,7 +629,7 @@
             placeholder="Tìm kiếm bảng..." 
             autocomplete="off" 
             value="{{ search_term }}">
-        <button class="btn" type"submit">Tìm Kếm </button>
+        <button id="buttontimkiem" class="btn" type"submit">Tìm Kiếm</button>
         </form>
           
     </div>
