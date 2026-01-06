@@ -9,6 +9,9 @@ from django.urls import reverse
 from accounts.models import EmailOTP, User
 from todo import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from accounts.models import UserProfile, Skill # Import đúng model của bạn
+import uuid
 
 
 # def sign_in(request):
@@ -391,3 +394,4 @@ def change_pass(request):
         'message': message,
         'is_success': is_success
     })
+    
