@@ -12,8 +12,8 @@ from accounts.models import UserProfile, Skill
 import uuid
 from .models import Board, BoardMember, List, Card, Checklist, ChecklistItem
 import numpy as np
-from sentence_transformers import SentenceTransformer, util  # thư viện để so sánh ngữ nghĩa câu
-from boards.utils import calculate_priority_score
+from sentence_transformers import SentenceTransformer, util #thư viện để so sánh ngữ nghĩa câu
+from boards.utils import user_has_task_in_other_boards
 
 # chuyên dùng để so sánh độ tương đồng ngữ nghĩa
 print("Đang tải model AI... vui lòng đợi trong giây lát...")
@@ -21,6 +21,14 @@ semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
 print("Model AI đã sẵn sàng!")
 
 User = get_user_model()
+
+
+
+# --- 2. LOAD MODEL AI (Chỉ load 1 lần khi server chạy, ko đưa dô hàm nếu ko bị treo) ---
+# chuyên dùng để so sánh độ tương đồng ngữ nghĩa
+print("Đang tải model AI... vui lòng đợi trong giây lát...")
+semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
+print("Model AI đã sẵn sàng!")
 
 
 # ============================================================================
@@ -88,8 +96,8 @@ def about_me(request):
             profile.save()
 
             # 4. Lưu Kỹ năng (Tách chuỗi -> Lưu vào DB)
-            if skills_text is not None:  # Chỉ xử lý khi có input gửi lên
-                profile.skill.clear()  # Xóa skill cũ để cập nhật mới
+            if skills_text is not None: # Chỉ xử lý khi có input gửi lên
+                profile.skill.clear() # Xóa skill cũ để cập nhật mới
 
                 # Tách chuỗi "Python, HTML" thành danh sách ['Python', 'HTML']
                 skill_list = [s.strip() for s in skills_text.split(',') if s.strip()]
@@ -169,7 +177,7 @@ def create_board_logic(request):
             BoardMember.objects.create(
                 project=new_board,
                 user=request.user,
-                role='admin'
+                role='Quản trị viên'
             )
             return redirect('home_page')
 
@@ -205,7 +213,7 @@ def add_member(request, board_id):
             if BoardMember.objects.filter(project=board, user=user_to_add).exists():
                 messages.warning(request, f'Thành viên {email} đã có trong bảng này!')
             else:
-                BoardMember.objects.create(project=board, user=user_to_add, role='member')
+                BoardMember.objects.create(project=board, user=user_to_add, role='Thành viên')
                 messages.success(request, f'Đã thêm {email} vào bảng thành công!')
 
         except User.DoesNotExist:
@@ -357,7 +365,6 @@ def delete_checklist(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
-
 '''def findBoard(request):
     boards  = Board.objects.all()
     search_input =""
@@ -369,13 +376,11 @@ def delete_checklist(request):
                 board_id = boards.first().id
                 return redirect('board_detail', pk=board_id)
     return render(request,"BangCVcuaToi.html")'''
-
-
 def findBoard2(request):
     # Mặc định lấy tất cả
-    boards = Board.objects.all()
-    search_input = ""
-    if request.method == "POST":
+     boards = Board.objects.all()
+     search_input = ""
+     if request.method == "POST":
         search_input = request.POST.get("search", "")
 
         if search_input:
@@ -387,18 +392,16 @@ def findBoard2(request):
             # Trường hợp 1: Tìm thấy đúng 1 bảng duy nhất -> Chuyển ngay sang trang chi tiết
             if results.count() == 1:
                 board_id = results.first().id
-                return redirect('board_detail', pk=board_id)  # Chuyển trang là ở đây
+                return redirect('board_detail', pk=board_id) # Chuyển trang là ở đây
 
             # Trường hợp 2: Tìm thấy nhiều bảng hoặc không thấy -> Hiện danh sách lọc
             boards = results
 
     # Render lại trang hiện tại với danh sách kết quả
-    return render(request, "BangCVcuaToi.html", {
+     return render(request, "BangCVcuaToi.html", {
         "boards": boards,
         "search_term": search_input
-    })
-
-
+     })
 def findBoard(request):
     boards = Board.objects.all()
     search_input = ""
@@ -413,8 +416,6 @@ def findBoard(request):
             boards = results
 
     return render(request, "TrangChu.html")
-
-
 def search_suggest(request):
     query = request.GET.get('term', '')
     results = []
@@ -433,8 +434,6 @@ def search_suggest(request):
 
     # Trả về JSON (safe=False cho phép trả về list)
     return JsonResponse(results, safe=False)
-
-
 @login_required
 def get_card_checklists(request, card_id):
     card = get_object_or_404(Card, id=card_id)
@@ -466,126 +465,7 @@ def delete_checklist_item(request):
     item.delete()
     return JsonResponse({"status": "ok"})
 
-
-# ============================================================================
-# PHẦN 4: CÁC HÀM XỬ LÝ CARD CŨ/PHỤ (Legacy)
-# ============================================================================
-
-# Tạo deadline (Hàm cũ, có thể không còn dùng)
-def createdealine(request):
-    if request.method == "POST":
-        d1 = request.POST.get("title")
-        d2 = request.POST.get("description")
-        d3 = request.POST.get("priority")
-        d4 = request.POST.get("process")
-        d5 = request.POST.get("complexity")
-        d6 = request.POST.get("inputdate")
-        d7 = request.POST.get("inputtime")
-        dt = datetime.strptime(f"{d6} {d7}", "%Y-%m-%d %H:%M")
-        Card.objects.create(
-            title=d1, description=d2, priority=d3,
-            status=d4, difficulty=d5, deadline=dt
-        )
-        return redirect("boards/BangCVcuaToi.html")
-
-
-# Load deadline (Hàm cũ)
-def loaddealine(request, id):
-    card = Card.objects.get(id=id)  # Đã sửa cú pháp id==id thành id=id
-    dealine = card.deadline
-    if timezone.is_aware(dealine):
-        dealine = timezone.localtime(dealine)
-    context = {
-        "deadline_date": dealine.date(),
-        "deadline_time": dealine.time().strftime("%H:%M"),
-    }
-    return render(request, "CardDetail.html", context)
-
-
-# Chi tiết task (Hàm cũ)
-def detail_task(request, id):
-    task = Card.objects.get(id=id)
-    return render(request, "detail.html", {"task": task})
-
-
-# ============================================================================
-# PHẦN 5: API QUẢN LÝ THÀNH VIÊN TRONG THẺ (MEMBER)
-# ============================================================================
-
-# API: Gán thành viên (Phiên bản cũ)
-def assign_member_to_card(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            card_id = data.get('card_id')
-            username = data.get('username')
-            action = data.get('action')
-
-            card = Card.objects.get(id=card_id)
-            user = User.objects.get(username=username)
-
-            if action == 'add':
-                card.members.add(user)
-            elif action == 'remove':
-                card.members.remove(user)
-
-            return JsonResponse({'status': 'ok'})
-        except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)})
-    return JsonResponse({'status': 'error', 'message': 'Invalid method'})
-
-
-# API: Cập nhật thành viên (Phiên bản khác)
-@csrf_exempt
-def update_card_member(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            card_id = data.get('card_id')
-            username = data.get('username')
-            action = data.get('action')
-
-            card = get_object_or_404(Card, id=card_id)
-            user = get_object_or_404(User, username=username)
-
-            if action == 'add':
-                card.members.add(user)
-                message = f"Đã thêm {username} vào thẻ."
-            elif action == 'remove':
-                card.members.remove(user)
-                message = f"Đã xóa {username} khỏi thẻ."
-
-            return JsonResponse({'status': 'ok', 'message': message})
-        except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
-
-
-# API: Quản lý thành viên (Phiên bản mới nhất - Nên dùng cái này)
-# def manage_card_member(request):
-#     if request.method == "POST":
-#         try:
-#             data = json.loads(request.body)
-#             card_id = data.get('card_id')
-#             username = data.get('username')
-#             action = data.get('action')
-#
-#             card = get_object_or_404(Card, id=card_id)
-#             user = get_object_or_404(User, username=username)
-#
-#             if action == 'add':
-#                 card.members.add(user)
-#                 message = f"Đã thêm {username} vào thẻ"
-#             elif action == 'remove':
-#                 card.members.remove(user)
-#                 message = f"Đã xóa {username} khỏi thẻ"
-#             else:
-#                 return JsonResponse({'status': 'error', 'message': 'Action không hợp lệ'})
-#
-#             return JsonResponse({'status': 'success', 'message': message})
-#         except Exception as e:
-#             return JsonResponse({'status': 'error', 'message': str(e)})
-#     return JsonResponse({'status': 'error', 'message': 'Invalid method'})
+# API: Quản lý thành viên 
 def manage_card_member(request):
     if request.method == "POST":
         try:
@@ -598,16 +478,13 @@ def manage_card_member(request):
             user = get_object_or_404(User, username=username)
 
             if action == 'add':
-                board = card.list.board
+                board = card.list.board  # 🔥 BOARD HIỆN TẠI
 
-                priority_score = calculate_priority_score(user, board)
-                PRIORITY_THRESHOLD = 30 #điểm chốt để không cho người đó tham gia dự án khác nếu nhỏ hơn cái này
-
-                if priority_score < PRIORITY_THRESHOLD:
+                # 🔥 CHECK USER CÓ TASK Ở BOARD KHÁC KHÔNG
+                if user_has_task_in_other_boards(user, board):
                     return JsonResponse({
                         'status': 'warning',
-                        'message': f'{username} đang quá tải (điểm ưu tiên: {priority_score})',
-                        'priority_score': priority_score
+                        'message': f'{username} đang được phân công task ở dự án khác'
                     })
 
                 card.members.add(user)
@@ -637,27 +514,6 @@ def manage_card_member(request):
     return JsonResponse({
         'status': 'error',
         'message': 'Invalid method'
-    })
-
-# tính toán và trả về mức độ ưu tiên công việc (priority score) của một người dùng đối với card đang được xem.
-def get_user_priority(request):
-    card_id = request.GET.get("card_id")
-    username = request.GET.get("username")
-
-    if not card_id or not username:
-        return JsonResponse(
-            {"error": "Missing card_id or username"},
-            status=400
-        )
-
-    card = get_object_or_404(Card, id=card_id)
-    user = get_object_or_404(User, username=username)
-
-    board = card.list.board
-    priority_score = calculate_priority_score(user, board)
-
-    return JsonResponse({
-        "priority_score": priority_score
     })
 
 
@@ -707,8 +563,7 @@ def update_card_title(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 
-# API: Xóa Thẻ (An toàn)
-@csrf_exempt
+# API: Xóa Thẻ
 def delete_card_api(request, card_id):
     if request.method == "POST":
         try:
@@ -721,10 +576,10 @@ def delete_card_api(request, card_id):
 
 
 # ============================================================================
-# PHẦN 7: API TẠO/XÓA DANH SÁCH & THẺ (AN TOÀN - KHÔNG MẤT DỮ LIỆU)
+# PHẦN 7: API TẠO/XÓA DANH SÁCH & THẺ
 # ============================================================================
 
-# 1. API Tạo Danh Sách Mới (An toàn)
+# 1. API Tạo Danh Sách Mới 
 @csrf_exempt
 def create_list_api(request):
     if request.method == "POST":
@@ -770,7 +625,7 @@ def create_card_api(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 
-# 3. API Xóa Danh Sách (An toàn)
+# 3. API Xóa Danh Sách
 @csrf_exempt
 def delete_list_api(request, list_id):
     if request.method == "POST":
@@ -817,11 +672,6 @@ def toggle_card_completed_api(request, card_id):
         try:
             card = get_object_or_404(Card, id=card_id)
             # Đảo ngược trạng thái (True -> False, False -> True)
-            # Lưu ý: Bạn cần chắc chắn trong models.py, model Card đã có trường is_completed
-            # Nếu chưa có, bạn cần thêm: is_completed = models.BooleanField(default=False) và makemigrations
-
-            # Nếu chưa có trường is_completed trong model, hãy tạm dùng 1 trường khác hoặc thêm vào model nhé.
-            # Giả sử bạn đã thêm trường is_completed vào Model Card:
             card.is_completed = not card.is_completed
             card.save()
 
@@ -898,9 +748,10 @@ def ai_auto_assign_member(request):
             board = card.list.board
             members = BoardMember.objects.filter(project=board)
 
-            user_docs = []  # Chứa văn bản mô tả năng lực (để biến thành vector)
-            user_names = []  # Chứa username
-            valid_users = []  # Chứa object User thực tế
+
+            user_docs = []      # Chứa văn bản mô tả năng lực (để biến thành vector)
+            user_names = []     # Chứa username
+            valid_users = []    # Chứa object User thực tế
 
             # B. Quét Profile của từng thành viên
             for mem in members:
@@ -912,8 +763,10 @@ def ai_auto_assign_member(request):
                     skills_list = [s.name for s in profile.skill.all()]
                     skills_str = ", ".join(skills_list)
 
+
                     # Tạo đoạn văn mô tả năng lực nhân viên
                     # Ví dụ: "Backend Developer Senior Python Django SQL. Thích làm server."
+
                     doc_text = f"{profile.role} {profile.experience_level} {skills_str}. {profile.bio}"
 
                     user_docs.append(doc_text)
@@ -921,7 +774,7 @@ def ai_auto_assign_member(request):
                     valid_users.append(mem.user)
 
                 except UserProfile.DoesNotExist:
-                    continue  # Bỏ qua người chưa cập nhật profile
+                    continue # Bỏ qua người chưa cập nhật profile
 
             if not user_docs:
                 return JsonResponse({
