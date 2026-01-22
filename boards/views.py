@@ -12,7 +12,7 @@ from accounts.models import UserProfile, Skill
 import uuid
 from .models import Board, BoardMember, List, Card, Checklist, ChecklistItem
 import numpy as np
-from sentence_transformers import SentenceTransformer, util #thư viện để so sánh ngữ nghĩa câu
+from sentence_transformers import SentenceTransformer, util
 from boards.utils import user_has_task_in_other_boards
 
 # chuyên dùng để so sánh độ tương đồng ngữ nghĩa
