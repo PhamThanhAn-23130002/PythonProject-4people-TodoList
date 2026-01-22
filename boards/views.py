@@ -13,7 +13,7 @@ import uuid
 from .models import Board, BoardMember, List, Card, Checklist, ChecklistItem
 import numpy as np
 from sentence_transformers import SentenceTransformer, util #thư viện để so sánh ngữ nghĩa câu
-from boards.utils import user_has_task_in_other_boards
+from boards.utils import calculate_priority_score
 
 # chuyên dùng để so sánh độ tương đồng ngữ nghĩa
 print("Đang tải model AI... vui lòng đợi trong giây lát...")
@@ -478,13 +478,16 @@ def manage_card_member(request):
             user = get_object_or_404(User, username=username)
 
             if action == 'add':
-                board = card.list.board  # 🔥 BOARD HIỆN TẠI
+                board = card.list.board
 
-                # 🔥 CHECK USER CÓ TASK Ở BOARD KHÁC KHÔNG
-                if user_has_task_in_other_boards(user, board):
+                priority_score = calculate_priority_score(user, board)
+                PRIORITY_THRESHOLD = 30 #điểm chốt để không cho người đó tham gia dự án khác nếu nhỏ hơn cái này
+
+                if priority_score < PRIORITY_THRESHOLD:
                     return JsonResponse({
                         'status': 'warning',
-                        'message': f'{username} đang được phân công task ở dự án khác'
+                        'message': f'{username} đang quá tải (điểm ưu tiên: {priority_score})',
+                        'priority_score': priority_score
                     })
 
                 card.members.add(user)
@@ -514,6 +517,27 @@ def manage_card_member(request):
     return JsonResponse({
         'status': 'error',
         'message': 'Invalid method'
+    })
+
+# tính toán và trả về mức độ ưu tiên công việc (priority score) của một người dùng đối với card đang được xem.
+def get_user_priority(request):
+    card_id = request.GET.get("card_id")
+    username = request.GET.get("username")
+
+    if not card_id or not username:
+        return JsonResponse(
+            {"error": "Missing card_id or username"},
+            status=400
+        )
+
+    card = get_object_or_404(Card, id=card_id)
+    user = get_object_or_404(User, username=username)
+
+    board = card.list.board
+    priority_score = calculate_priority_score(user, board)
+
+    return JsonResponse({
+        "priority_score": priority_score
     })
 
 
