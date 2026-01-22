@@ -13,7 +13,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from accounts.models import UserProfile, Skill # Import đúng model của bạn
 import uuid
-
+from django.db.models import Count
 
 # def sign_in(request):
 #     return render(request, 'accounts/login.html')
@@ -414,4 +414,3 @@ def change_pass(request):
         'message': message,
         'is_success': is_success
     })
-    
