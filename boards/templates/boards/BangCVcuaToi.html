@@ -3106,35 +3106,6 @@
         }
     }
 
-    {#function assignMemberToCard(username, fullname) {#}
-    {#    if (!currentActiveCard) return;#}
-    {#    let currentData = currentActiveCard.getAttribute('data-members') || "";#}
-    {#    let memberList = currentData ? currentData.split(',') : [];#}
-    {##}
-    {#    if (memberList.some(item => item.split('|')[0] === username)) {#}
-    {#        alert("Thành viên này đã có trong thẻ!");#}
-    {#        return;#}
-    {#    }#}
-    {##}
-    {#    memberList.push(`${username}|${fullname}`);#}
-    {#    currentActiveCard.setAttribute('data-members', memberList.join(','));#}
-    {#    const lbl = document.getElementById('membersLabel');#}
-    {#    if (lbl) lbl.style.display = 'block';#}
-    {##}
-    {#    addMemberToView(username, fullname);#}
-    {#    safeHide("member");#}
-    {##}
-    {#    const cardId = currentActiveCard.getAttribute('data-id');#}
-    {#    if (cardId) {#}
-    {#        fetch('/boards/api/card/member/', {#}
-    {#            method: 'POST',#}
-    {#            headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},#}
-    {#            body: JSON.stringify({card_id: cardId, username: username, action: 'add'})#}
-    {#        }).then(res => res.json()).then(data => {#}
-    {#            if (data.status === 'success' || data.status === 'ok') console.log("Member added");#}
-    {#            else alert("Lỗi: " + data.message);#}
-    {#        });#}
-    {#    }#}
 
 
     function assignMemberToCard(username, fullname) {
@@ -3783,9 +3754,26 @@ function callAutoAssignAI(e) {
     });
 }
 
-
-
-
+//Tự động ẩn thông báo đi
+document.addEventListener("DOMContentLoaded", function() {
+        // Tìm tất cả các thông báo (class .alert)
+        const alerts = document.querySelectorAll('.alert');
+        
+        if (alerts.length > 0) {
+            setTimeout(function() {
+                alerts.forEach(function(alert) {
+                    // Hiệu ứng mờ dần
+                    alert.style.transition = "opacity 0.5s ease";
+                    alert.style.opacity = "0";
+                    
+                    // Sau khi mờ thì xóa khỏi DOM luôn
+                    setTimeout(function() {
+                        alert.remove();
+                    }, 500); 
+                });
+            }, 4000); // 4000ms = 4 giây
+        }
+    });
 
 </script>
 </html>
