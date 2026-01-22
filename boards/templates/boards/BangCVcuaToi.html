@@ -1650,7 +1650,7 @@
             font-weight: bold;
         }
 
-        /* Hiệu ứng khi đang kéo thả */ 
+        /* Hiệu ứng khi đang kéo thả */
         .sortable-ghost {
             background-color: rgba(255, 255, 255, 0.1) !important;
             border: 2px dashed #444;
@@ -1909,6 +1909,38 @@
             margin-top: 12px;
         }
 
+        .formtimkiem {
+            display: flex;
+            border: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #buttontimkiem {
+            margin-left: 5px;
+            width: 90px;
+            height: 35px;
+            padding: 0px;
+        }
+
+        .priority-badge {
+            margin-left: auto;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .priority-badge.high {
+            color: #22c55e;
+        }
+
+        .priority-badge.medium {
+            color: #f59e0b;
+        }
+
+        .priority-badge.low {
+            color: #ef4444;
+        }
+
         .formtimkiem{
     display:flex;
     border:auto;
@@ -1985,20 +2017,21 @@
         <a class="logo" onclick="window.location.href='{% url 'home_page' %}'">L</a>
         <span>List</span>
     </div>
-        </div>
-        <div class="search" name="search" placeholder="Tìm kiếm" aria-label="Tìm kiếm"> 
-        <form method="post" action="{% url 'find_board'%}"class="formtimkiem">
-        {% csrf_token %}
-        <input 
-            type="text" 
-            id="search-input" 
-            name="search" 
-            placeholder="Tìm kiếm bảng..." 
-            autocomplete="off" 
-            value="{{ search_term }}">
-        <button id="buttontimkiem" class="btn" type"submit">Tìm Kiếm</button>
+    </div>
+    <div class="search" name="search" placeholder="Tìm kiếm" aria-label="Tìm kiếm">
+        <form method="post" action="{% url 'find_board' %}" class="formtimkiem">
+            {% csrf_token %}
+            <input
+                    type="text"
+                    id="search-input"
+                    name="search"
+                    placeholder="Tìm kiếm bảng..."
+                    autocomplete="off"
+                    value="{{ search_term }}">
+            <button id="buttontimkiem" class="btn" type
+            "submit">Tìm Kiếm</button>
         </form>
-          
+
     </div>
     <div class="top-actions">
         <div class="noti-wrap">
@@ -2111,6 +2144,8 @@
                              data-completed="{{ c.is_completed|yesno:'true,false' }}"
                              data-overdue="{{ c.is_overdue|yesno:'true,false' }}"
                              data-members="{% for m in c.members.all %}{{ m.username }}|
+
+
 
 
 
@@ -2341,7 +2376,8 @@
                         <button onclick="openChecklistCreateModal(event)">CẦN LÀM</button>
 
                         <button onclick="addmember(this)">THÀNH VIÊN</button>
-                        <button onclick="callAutoAssignAI(event)" style="background: linear-gradient(135deg, #6b2f86, #a64f86); border: none; color: white; margin-top: 10px; width: 100%; padding: 8px; border-radius: 3px; cursor: pointer;">
+                        <button onclick="callAutoAssignAI(event)"
+                                style="background: linear-gradient(135deg, #6b2f86, #a64f86); border: none; color: white; margin-top: 10px; width: 100%; padding: 8px; border-radius: 3px; cursor: pointer;">
                             ✨ AI Phân công việc
                         </button>
                     </div>
@@ -2423,11 +2459,17 @@
                 {% with display_name=member.user.get_full_name|default:member.user.username %}
 
                     <div class="member-item"
-                         onclick="assignMemberToCard('{{ member.user.username }}', '{{ display_name }}')">
+                         onclick="assignMemberToCard('{{ member.user.username }}', '{{ display_name }}')"
+                         onmouseenter="showPriority('{{ member.user.username }}')">
                         <div class="member-avatar-small">
                             {{ display_name|slice:":1"|upper }}
                         </div>
                         <span>{{ display_name }}</span>
+
+                        <span class="priority-badge"
+                              id="priority-{{ member.user.username }}">
+                        </span>
+
                     </div>
 
                 {% endwith %}
@@ -3158,85 +3200,83 @@
         }
     }
 
-    {#function assignMemberToCard(username, fullname) {#}
-    {#    if (!currentActiveCard) return;#}
-    {#    let currentData = currentActiveCard.getAttribute('data-members') || "";#}
-    {#    let memberList = currentData ? currentData.split(',') : [];#}
-    {##}
-    {#    if (memberList.some(item => item.split('|')[0] === username)) {#}
-    {#        alert("Thành viên này đã có trong thẻ!");#}
-    {#        return;#}
-    {#    }#}
-    {##}
-    {#    memberList.push(`${username}|${fullname}`);#}
-    {#    currentActiveCard.setAttribute('data-members', memberList.join(','));#}
-    {#    const lbl = document.getElementById('membersLabel');#}
-    {#    if (lbl) lbl.style.display = 'block';#}
-    {##}
-    {#    addMemberToView(username, fullname);#}
-    {#    safeHide("member");#}
-    {##}
-    {#    const cardId = currentActiveCard.getAttribute('data-id');#}
-    {#    if (cardId) {#}
-    {#        fetch('/boards/api/card/member/', {#}
-    {#            method: 'POST',#}
-    {#            headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},#}
-    {#            body: JSON.stringify({card_id: cardId, username: username, action: 'add'})#}
-    {#        }).then(res => res.json()).then(data => {#}
-    {#            if (data.status === 'success' || data.status === 'ok') console.log("Member added");#}
-    {#            else alert("Lỗi: " + data.message);#}
-    {#        });#}
-    {#    }#}
 
-
+    //phân công một thành viên vào card đang được mở
     function assignMemberToCard(username, fullname) {
-    if (!currentActiveCard) return;
+        if (!currentActiveCard) return;
 
-    const cardId = currentActiveCard.getAttribute('data-id');
-    if (!cardId) return;
+        const cardId = currentActiveCard.getAttribute('data-id');
+        if (!cardId) return;
 
-    fetch('/boards/api/card/member/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRFToken()
-        },
-        body: JSON.stringify({
-            card_id: cardId,
-            username: username,
-            action: 'add'
+        fetch('/boards/api/card/member/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({
+                card_id: cardId,
+                username: username,
+                action: 'add'
+            })
         })
-    })
-    .then(res => res.json())
-    .then(data => {
+            .then(res => res.json())
+            .then(data => {
 
-        //  TRƯỜNG HỢP USER ĐANG BẬN Ở PROJECT KHÁC
-        if (data.status === 'warning') {
-            alert(data.message);
-            return;
-        }
+                //  TRƯỜNG HỢP USER ĐANG BẬN Ở PROJECT KHÁC
+                if (data.status === 'warning') {
+                    alert(data.message);
+                    return;
+                }
 
-        // LỖI BACKEND
-        if (data.status !== 'success' && data.status !== 'ok') {
-            alert("Lỗi: " + data.message);
-            return;
-        }
+                // LỖI BACKEND
+                if (data.status !== 'success' && data.status !== 'ok') {
+                    alert("Lỗi: " + data.message);
+                    return;
+                }
 
-        //  CHỈ UPDATE UI KHI BACKEND OK
-        let currentData = currentActiveCard.getAttribute('data-members') || "";
-        let memberList = currentData ? currentData.split(',') : [];
+                //  CHỈ UPDATE UI KHI BACKEND OK
+                let currentData = currentActiveCard.getAttribute('data-members') || "";
+                let memberList = currentData ? currentData.split(',') : [];
 
-        if (!memberList.some(item => item.split('|')[0] === username)) {
-            memberList.push(`${username}|${fullname}`);
-            currentActiveCard.setAttribute('data-members', memberList.join(','));
-        }
+                if (!memberList.some(item => item.split('|')[0] === username)) {
+                    memberList.push(`${username}|${fullname}`);
+                    currentActiveCard.setAttribute('data-members', memberList.join(','));
+                }
 
-        const lbl = document.getElementById('membersLabel');
-        if (lbl) lbl.style.display = 'block';
+                const lbl = document.getElementById('membersLabel');
+                if (lbl) lbl.style.display = 'block';
 
-        addMemberToView(username, fullname);
-        safeHide("member");
-    });}
+                addMemberToView(username, fullname);
+                safeHide("member");
+            });
+    }
+
+
+    //hiển thị mức độ ưu tiên (priority score) của một thành viên khi người dùng xem danh sách phân công
+    function showPriority(username) {
+        if (!currentActiveCard) return;
+
+        const cardId = currentActiveCard.getAttribute("data-id");
+
+        fetch(`/boards/api/user/priority/?card_id=${cardId}&username=${username}`)
+            .then(res => res.json())
+            .then(data => {
+                const badge = document.getElementById(`priority-${username}`);
+                if (!badge) return;
+
+                badge.innerText = `(${data.priority_score})`;
+
+                // tô màu
+                badge.className = "priority-badge " +
+                    (data.priority_score >= 70
+                        ? "high"
+                        : data.priority_score >= 40
+                            ? "medium"
+                            : "low");
+            });
+    }
+
 
     function removeMemberFromCard(username) {
         if (!currentActiveCard) return;
@@ -3779,65 +3819,82 @@
         });
     }
 
-  // Xử lý việc phân công công việc tự động
-function callAutoAssignAI(e) {
-    // 1. SỬA LỖI: Kiểm tra biến currentActiveCard thay vì tìm ID ảo
-    if (!currentActiveCard) {
-        alert("Không tìm thấy thẻ đang chọn! Hãy thử tải lại trang.");
-        return;
-    }
-
-    // 2. Lấy ID từ thẻ đang active
-    const cardId = currentActiveCard.getAttribute('data-id');
-
-    if (!cardId) {
-        alert("Lỗi dữ liệu thẻ (thiếu ID).");
-        return;
-    }
-
-    const btn = e.target;
-    const originalText = btn.innerText;
-
-    // 3. Hiệu ứng loading
-    btn.innerText = "⏳ AI đang suy nghĩ...";
-    btn.disabled = true;
-    btn.style.opacity = "0.7";
-
-    fetch('/boards/api/ai/auto-assign/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            // 4. Bổ sung CSRF Token để tránh lỗi 403 Forbidden (quan trọng)
-            'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: JSON.stringify({ card_id: cardId })
-    })
-    .then(res => res.json())
-    .then(data => {
-        // Trả lại trạng thái nút
-        btn.innerText = originalText;
-        btn.disabled = false;
-        btn.style.opacity = "1";
-
-        if (data.status === 'success') {
-            alert(`✅ Đã chọn: ${data.username}\n📊 ${data.reason}`);
-            window.location.reload(); // Load lại trang để thấy avatar người mới
-        } else {
-            alert("⚠️ " + data.message);
+    // Xử lý việc phân công công việc tự động
+    function callAutoAssignAI(e) {
+        // 1. SỬA LỖI: Kiểm tra biến currentActiveCard thay vì tìm ID ảo
+        if (!currentActiveCard) {
+            alert("Không tìm thấy thẻ đang chọn! Hãy thử tải lại trang.");
+            return;
         }
-    })
-    .catch(err => {
-        console.error(err);
-        btn.innerText = originalText;
-        btn.disabled = false;
-        btn.style.opacity = "1";
-        alert("Lỗi kết nối server hoặc lỗi mạng!");
+
+        // 2. Lấy ID từ thẻ đang active
+        const cardId = currentActiveCard.getAttribute('data-id');
+
+        if (!cardId) {
+            alert("Lỗi dữ liệu thẻ (thiếu ID).");
+            return;
+        }
+
+        const btn = e.target;
+        const originalText = btn.innerText;
+
+        // 3. Hiệu ứng loading
+        btn.innerText = "⏳ AI đang suy nghĩ...";
+        btn.disabled = true;
+        btn.style.opacity = "0.7";
+
+        fetch('/boards/api/ai/auto-assign/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // 4. Bổ sung CSRF Token để tránh lỗi 403 Forbidden (quan trọng)
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({card_id: cardId})
+        })
+            .then(res => res.json())
+            .then(data => {
+                // Trả lại trạng thái nút
+                btn.innerText = originalText;
+                btn.disabled = false;
+                btn.style.opacity = "1";
+
+                if (data.status === 'success') {
+                    alert(`✅ Đã chọn: ${data.username}\n📊 ${data.reason}`);
+                    window.location.reload(); // Load lại trang để thấy avatar người mới
+                } else {
+                    alert("⚠️ " + data.message);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                btn.innerText = originalText;
+                btn.disabled = false;
+                btn.style.opacity = "1";
+                alert("Lỗi kết nối server hoặc lỗi mạng!");
+            });
+    }
+
+    //Tự động ẩn thông báo đi
+    document.addEventListener("DOMContentLoaded", function () {
+        // Tìm tất cả các thông báo (class .alert)
+        const alerts = document.querySelectorAll('.alert');
+
+        if (alerts.length > 0) {
+            setTimeout(function () {
+                alerts.forEach(function (alert) {
+                    // Hiệu ứng mờ dần
+                    alert.style.transition = "opacity 0.5s ease";
+                    alert.style.opacity = "0";
+
+                    // Sau khi mờ thì xóa khỏi DOM luôn
+                    setTimeout(function () {
+                        alert.remove();
+                    }, 500);
+                });
+            }, 4000); // 4000ms = 4 giây
+        }
     });
-}
-
-
-
-
 
 </script>
 <script>
