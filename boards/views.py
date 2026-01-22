@@ -12,8 +12,8 @@ from accounts.models import UserProfile, Skill
 import uuid
 from .models import Board, BoardMember, List, Card, Checklist, ChecklistItem
 import numpy as np
-from sentence_transformers import SentenceTransformer, util #thư viện để so sánh ngữ nghĩa câu
-from boards.utils import user_has_task_in_other_boards
+from sentence_transformers import SentenceTransformer, util  # thư viện để so sánh ngữ nghĩa câu
+from boards.utils import calculate_priority_score
 
 # chuyên dùng để so sánh độ tương đồng ngữ nghĩa
 print("Đang tải model AI... vui lòng đợi trong giây lát...")
@@ -21,6 +21,7 @@ semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
 print("Model AI đã sẵn sàng!")
 
 User = get_user_model()
+
 
 # ============================================================================
 # PHẦN 1: CÁC VIEW RENDER TEMPLATE (TRANG TĨNH HOẶC ÍT LOGIC)
@@ -87,8 +88,8 @@ def about_me(request):
             profile.save()
 
             # 4. Lưu Kỹ năng (Tách chuỗi -> Lưu vào DB)
-            if skills_text is not None: # Chỉ xử lý khi có input gửi lên
-                profile.skill.clear() # Xóa skill cũ để cập nhật mới
+            if skills_text is not None:  # Chỉ xử lý khi có input gửi lên
+                profile.skill.clear()  # Xóa skill cũ để cập nhật mới
 
                 # Tách chuỗi "Python, HTML" thành danh sách ['Python', 'HTML']
                 skill_list = [s.strip() for s in skills_text.split(',') if s.strip()]
@@ -356,6 +357,7 @@ def delete_checklist(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
+
 '''def findBoard(request):
     boards  = Board.objects.all()
     search_input =""
@@ -367,11 +369,13 @@ def delete_checklist(request):
                 board_id = boards.first().id
                 return redirect('board_detail', pk=board_id)
     return render(request,"BangCVcuaToi.html")'''
+
+
 def findBoard2(request):
     # Mặc định lấy tất cả
-     boards = Board.objects.all()
-     search_input = ""
-     if request.method == "POST":
+    boards = Board.objects.all()
+    search_input = ""
+    if request.method == "POST":
         search_input = request.POST.get("search", "")
 
         if search_input:
@@ -383,16 +387,18 @@ def findBoard2(request):
             # Trường hợp 1: Tìm thấy đúng 1 bảng duy nhất -> Chuyển ngay sang trang chi tiết
             if results.count() == 1:
                 board_id = results.first().id
-                return redirect('board_detail', pk=board_id) # Chuyển trang là ở đây
+                return redirect('board_detail', pk=board_id)  # Chuyển trang là ở đây
 
             # Trường hợp 2: Tìm thấy nhiều bảng hoặc không thấy -> Hiện danh sách lọc
             boards = results
 
     # Render lại trang hiện tại với danh sách kết quả
-     return render(request, "BangCVcuaToi.html", {
+    return render(request, "BangCVcuaToi.html", {
         "boards": boards,
         "search_term": search_input
-     })
+    })
+
+
 def findBoard(request):
     boards = Board.objects.all()
     search_input = ""
@@ -407,6 +413,8 @@ def findBoard(request):
             boards = results
 
     return render(request, "TrangChu.html")
+
+
 def search_suggest(request):
     query = request.GET.get('term', '')
     results = []
@@ -425,6 +433,8 @@ def search_suggest(request):
 
     # Trả về JSON (safe=False cho phép trả về list)
     return JsonResponse(results, safe=False)
+
+
 @login_required
 def get_card_checklists(request, card_id):
     card = get_object_or_404(Card, id=card_id)
@@ -588,13 +598,16 @@ def manage_card_member(request):
             user = get_object_or_404(User, username=username)
 
             if action == 'add':
-                board = card.list.board  # 🔥 BOARD HIỆN TẠI
+                board = card.list.board
 
-                # 🔥 CHECK USER CÓ TASK Ở BOARD KHÁC KHÔNG
-                if user_has_task_in_other_boards(user, board):
+                priority_score = calculate_priority_score(user, board)
+                PRIORITY_THRESHOLD = 30 #điểm chốt để không cho người đó tham gia dự án khác nếu nhỏ hơn cái này
+
+                if priority_score < PRIORITY_THRESHOLD:
                     return JsonResponse({
                         'status': 'warning',
-                        'message': f'{username} đang được phân công task ở dự án khác'
+                        'message': f'{username} đang quá tải (điểm ưu tiên: {priority_score})',
+                        'priority_score': priority_score
                     })
 
                 card.members.add(user)
@@ -624,6 +637,27 @@ def manage_card_member(request):
     return JsonResponse({
         'status': 'error',
         'message': 'Invalid method'
+    })
+
+# tính toán và trả về mức độ ưu tiên công việc (priority score) của một người dùng đối với card đang được xem.
+def get_user_priority(request):
+    card_id = request.GET.get("card_id")
+    username = request.GET.get("username")
+
+    if not card_id or not username:
+        return JsonResponse(
+            {"error": "Missing card_id or username"},
+            status=400
+        )
+
+    card = get_object_or_404(Card, id=card_id)
+    user = get_object_or_404(User, username=username)
+
+    board = card.list.board
+    priority_score = calculate_priority_score(user, board)
+
+    return JsonResponse({
+        "priority_score": priority_score
     })
 
 
@@ -864,9 +898,9 @@ def ai_auto_assign_member(request):
             board = card.list.board
             members = BoardMember.objects.filter(project=board)
 
-            user_docs = []      # Chứa văn bản mô tả năng lực (để biến thành vector)
-            user_names = []     # Chứa username
-            valid_users = []    # Chứa object User thực tế
+            user_docs = []  # Chứa văn bản mô tả năng lực (để biến thành vector)
+            user_names = []  # Chứa username
+            valid_users = []  # Chứa object User thực tế
 
             # B. Quét Profile của từng thành viên
             for mem in members:
@@ -887,7 +921,7 @@ def ai_auto_assign_member(request):
                     valid_users.append(mem.user)
 
                 except UserProfile.DoesNotExist:
-                    continue # Bỏ qua người chưa cập nhật profile
+                    continue  # Bỏ qua người chưa cập nhật profile
 
             if not user_docs:
                 return JsonResponse({
