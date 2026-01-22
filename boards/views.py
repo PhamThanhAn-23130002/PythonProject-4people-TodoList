@@ -465,100 +465,7 @@ def delete_checklist_item(request):
     item.delete()
     return JsonResponse({"status": "ok"})
 
-
-# ============================================================================
-# PHẦN 4: CÁC HÀM XỬ LÝ CARD CŨ/PHỤ (Legacy)
-# ============================================================================
-
-# Tạo deadline
-# def createdealine(request):
-#     if request.method == "POST":
-#         d1 = request.POST.get("title")
-#         d2 = request.POST.get("description")
-#         d3 = request.POST.get("priority")
-#         d4 = request.POST.get("process")
-#         d5 = request.POST.get("complexity")
-#         d6 = request.POST.get("inputdate")
-#         d7 = request.POST.get("inputtime")
-#         dt = datetime.strptime(f"{d6} {d7}", "%Y-%m-%d %H:%M")
-#         Card.objects.create(
-#             title=d1, description=d2, priority=d3,
-#             status=d4, difficulty=d5, deadline=dt
-#         )
-#         return redirect("boards/BangCVcuaToi.html")
-
-
-# # Load deadline 
-# def loaddealine(request, id):
-#     card = Card.objects.get(id=id)  
-#     dealine = card.deadline
-#     if timezone.is_aware(dealine):
-#         dealine = timezone.localtime(dealine)
-#     context = {
-#         "deadline_date": dealine.date(),
-#         "deadline_time": dealine.time().strftime("%H:%M"),
-#     }
-#     return render(request, "CardDetail.html", context)
-
-
-# # Chi tiết task 
-# def detail_task(request, id):
-#     task = Card.objects.get(id=id)
-#     return render(request, "detail.html", {"task": task})
-
-
-# ============================================================================
-# PHẦN 5: API QUẢN LÝ THÀNH VIÊN TRONG THẺ (MEMBER)
-# ============================================================================
-
-# # API: Gán thành viên
-# def assign_member_to_card(request):
-#     if request.method == 'POST':
-#         try:
-#             data = json.loads(request.body)
-#             card_id = data.get('card_id')
-#             username = data.get('username')
-#             action = data.get('action')
-
-#             card = Card.objects.get(id=card_id)
-#             user = User.objects.get(username=username)
-
-#             if action == 'add':
-#                 card.members.add(user)
-#             elif action == 'remove':
-#                 card.members.remove(user)
-
-#             return JsonResponse({'status': 'ok'})
-#         except Exception as e:
-#             return JsonResponse({'status': 'error', 'message': str(e)})
-#     return JsonResponse({'status': 'error', 'message': 'Invalid method'})
-
-
-# # API: Cập nhật thành viên
-# @csrf_exempt
-# def update_card_member(request):
-#     if request.method == 'POST':
-#         try:
-#             data = json.loads(request.body)
-#             card_id = data.get('card_id')
-#             username = data.get('username')
-#             action = data.get('action')
-
-#             card = get_object_or_404(Card, id=card_id)
-#             user = get_object_or_404(User, username=username)
-
-#             if action == 'add':
-#                 card.members.add(user)
-#                 message = f"Đã thêm {username} vào thẻ."
-#             elif action == 'remove':
-#                 card.members.remove(user)
-#                 message = f"Đã xóa {username} khỏi thẻ."
-
-#             return JsonResponse({'status': 'ok', 'message': message})
-#         except Exception as e:
-#             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-#     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
-
+# API: Quản lý thành viên 
 def manage_card_member(request):
     if request.method == "POST":
         try:
@@ -841,6 +748,7 @@ def ai_auto_assign_member(request):
             board = card.list.board
             members = BoardMember.objects.filter(project=board)
 
+
             user_docs = []      # Chứa văn bản mô tả năng lực (để biến thành vector)
             user_names = []     # Chứa username
             valid_users = []    # Chứa object User thực tế
@@ -854,6 +762,7 @@ def ai_auto_assign_member(request):
                     # Gom kỹ năng từ ManyToMany thành chuỗi
                     skills_list = [s.name for s in profile.skill.all()]
                     skills_str = ", ".join(skills_list)
+
 
                     # Tạo đoạn văn mô tả năng lực nhân viên
                     # Ví dụ: "Backend Developer Senior Python Django SQL. Thích làm server."
