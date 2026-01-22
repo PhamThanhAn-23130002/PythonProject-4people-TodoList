@@ -12,10 +12,8 @@ from accounts.models import UserProfile, Skill
 import uuid
 from .models import Board, BoardMember, List, Card, Checklist, ChecklistItem
 import numpy as np
-from sentence_transformers import SentenceTransformer, util #thư viện để so sánh ngữ nghĩa câu
 from boards.utils import calculate_priority_score
 from sentence_transformers import SentenceTransformer, util
-from boards.utils import user_has_task_in_other_boards
 
 # chuyên dùng để so sánh độ tương đồng ngữ nghĩa
 print("Đang tải model AI... vui lòng đợi trong giây lát...")
@@ -23,15 +21,6 @@ semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
 print("Model AI đã sẵn sàng!")
 
 User = get_user_model()
-
-
-
-# --- 2. LOAD MODEL AI (Chỉ load 1 lần khi server chạy, ko đưa dô hàm nếu ko bị treo) ---
-# chuyên dùng để so sánh độ tương đồng ngữ nghĩa
-print("Đang tải model AI... vui lòng đợi trong giây lát...")
-semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
-print("Model AI đã sẵn sàng!")
-
 
 # ============================================================================
 # PHẦN 1: CÁC VIEW RENDER TEMPLATE (TRANG TĨNH HOẶC ÍT LOGIC)
