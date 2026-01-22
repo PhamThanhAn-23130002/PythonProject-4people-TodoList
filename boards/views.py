@@ -13,6 +13,7 @@ import uuid
 from .models import Board, BoardMember, List, Card, Checklist, ChecklistItem
 import numpy as np
 from sentence_transformers import SentenceTransformer, util #thư viện để so sánh ngữ nghĩa câu
+from boards.utils import user_has_task_in_other_boards
 
 # chuyên dùng để so sánh độ tương đồng ngữ nghĩa
 print("Đang tải model AI... vui lòng đợi trong giây lát...")
@@ -61,22 +62,22 @@ def home_page_Table(request):
 @login_required(login_url='/login/')
 def about_me(request):
     user = request.user
-    
+
     try:
         profile = UserProfile.objects.get(user_id=user)
     except UserProfile.DoesNotExist:
         # Nếu chưa có thì tạo mới ngay lập tức
         new_id = uuid.uuid4().hex[:10]
         profile = UserProfile.objects.create(
-            id=new_id, 
+            id=new_id,
             user_id=user,
-            role='Member', 
+            role='Member',
             experience_level='Junior'
         )
 
     if request.method == "POST":
         print("--- DEBUG: Đang xử lý lưu profile tại hàm about_me ---")
-        
+
         # 1. Lấy dữ liệu từ form
         username = request.POST.get('username')
         bio = request.POST.get('bio')
@@ -97,10 +98,10 @@ def about_me(request):
             # 4. Lưu Kỹ năng (Tách chuỗi -> Lưu vào DB)
             if skills_text is not None: # Chỉ xử lý khi có input gửi lên
                 profile.skill.clear() # Xóa skill cũ để cập nhật mới
-                
+
                 # Tách chuỗi "Python, HTML" thành danh sách ['Python', 'HTML']
                 skill_list = [s.strip() for s in skills_text.split(',') if s.strip()]
-                
+
                 for s_name in skill_list:
                     # Kiểm tra skill đã tồn tại trong kho chưa
                     skill_obj = Skill.objects.filter(name__iexact=s_name).first()
@@ -108,19 +109,19 @@ def about_me(request):
                         # Chưa có thì tạo mới skill trong kho
                         skill_id = uuid.uuid4().hex[:10]
                         skill_obj = Skill.objects.create(id=skill_id, name=s_name)
-                    
+
                     # Gán skill vào profile người dùng
                     profile.skill.add(skill_obj)
 
             messages.success(request, "Đã lưu thay đổi thành công!")
-            
+
         except Exception as e:
             print("Lỗi lưu DB:", e)
             messages.error(request, f"Lỗi: {str(e)}")
-            
+
         # Load lại chính trang này để thấy dữ liệu mới
-        return redirect('about_me') 
-    
+        return redirect('about_me')
+
     # Chuyển danh sách skill thành chuỗi để hiện ra form (VD: "Python, HTML")
     current_skills = ", ".join([s.name for s in profile.skill.all()])
 
@@ -381,18 +382,18 @@ def findBoard2(request):
      search_input = ""
      if request.method == "POST":
         search_input = request.POST.get("search", "")
-        
+
         if search_input:
             # Dùng filter để không bị lỗi nếu có nhiều kết quả
             results = Board.objects.filter(name__icontains=search_input)
-            
+
             # --- LOGIC CHUYỂN TRANG ---
-            
+
             # Trường hợp 1: Tìm thấy đúng 1 bảng duy nhất -> Chuyển ngay sang trang chi tiết
             if results.count() == 1:
                 board_id = results.first().id
                 return redirect('board_detail', pk=board_id) # Chuyển trang là ở đây
-            
+
             # Trường hợp 2: Tìm thấy nhiều bảng hoặc không thấy -> Hiện danh sách lọc
             boards = results
 
@@ -406,23 +407,23 @@ def findBoard(request):
     search_input = ""
     if request.method == "POST":
         search_input = request.POST.get("search", "")
-        
+
         if search_input:
             results = Board.objects.filter(name__icontains=search_input)
             if results.count() == 1:
                 board = results.first()
-                return redirect('board_detail', board_id=board.id) 
+                return redirect('board_detail', board_id=board.id)
             boards = results
 
     return render(request, "TrangChu.html")
 def search_suggest(request):
     query = request.GET.get('term', '')
     results = []
-    
+
     if query:
         # Lọc bảng theo tên (giới hạn 5-10 kết quả để load cho nhanh)
         boards = Board.objects.filter(name__icontains=query)[:10]
-        
+
         # Chuyển đổi dữ liệu thành danh sách Dictionary
         for board in boards:
             results.append({
@@ -430,7 +431,7 @@ def search_suggest(request):
                 'name': board.name,
                 # Có thể thêm ảnh bìa hoặc thông tin khác nếu muốn
             })
-    
+
     # Trả về JSON (safe=False cho phép trả về list)
     return JsonResponse(results, safe=False)
 @login_required
@@ -558,8 +559,6 @@ def delete_checklist_item(request):
 #             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 #     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
-
-# API: Quản lý thành viên 
 def manage_card_member(request):
     if request.method == "POST":
         try:
@@ -572,18 +571,43 @@ def manage_card_member(request):
             user = get_object_or_404(User, username=username)
 
             if action == 'add':
+                board = card.list.board  # 🔥 BOARD HIỆN TẠI
+
+                # 🔥 CHECK USER CÓ TASK Ở BOARD KHÁC KHÔNG
+                if user_has_task_in_other_boards(user, board):
+                    return JsonResponse({
+                        'status': 'warning',
+                        'message': f'{username} đang được phân công task ở dự án khác'
+                    })
+
                 card.members.add(user)
                 message = f"Đã thêm {username} vào thẻ"
+
             elif action == 'remove':
                 card.members.remove(user)
                 message = f"Đã xóa {username} khỏi thẻ"
-            else:
-                return JsonResponse({'status': 'error', 'message': 'Action không hợp lệ'})
 
-            return JsonResponse({'status': 'success', 'message': message})
+            else:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Action không hợp lệ'
+                })
+
+            return JsonResponse({
+                'status': 'success',
+                'message': message
+            })
+
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)})
-    return JsonResponse({'status': 'error', 'message': 'Invalid method'})
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            })
+
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid method'
+    })
 
 
 # ============================================================================
@@ -814,10 +838,10 @@ def ai_auto_assign_member(request):
             card = get_object_or_404(Card, id=card_id)
 
             # A. Lấy danh sách thành viên trong bảng
-            board = card.list.board 
+            board = card.list.board
             members = BoardMember.objects.filter(project=board)
-            
-            user_docs = []      # Chứa văn bản mô tả năng lực, để biến thành vector
+
+            user_docs = []      # Chứa văn bản mô tả năng lực (để biến thành vector)
             user_names = []     # Chứa username
             valid_users = []    # Chứa object User thực tế
 
@@ -826,30 +850,32 @@ def ai_auto_assign_member(request):
                 try:
                     # Lấy profile dựa trên user_id
                     profile = UserProfile.objects.get(user_id=mem.user)
-                    
+
                     # Gom kỹ năng từ ManyToMany thành chuỗi
                     skills_list = [s.name for s in profile.skill.all()]
                     skills_str = ", ".join(skills_list)
-                    
-                    # Tạo đoạn văn mô tả năng lực
+
+                    # Tạo đoạn văn mô tả năng lực nhân viên
+                    # Ví dụ: "Backend Developer Senior Python Django SQL. Thích làm server."
+
                     doc_text = f"{profile.role} {profile.experience_level} {skills_str}. {profile.bio}"
-                    
+
                     user_docs.append(doc_text)
                     user_names.append(mem.user.username)
                     valid_users.append(mem.user)
-                    
+
                 except UserProfile.DoesNotExist:
                     continue # Bỏ qua người chưa cập nhật profile
 
             if not user_docs:
                 return JsonResponse({
-                    'status': 'error', 
+                    'status': 'error',
                     'message': 'Chưa thành viên nào trong bảng này cập nhật Profile. Hãy vào mục "Hồ sơ cá nhân" để nhập liệu.'
                 })
 
             # C. Chuẩn bị dữ liệu công việc (Task)
             task_text = f"{card.title}. {card.description if card.description else ''}"
-            
+
             # D. SO SÁNH NGỮ NGHĨA (SEMANTIC SEARCH)
             # Biến đổi text thành vector số học
             task_embedding = semantic_model.encode(task_text, convert_to_tensor=True)
@@ -866,18 +892,18 @@ def ai_auto_assign_member(request):
 
             # E. Ra quyết định
             # Ngưỡng 0.25 là mức chấp nhận được cho sự liên quan ngữ nghĩa
-            if best_score > 0.25: 
+            if best_score > 0.25:
                 selected_user = valid_users[best_score_index]
-                
+
                 # Gán người này vào thẻ (nếu chưa có)
                 if not card.members.filter(id=selected_user.id).exists():
                     card.members.add(selected_user)
-                
+
                 reason = f"Độ phù hợp: {match_percentage}% (Dựa trên kỹ năng & kinh nghiệm)"
                 return JsonResponse({'status': 'success', 'username': best_username, 'reason': reason})
             else:
                 return JsonResponse({
-                    'status': 'error', 
+                    'status': 'error',
                     'message': f'Không tìm thấy ai phù hợp (Người cao nhất chỉ đạt {match_percentage}%)'
                 })
 

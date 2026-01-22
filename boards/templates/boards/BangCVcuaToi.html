@@ -3106,36 +3106,85 @@
         }
     }
 
-    function assignMemberToCard(username, fullname) {
-        if (!currentActiveCard) return;
-        let currentData = currentActiveCard.getAttribute('data-members') || "";
-        let memberList = currentData ? currentData.split(',') : [];
+    {#function assignMemberToCard(username, fullname) {#}
+    {#    if (!currentActiveCard) return;#}
+    {#    let currentData = currentActiveCard.getAttribute('data-members') || "";#}
+    {#    let memberList = currentData ? currentData.split(',') : [];#}
+    {##}
+    {#    if (memberList.some(item => item.split('|')[0] === username)) {#}
+    {#        alert("Thành viên này đã có trong thẻ!");#}
+    {#        return;#}
+    {#    }#}
+    {##}
+    {#    memberList.push(`${username}|${fullname}`);#}
+    {#    currentActiveCard.setAttribute('data-members', memberList.join(','));#}
+    {#    const lbl = document.getElementById('membersLabel');#}
+    {#    if (lbl) lbl.style.display = 'block';#}
+    {##}
+    {#    addMemberToView(username, fullname);#}
+    {#    safeHide("member");#}
+    {##}
+    {#    const cardId = currentActiveCard.getAttribute('data-id');#}
+    {#    if (cardId) {#}
+    {#        fetch('/boards/api/card/member/', {#}
+    {#            method: 'POST',#}
+    {#            headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},#}
+    {#            body: JSON.stringify({card_id: cardId, username: username, action: 'add'})#}
+    {#        }).then(res => res.json()).then(data => {#}
+    {#            if (data.status === 'success' || data.status === 'ok') console.log("Member added");#}
+    {#            else alert("Lỗi: " + data.message);#}
+    {#        });#}
+    {#    }#}
 
-        if (memberList.some(item => item.split('|')[0] === username)) {
-            alert("Thành viên này đã có trong thẻ!");
+
+    function assignMemberToCard(username, fullname) {
+    if (!currentActiveCard) return;
+
+    const cardId = currentActiveCard.getAttribute('data-id');
+    if (!cardId) return;
+
+    fetch('/boards/api/card/member/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+        },
+        body: JSON.stringify({
+            card_id: cardId,
+            username: username,
+            action: 'add'
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        //  TRƯỜNG HỢP USER ĐANG BẬN Ở PROJECT KHÁC
+        if (data.status === 'warning') {
+            alert(data.message);
             return;
         }
 
-        memberList.push(`${username}|${fullname}`);
-        currentActiveCard.setAttribute('data-members', memberList.join(','));
+        // LỖI BACKEND
+        if (data.status !== 'success' && data.status !== 'ok') {
+            alert("Lỗi: " + data.message);
+            return;
+        }
+
+        //  CHỈ UPDATE UI KHI BACKEND OK
+        let currentData = currentActiveCard.getAttribute('data-members') || "";
+        let memberList = currentData ? currentData.split(',') : [];
+
+        if (!memberList.some(item => item.split('|')[0] === username)) {
+            memberList.push(`${username}|${fullname}`);
+            currentActiveCard.setAttribute('data-members', memberList.join(','));
+        }
+
         const lbl = document.getElementById('membersLabel');
         if (lbl) lbl.style.display = 'block';
 
         addMemberToView(username, fullname);
         safeHide("member");
-
-        const cardId = currentActiveCard.getAttribute('data-id');
-        if (cardId) {
-            fetch('/boards/api/card/member/', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},
-                body: JSON.stringify({card_id: cardId, username: username, action: 'add'})
-            }).then(res => res.json()).then(data => {
-                if (data.status === 'success' || data.status === 'ok') console.log("Member added");
-                else alert("Lỗi: " + data.message);
-            });
-        }
-    }
+    });}
 
     function removeMemberFromCard(username) {
         if (!currentActiveCard) return;
@@ -3687,8 +3736,8 @@ function callAutoAssignAI(e) {
     }
 
     // 2. Lấy ID từ thẻ đang active
-    const cardId = currentActiveCard.getAttribute('data-id'); 
-    
+    const cardId = currentActiveCard.getAttribute('data-id');
+
     if (!cardId) {
         alert("Lỗi dữ liệu thẻ (thiếu ID).");
         return;
@@ -3696,7 +3745,7 @@ function callAutoAssignAI(e) {
 
     const btn = e.target;
     const originalText = btn.innerText;
-    
+
     // 3. Hiệu ứng loading
     btn.innerText = "⏳ AI đang suy nghĩ...";
     btn.disabled = true;
@@ -3704,10 +3753,10 @@ function callAutoAssignAI(e) {
 
     fetch('/boards/api/ai/auto-assign/', {
         method: 'POST',
-        headers: { 
+        headers: {
             'Content-Type': 'application/json',
             // 4. Bổ sung CSRF Token để tránh lỗi 403 Forbidden (quan trọng)
-            'X-CSRFToken': '{{ csrf_token }}' 
+            'X-CSRFToken': '{{ csrf_token }}'
         },
         body: JSON.stringify({ card_id: cardId })
     })
@@ -3754,5 +3803,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }, 4000); // 4000ms = 4 giây
         }
     });
+
 </script>
 </html>
