@@ -25,4 +25,5 @@ urlpatterns = [
     # path('notifications/', include('notifications.urls')),
     path('tasks/',include('tasks.urls')),
     path('accounts/', include('allauth.urls')),
+    path('notifications/', include('notifications.urls')),
 ]

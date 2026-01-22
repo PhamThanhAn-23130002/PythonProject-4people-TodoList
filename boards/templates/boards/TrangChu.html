@@ -108,8 +108,8 @@
         }
 
         .icon-btn {
-            width: 3px;
-            height: 3px;
+            width: 5px;
+            height: 5px;
             border-radius: 50%;
             border: 1px solid var(--stroke);
             background: transparent;
@@ -604,6 +604,60 @@
     padding:0px;
 }
 
+/* --- SỬA CÁI CHUÔNG --- */
+.icon-btn#notiBtn {
+    /* Tăng kích thước cái chuông lên */
+    font-size: 24px !important; /* Điều chỉnh số này cho vừa mắt */
+
+    /* Căn chỉnh lại vị trí để nó không bị lệch khi to lên */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;  /* Định hình khung cho nút */
+    height: 40px;
+    padding: 0;   /* Bỏ padding mặc định nếu có */
+}
+
+/* Điều chỉnh lại vị trí cái chấm đỏ (badge) cho cân đối với chuông mới */
+#notiBadge {
+    top: -2px !important;  /* Nhích lên một chút */
+    right: -2px !important; /* Nhích sang phải một chút */
+    font-size: 11px !important; /* Tăng nhẹ kích thước số */
+    padding: 3px 6px !important;
+}
+
+/* --- CẤU TRÚC CHUNG CỦA 1 THÔNG BÁO --- */
+.noti-item {
+    /* Mặc định là ĐÃ ĐỌC (Nền trắng) */
+    background-color: white;
+    color: #333;             /* Chữ đen xám */
+    padding: 15px 20px;      /* Khoảng cách thoáng */
+    border-bottom: 1px solid #ddd; /* Đường kẻ ngăn cách mờ */
+    cursor: pointer;
+    text-align: left;
+    transition: none;        /* Tắt mọi hiệu ứng chuyển động */
+}
+
+/* --- TRẠNG THÁI CHƯA ĐỌC (Ghi đè lên cái trên) --- */
+.noti-item.unread {
+    /* Màu xanh lá nhạt (Pastel) - Dịu mắt và đọc rõ chữ đen */
+    background-color: #d1e7dd;
+
+    /* Nếu bạn thích màu xanh đậm hẳn (ForestGreen) thì phải đổi chữ thành trắng mới đọc được:
+       background-color: forestgreen;
+       color: white;
+    */
+}
+
+/* --- DÒNG NGÀY THÁNG --- */
+.noti-item .noti-time {
+    font-size: 11px;
+    color: #666;
+    text-align: right;
+    font-style: italic;
+    margin-top: 5px;
+}
+
     </style>
 </head>
 <body>
@@ -636,18 +690,19 @@
     <div class="top-actions">
         <button id="openModalBtn" class="btn">Tạo mới</button>
         <div class="noti-wrap">
-    <button class="icon-btn" id="notiBtn" title="Thông báo">🔔</button>
-    <div class="noti-menu" id="notiMenu">
-    <div class="noti-header">
-        <h3>Thông báo</h3>
-    </div>
+    <button class="icon-btn" id="notiBtn" title="Thông báo">🔔
+        <span id="notiBadge" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; display: none;">0</span>
+    </button>
 
-    <div class="noti-content">
-        <img src="https://trello.com/assets/ee2660df9335718b1a80.svg" alt="Sleepy dog" class="noti-img">
-        <div class="noti-empty-text">Không có thông báo chưa đọc</div>
-        <div style="margin-top: 10px; color: #ff6b6b; font-size: 12px; display: none;">Click to view details</div>
+    <div class="noti-menu" id="notiMenu">
+        <div class="noti-header">
+            <h3>Thông báo</h3>
+        </div>
+
+        <div class="noti-content" id="notiContentList">
+            <div class="noti-empty-text">Không có thông báo chưa đọc</div>
+        </div>
     </div>
-</div>
 </div>
         <button class="icon-btn" title="Trợ giúp">?</button>
         <div class="account-wrap">
@@ -868,39 +923,100 @@ if (createBoardHeroBtn) createBoardHeroBtn.onclick = openModal;  {% endcomment %
 </script>
 
 <script>
-    // --- XỬ LÝ NOTIFICATION POPUP ---
+    // --- HÀM LOAD THÔNG BÁO TỪ SERVER ---
+    function fetchNotifications() {
+        fetch('/notifications/api/get-notifications/')
+            .then(response => response.json())
+            .then(data => {
+                const listContainer = document.getElementById('notiContentList');
+                const badge = document.getElementById('notiBadge');
+
+                // 1. Cập nhật số lượng chưa đọc
+                if (data.unread_count > 0) {
+                    badge.innerText = data.unread_count;
+                    badge.style.display = 'block';
+                } else {
+                    badge.style.display = 'none';
+                }
+
+                // 2. Render danh sách thông báo
+                if (data.notifications.length === 0) {
+                    listContainer.innerHTML = `
+                        <img src="https://trello.com/assets/ee2660df9335718b1a80.svg" alt="Empty" class="noti-img">
+                        <div class="noti-empty-text">Không có thông báo chưa đọc</div>
+                    `;
+                } else {
+                    let html = '';
+                    data.notifications.forEach(noti => {
+                        // Nếu chưa đọc (is_read = false) thì thêm class 'unread'
+                        const statusClass = noti.is_read ? '' : 'unread';
+
+                        html += `
+                            <div class="noti-item ${statusClass}" onclick="markAsRead(${noti.id}, this)">
+
+                                <div style="font-size: 14px; line-height: 1.5; margin-bottom: 8px;margin-right: 10px; margin-left: -10px; display: flex; gap: 8px;">
+                                    <span>✨</span>
+                                    <span style="font-weight: ${noti.is_read ? '400' : '600'}">${noti.message}</span>
+                                </div>
+
+                                <div class="noti-time">
+                                    ${noti.created_at}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    listContainer.innerHTML = html;
+                }
+            })
+            .catch(error => console.error('Lỗi tải thông báo:', error));
+    }
+
+    // --- HÀM ĐÁNH DẤU ĐÃ ĐỌC ---
+    function markAsRead(id, element) {
+    fetch(`/notifications/api/mark-read/${id}/`)
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === 'success') {
+                // Xóa class 'unread' -> CSS sẽ tự động đổi màu về Trắng
+                element.classList.remove('unread');
+
+                // Bỏ in đậm chữ bên trong
+                const contentSpan = element.querySelector('div span:last-child');
+                if(contentSpan) contentSpan.style.fontWeight = '400';
+
+                // Load lại số lượng badge
+                fetchNotifications();
+            }
+        });
+}
+
+    // --- LOGIC POPUP
     const notiBtn = document.getElementById('notiBtn');
     const notiMenu = document.getElementById('notiMenu');
 
     if (notiBtn && notiMenu) {
+        // Gọi load thông báo ngay khi trang vừa tải
+        document.addEventListener('DOMContentLoaded', fetchNotifications);
+
         notiBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Ngăn sự kiện lan ra ngoài
-            notiMenu.classList.toggle('show'); // Bật/Tắt class show
-
-            // Nếu đang mở menu account thì đóng lại cho đỡ rối
-            const accMenu = document.getElementById('accountMenu');
-            if (accMenu && accMenu.classList.contains('show')) {
-                accMenu.classList.remove('show');
-            }
-        });
-
-        // Click bên trong menu thông báo thì không đóng
-        notiMenu.addEventListener('click', (e) => {
             e.stopPropagation();
+            notiMenu.classList.toggle('show');
+
+            // Khi mở menu ra, gọi load lại lần nữa cho chắc
+            if (notiMenu.classList.contains('show')) {
+                fetchNotifications();
+            }
+
+            const accMenu = document.getElementById('accountMenu');
+            if (accMenu && accMenu.classList.contains('show')) accMenu.classList.remove('show');
         });
-    }///
-    // Ẩn hộp gợi ý khi click ra ngoài
-    document.addEventListener('click', function(e) {
-        if (!searchInput.contains(e.target) && !suggestionBox.contains(e.target)) {
-            suggestionBox.style.display = 'none';
-        }
-    });
-    // Đóng popup khi click bất kỳ đâu bên ngoài (Sửa lại đoạn lắng nghe click body cũ của bạn)
-    document.addEventListener('click', () => {
-        const accMenu = document.getElementById('accountMenu');
-        if (accMenu) accMenu.classList.remove('show');
-        if (notiMenu) notiMenu.classList.remove('show');
-    });
+
+        notiMenu.addEventListener('click', (e) => e.stopPropagation());
+
+        document.addEventListener('click', () => {
+             if (notiMenu) notiMenu.classList.remove('show');
+        });
+    }
 </script>
 </body>
 </html>
