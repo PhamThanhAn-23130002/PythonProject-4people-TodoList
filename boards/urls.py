@@ -66,5 +66,9 @@ urlpatterns = [
     path("api/card/<int:card_id>/checklists/", views.get_card_checklists),
     path("api/checklist/item/delete/", views.delete_checklist_item),
     path('api/ai/auto-assign/', views.ai_auto_assign_member, name='ai_auto_assign_member'),
+<<<<<<< HEAD
+    path('boads/<int:board_id>/',views.countTag)
+=======
     path("api/user/priority/",views.get_user_priority,name="get_user_priority"),
+>>>>>>> main
 ]

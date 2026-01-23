@@ -12,8 +12,9 @@ from accounts.models import UserProfile, Skill
 import uuid
 from .models import Board, BoardMember, List, Card, Checklist, ChecklistItem
 import numpy as np
-from boards.utils import calculate_priority_score
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import SentenceTransformer, util #thư viện để so sánh ngữ nghĩa câu
+from boards.utils import user_has_task_in_other_boards
+from django.db.models import Count
 
 # chuyên dùng để so sánh độ tương đồng ngữ nghĩa
 print("Đang tải model AI... vui lòng đợi trong giây lát...")
@@ -835,3 +836,12 @@ def ai_auto_assign_member(request):
             return JsonResponse({'status': 'error', 'message': str(e)})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+def countTag(board_id):
+     return((
+        User.objects
+        .filter(cards__list__board_id=board_id)
+        .annotate(total_tasks=Count('cards', distinct=True))
+        .values('id', 'total_tasks')
+    ))
+def countTagUser(User_id):
+    return User.objects.get(User_id).annotate(toal_task=Count('cards',distinct=True)).values('id','toal_tasks')
