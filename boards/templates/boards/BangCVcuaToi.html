@@ -2425,17 +2425,34 @@
 
         <div id="checklistMount"></div>
 
-        <div class="col-xl-6 commentcard">
-            <h4>NHẬN XÉT HOẠT ĐỘNG</h4>
-            <input class="activity-input" type="text" placeholder="Viết bình luận...">
+<div class="col-xl-6 commentcard">
+    <h4>NHẬN XÉT HOẠT ĐỘNG</h4>
+    
+    <div class="input-wrapper" style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <input id="comment-input" class="activity-input" type="text" 
+               style="flex-grow: 1;" 
+               placeholder="Viết bình luận..." 
+               data-card-id="{{ card.id }}"> 
+        
+        <button id="btn-send-comment" class="btn btn-primary" type="button" style="height: 45px;">
+            Gửi <i class="fa fa-paper-plane"></i>
+        </button>
+    </div>
+
+    <div id="comment-list">
+        {% for comment in card.comments.all reversed %} 
             <div class="activity-item">
-                <div class="avatar">V</div>
+                <div class="avatar">{{ comment.author.username.0|upper }}</div>
                 <div class="activity-content">
-                    <p><span class="name">Vũ Minh Đức</span> đã thêm thẻ mới</p>
+                    <p><span class="name">{{ comment.author.username }}</span>: {{ comment.content }}</p>
+                    <span class="time-log">{{ comment.created_at|timesince }} trước</span>
                 </div>
             </div>
-        </div>
+        {% empty %}
+            <p class="text-muted text-center mt-2" id="no-comment-text">Chưa có bình luận nào.</p>
+        {% endfor %}
     </div>
+</div>
 
 
     <div class="optionchecklist" id="choosedate">
@@ -2942,6 +2959,7 @@
      */
     function openCardDetail() {
         if (currentActiveCard) {
+            const cardId = currentActiveCard.getAttribute('data-id');
             // A. Tên danh sách
             const parentList = currentActiveCard.closest('.list');
             if (parentList) {
@@ -3095,8 +3113,53 @@
             // Sync trạng thái checkbox
             const checkbox = document.querySelector('.complete');
             if (checkbox) checkbox.checked = isCompleted;
+
+            //thêm comment
+        const commentInput = document.getElementById('comment-input');
+        if (commentInput) {
+            commentInput.dataset.cardId = cardId;
+            commentInput.value = '';
+            loadComments(cardId);
         }
+    } 
     }
+
+    function loadComments(cardId) {
+    const listContainer = document.getElementById('comment-list');
+    if (!listContainer) return;
+    listContainer.innerHTML = '<p class="text-center text-muted" style="color:#aaa; font-style:italic;">Đang tải bình luận...</p>';
+
+    // Gọi API
+    fetch(`/boards/api/get-comments/${cardId}/`)
+        .then(response => {
+            if (!response.ok) throw new Error("Lỗi kết nối");
+            return response.json();
+        })
+        .then(data => {
+            listContainer.innerHTML = '';
+
+            if (data.status === 'success' && data.comments && data.comments.length > 0) {
+                data.comments.forEach(cmt => {
+                    const html = `
+                        <div class="activity-item">
+                            <div class="avatar">${cmt.avatar}</div>
+                            <div class="activity-content">
+                                <p><span class="name">${cmt.username}</span>: ${cmt.content}</p>
+                                <span class="time-log" style="font-size: 12px; color: gray;">${cmt.created_at}</span>
+                            </div>
+                        </div>
+                    `;
+                    listContainer.insertAdjacentHTML('beforeend', html);
+                });
+            } else {
+                listContainer.innerHTML = '<p class="text-muted text-center mt-2" id="no-comment-text" style="color:#aaa;">Chưa có bình luận nào.</p>';
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            listContainer.innerHTML = '<p class="text-muted text-center mt-2" style="color:red;">Không thể tải bình luận.</p>';
+        });
+}
 
     function closeCardModal() {
         if (cardOverlay) {
@@ -3142,7 +3205,6 @@
                 alert("Chưa chọn thẻ!");
                 return;
             }
-            const cardId = currentActiveCard.getAttribute('data-id');
 
             if (cardId) {
                 form.action = `/tasks/card/${cardId}/add-tag/`;
@@ -3992,5 +4054,99 @@
              if (notiMenu) notiMenu.classList.remove('show');
         });
     }
+
+    //nhận xét hoạt động
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Bắt sự kiện Click vào nút Gửi
+    const btnSend = document.getElementById('btn-send-comment');
+    if (btnSend) {
+        btnSend.addEventListener('click', function() {
+            const inputElement = document.getElementById('comment-input');
+            sendComment(inputElement);
+        });
+    }
+
+    // (Tùy chọn) Vẫn giữ phím Enter cho tiện (UX tốt hơn)
+    // Nếu bạn muốn cấm tiệt Enter thì xóa đoạn này đi
+    const inputElement = document.getElementById('comment-input');
+    if (inputElement) {
+        inputElement.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendComment(inputElement);
+            }
+        });
+    }
+});
+
+// Hàm gửi dữ liệu (Logic giữ nguyên, chỉ thêm hiệu ứng cho button)
+function sendComment(inputElement) {
+    const content = inputElement.value;
+    const cardId = inputElement.dataset.cardId; 
+    const btnSend = document.getElementById('btn-send-comment'); // Lấy nút button để làm hiệu ứng
+
+    if (content.trim() === "") {
+        alert("Vui lòng nhập nội dung!");
+        return;
+    }
+
+    // Hiệu ứng: Disable nút và input để tránh bấm liên tục
+    inputElement.disabled = true;
+    if(btnSend) {
+        btnSend.disabled = true;
+        btnSend.innerHTML = 'Đang gửi...';
+    }
+
+    fetch('/boards/api/add-comment/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            card_id: cardId,
+            content: content
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Mở lại nút
+        inputElement.disabled = false;
+        inputElement.focus();
+        if(btnSend) {
+            btnSend.disabled = false;
+            btnSend.innerHTML = 'Gửi <i class="fa fa-paper-plane"></i>';
+        }
+
+        if (data.status === 'success') {
+            inputElement.value = ''; 
+
+            const commentList = document.getElementById('comment-list');
+            const noCommentText = document.getElementById('no-comment-text');
+            if (noCommentText) noCommentText.remove();
+
+            const newHtml = `
+                <div class="activity-item">
+                    <div class="avatar">${data.avatar_char}</div>
+                    <div class="activity-content">
+                        <p><span class="name">${data.username}</span>: ${data.content}</p>
+                        <span class="time-log" style="font-size: 12px; color: gray;">${data.created_at}</span>
+                    </div>
+                </div>
+            `;
+            commentList.insertAdjacentHTML('afterbegin', newHtml); 
+        } else {
+            alert('Lỗi: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        inputElement.disabled = false;
+        if(btnSend) {
+            btnSend.disabled = false;
+            btnSend.innerHTML = 'Gửi lại';
+        }
+        alert("Có lỗi xảy ra.");
+    });
+}
 </script>
 </html>

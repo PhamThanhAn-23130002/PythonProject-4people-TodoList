@@ -13,7 +13,7 @@ import uuid
 from .models import Board, BoardMember, List, Card, Checklist, ChecklistItem
 import numpy as np
 from sentence_transformers import SentenceTransformer, util #thư viện để so sánh ngữ nghĩa câu
-from boards.utils import user_has_task_in_other_boards
+from boards.utils import count_tasks_in_other_boards, count_tasks_in_board
 from django.db.models import Count
 
 # chuyên dùng để so sánh độ tương đồng ngữ nghĩa
@@ -759,89 +759,95 @@ def ai_auto_assign_member(request):
             data = json.loads(request.body)
             card_id = data.get('card_id')
             card = get_object_or_404(Card, id=card_id)
+            current_board = card.list.board
+            
+            # Quy định việc kỹ năng qđ 70% và bio, kinh nghiệm là 30%
+            WEIGHT_SKILL = 0.7 
+            WEIGHT_CONTEXT = 0.3
+            PENALTY_RATE = 0.05     # Với mỗi task ng đó đang được phân công phạt 5% mỗi task đang làm
 
-            # A. Lấy danh sách thành viên trong bảng
-            board = card.list.board
-            members = BoardMember.objects.filter(project=board)
+            #tiêu chí 1: vector hóa 
+            task_text = f"{card.title}. {card.description if card.description else ''}"
+            task_embedding = semantic_model.encode(task_text, convert_to_tensor=True)
 
+            # Lấy danh sách thành viên
+            members = BoardMember.objects.filter(project=current_board)
+            candidates = []
 
-            user_docs = []      # Chứa văn bản mô tả năng lực (để biến thành vector)
-            user_names = []     # Chứa username
-            valid_users = []    # Chứa object User thực tế
-
-            # B. Quét Profile của từng thành viên
+            # Vòng lặp tính toán 3 tiêu chí còn lại
             for mem in members:
                 try:
-                    # Lấy profile dựa trên user_id
-                    profile = UserProfile.objects.get(user_id=mem.user)
+                    user = mem.user
+                    profile = UserProfile.objects.get(user_id=user)
 
-                    # Gom kỹ năng từ ManyToMany thành chuỗi
+                    # tiêu chí 1: kỹ năng, kinh nghiệm
+                    #tính điểm kỹ năng
                     skills_list = [s.name for s in profile.skill.all()]
-                    skills_str = ", ".join(skills_list)
+                    skills_text = ", ".join(skills_list) if skills_list else "General"
+                    skill_emb = semantic_model.encode(skills_text, convert_to_tensor=True)
+                    skill_score = util.cos_sim(task_embedding, skill_emb)[0].item()
 
+                    # Tính điểm bio, kinh nghiệm
+                    context_text = f"{profile.role} {profile.experience_level} {profile.bio}"
+                    context_emb = semantic_model.encode(context_text, convert_to_tensor=True)
+                    context_score = util.cos_sim(task_embedding, context_emb)[0].item()
 
-                    # Tạo đoạn văn mô tả năng lực nhân viên
-                    # Ví dụ: "Backend Developer Senior Python Django SQL. Thích làm server."
+                    # Score(AI)
+                    base_score = (skill_score * WEIGHT_SKILL) + (context_score * WEIGHT_CONTEXT)
 
-                    doc_text = f"{profile.role} {profile.experience_level} {skills_str}. {profile.bio}"
+                    # tiêu chí 2 và 3: số task đang được phân trong dự án và các dự án khác
+                    local_load = count_tasks_in_board(user, current_board)
+                    global_load = count_tasks_in_other_boards(user, current_board)
+                    
+                    total_load = (local_load + global_load)*PENALTY_RATE
+                    
+                    # Công thức: Final = Base * (1 - P(load))
+                    final_score = base_score * (1 - total_load)
 
-                    user_docs.append(doc_text)
-                    user_names.append(mem.user.username)
-                    valid_users.append(mem.user)
+                    candidates.append({
+                        'username': user.username,
+                        'user_obj': user,
+                        'final_score': final_score,
+                        'base_score': base_score,
+                        'local': local_load,
+                        'global': global_load
+                    })
 
                 except UserProfile.DoesNotExist:
-                    continue # Bỏ qua người chưa cập nhật profile
+                    continue
 
-            if not user_docs:
-                return JsonResponse({
-                    'status': 'error',
-                    'message': 'Chưa thành viên nào trong bảng này cập nhật Profile. Hãy vào mục "Hồ sơ cá nhân" để nhập liệu.'
-                })
+            # sx chọn ra ng tốt nhất 
+            candidates.sort(key=lambda x: x['final_score'], reverse=True)
 
-            # C. Chuẩn bị dữ liệu công việc (Task)
-            task_text = f"{card.title}. {card.description if card.description else ''}"
+            if candidates and candidates[0]['final_score'] > 0.25:
+                best = candidates[0]
+                user_to_add = best['user_obj']
 
-            # D. SO SÁNH NGỮ NGHĨA (SEMANTIC SEARCH)
-            # Biến đổi text thành vector số học
-            task_embedding = semantic_model.encode(task_text, convert_to_tensor=True)
-            user_embeddings = semantic_model.encode(user_docs, convert_to_tensor=True)
+                if not card.members.filter(id=user_to_add.id).exists():
+                    card.members.add(user_to_add)
+                reason = (
+                    f"⭐ Độ phù hợp: {round(best['base_score']*100, 1)}%\n"
+                    f"📉 Đang bận: {best['local']} task ở đây "
+                    f"+ {best['global']} task dự án khác.\n"
+                    f"✅ Điểm quyết định: {round(best['final_score']*100, 1)}%"
+                )
 
-            # Tính điểm tương đồng (Cosine Similarity)
-            cosine_scores = util.cos_sim(task_embedding, user_embeddings)[0]
-
-            # Tìm người có điểm cao nhất
-            best_score_index = int(np.argmax(cosine_scores.cpu().numpy()))
-            best_score = float(cosine_scores[best_score_index])
-            best_username = user_names[best_score_index]
-            match_percentage = round(best_score * 100, 1)
-
-            # E. Ra quyết định
-            # Ngưỡng 0.25 là mức chấp nhận được cho sự liên quan ngữ nghĩa
-            if best_score > 0.25:
-                selected_user = valid_users[best_score_index]
-
-                # Gán người này vào thẻ (nếu chưa có)
-                if not card.members.filter(id=selected_user.id).exists():
-                    card.members.add(selected_user)
-
-                reason = f"Độ phù hợp: {match_percentage}% (Dựa trên kỹ năng & kinh nghiệm)"
-                return JsonResponse({'status': 'success', 'username': best_username, 'reason': reason})
+                return JsonResponse({'status': 'success', 'username': best['username'], 'reason': reason})
             else:
-                return JsonResponse({
-                    'status': 'error',
-                    'message': f'Không tìm thấy ai phù hợp (Người cao nhất chỉ đạt {match_percentage}%)'
-                })
+                return JsonResponse({'status': 'error', 'message': "Không tìm thấy ai phù hợp hoặc mọi người đều đang quá tải."})
 
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
-def countTag(board_id):
+
+
+def countTask(board_id):
      return((
         User.objects
         .filter(cards__list__board_id=board_id)
         .annotate(total_tasks=Count('cards', distinct=True))
         .values('id', 'total_tasks')
     ))
-def countTagUser(User_id):
+def countTaskUser(User_id):
     return User.objects.get(User_id).annotate(toal_task=Count('cards',distinct=True)).values('id','toal_tasks')
