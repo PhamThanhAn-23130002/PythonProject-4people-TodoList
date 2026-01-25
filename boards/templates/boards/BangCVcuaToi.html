@@ -3184,40 +3184,51 @@
      */
 
     // --- A. QUẢN LÝ NHÃN (TAGS) ---
-    function toggleTagPopover(e) {
-        if (e && e.stopPropagation) e.stopPropagation();
+    // --- QUẢN LÝ NHÃN (TAGS) - ĐÃ SỬA LỖI ---
+function toggleTagPopover(e) {
+    if (e && e.stopPropagation) e.stopPropagation();
 
-        const popover = document.getElementById('tagPopover');
-        const form = document.getElementById('addTagForm');
+    const popover = document.getElementById('tagPopover');
+    const form = document.getElementById('addTagForm');
 
-        safeHide("choosedate");
-        safeHide("member");
-        safeHide("cardMoreMenu");
+    // Ẩn các popup khác để tránh rối
+    safeHide("choosedate");
+    safeHide("member");
+    safeHide("cardMoreMenu");
 
-        if (!popover || !form) return;
+    if (!popover || !form) return;
 
-        popover.onclick = function (ev) {
-            ev.stopPropagation();
-        };
+    // Ngăn việc click vào popover bị đóng lại
+    popover.onclick = function (ev) {
+        ev.stopPropagation();
+    };
 
-        if (popover.style.display === 'none' || popover.style.display === '') {
-            if (!currentActiveCard) {
-                alert("Chưa chọn thẻ!");
-                return;
-            }
-
-            if (cardId) {
-                form.action = `/tasks/card/${cardId}/add-tag/`;
-                popover.style.display = 'block';
-                const nameInput = form.querySelector('input[name="name"]');
-                if (nameInput) nameInput.focus();
-            } else {
-                alert("Thẻ chưa có ID. Hãy tải lại trang (F5).");
-            }
-        } else {
-            popover.style.display = 'none';
+    if (popover.style.display === 'none' || popover.style.display === '') {
+        // Kiểm tra xem có thẻ đang active không
+        if (!currentActiveCard) {
+            alert("Chưa chọn thẻ!");
+            return;
         }
+
+        // 👇👇 THÊM DÒNG NÀY ĐỂ LẤY ID THẺ 👇👇
+        const cardId = currentActiveCard.getAttribute('data-id'); 
+
+        if (cardId) {
+            // Cập nhật action cho form để biết add tag vào thẻ nào
+            form.action = `/tasks/card/${cardId}/add-tag/`;
+            
+            popover.style.display = 'block';
+            
+            // Focus vào ô nhập tên tag cho tiện
+            const nameInput = form.querySelector('input[name="name"]');
+            if (nameInput) nameInput.focus();
+        } else {
+            alert("Lỗi: Thẻ không có ID. Hãy tải lại trang (F5).");
+        }
+    } else {
+        popover.style.display = 'none';
     }
+}
 
     function removeTag(tagId, tagElement) {
         if (!currentActiveCard) return;
