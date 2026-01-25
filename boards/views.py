@@ -15,6 +15,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer, util #thư viện để so sánh ngữ nghĩa câu
 from boards.utils import count_tasks_in_other_boards, count_tasks_in_board
 from django.db.models import Count
+from boards.utils import calculate_priority_score
 
 # chuyên dùng để so sánh độ tương đồng ngữ nghĩa
 print("Đang tải model AI... vui lòng đợi trong giây lát...")
@@ -765,6 +766,7 @@ def ai_auto_assign_member(request):
             WEIGHT_SKILL = 0.7 
             WEIGHT_CONTEXT = 0.3
             PENALTY_RATE = 0.05     # Với mỗi task ng đó đang được phân công phạt 5% mỗi task đang làm
+            THRESHOLD = 0.15
 
             #tiêu chí 1: vector hóa 
             task_text = f"{card.title}. {card.description if card.description else ''}"
@@ -819,7 +821,7 @@ def ai_auto_assign_member(request):
             # sx chọn ra ng tốt nhất 
             candidates.sort(key=lambda x: x['final_score'], reverse=True)
 
-            if candidates and candidates[0]['final_score'] > 0.25:
+            if candidates and candidates[0]['final_score'] > THRESHOLD:
                 best = candidates[0]
                 user_to_add = best['user_obj']
 

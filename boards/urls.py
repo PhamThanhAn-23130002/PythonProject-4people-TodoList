@@ -68,7 +68,7 @@ urlpatterns = [
     path("api/checklist/item/delete/", views.delete_checklist_item),
     path('api/ai/auto-assign/', views.ai_auto_assign_member, name='ai_auto_assign_member'),
     path('boads/<int:board_id>/',views.countTask),
-  #  path("api/user/priority/",views.get_user_priority,name="get_user_priority"),
+    path("api/user/priority/",views.get_user_priority,name="get_user_priority"),
     path('api/add-comment/', task_views.add_comment_api, name='add_comment_api'),
     path('api/get-comments/<int:card_id>/', task_views.get_comments_api, name='get_comments_api'),
 ]
